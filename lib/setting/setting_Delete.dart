@@ -18,29 +18,36 @@ class Delete extends StatelessWidget {
           title: Text("회원 탈퇴하기"),
         ),
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '탈퇴하기',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
-              SizedBox(height: 20), //간격 벌리기 용
-              InputField(label: '탈퇴 사유', hintText: '간단한 탈퇴 사유를 적어주세요.'),
-              SizedBox(height: 20), //간격 벌리기 용
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DeleteDetailScreen(),
-                    ),
-                  );
-                },
-                child: Text('회원탈퇴'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(40.0), //화면 간격부분
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '탈퇴하기',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 40), //간격 벌리기 용
+                InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
+                SizedBox(height: 20), //간격 벌리기 용
+                InputField(
+                  label: '탈퇴 사유',
+                  hintText: '간단한 탈퇴 사유를 적어주세요.',
+                ),
+                SizedBox(height: 20), //간격 벌리기 용
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DeleteDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: Text('회원탈퇴'),
+                ),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomBar(),

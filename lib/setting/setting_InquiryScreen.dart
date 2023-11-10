@@ -30,65 +30,69 @@ class _InquiryScreenState extends State<InquiryScreen> {
           title: Text("문의하기"),
         ),
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '문의하기',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    InputField(
-                      label: '제목 *',
-                      // 제목 부분 null 체크 후 할당
-                      onSaved: (value) {
-                        if (value != null) {
-                          title = value;
-                        }
-                      },
-                    ),
-                    SizedBox(height: 20), //간격 벌리기용
-                    InputField(
-                      label: '내용 *',
-                      isTextArea: true,
-                      hintText: "수정 요청, 유의 사항 등등 문의",
-                      //내용 부분 null 체크 후 할당
-                      onSaved: (value) {
-                        // null 체크 후 할당
-                        if (value != null) {
-                          content = value;
-                        }
-                      },
-                    ),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.all(40.0), //화면 간격부분
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '문의하기',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-              ),
-              SizedBox(height: 20), //간격 벌리기 용
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState != null &&
-                      _formKey.currentState!.validate()) {
-                    if (title != null && content != null) {
-                      // InquiryDetailScreen으로 정보 전달
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => InquiryDetailScreen(
-                            //22
-                            title: title,
-                            content: content,
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      InputField(
+                        label: '제목 *',
+                        // 제목 부분 null 체크 후 할당
+                        onSaved: (value) {
+                          if (value != null) {
+                            title = value;
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20), //간격 벌리기용
+                      InputField(
+                        label: '내용 *',
+                        isTextArea: true,
+                        hintText: "수정 요청, 유의 사항 등등 문의",
+                        //내용 부분 null 체크 후 할당
+                        onSaved: (value) {
+                          // null 체크 후 할당
+
+                          if (value != null) {
+                            content = value;
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20), //간격 벌리기 용
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState != null &&
+                        _formKey.currentState!.validate()) {
+                      if (title != null && content != null) {
+                        // InquiryDetailScreen으로 정보 전달
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InquiryDetailScreen(
+                              //22
+                              title: title,
+                              content: content,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     }
-                  }
-                },
-                child: Text('문의하기'),
-              ),
-            ],
+                  },
+                  child: Text('문의하기'),
+                ),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomBar(),
@@ -164,6 +168,8 @@ class InquiryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Received title: $title'); // 작성한 제목이 잘 넘어갔는 지 확인
+    debugPrint('Received content: $content'); // 작성한 내용이 잘 넘어갔는 지 확인
     return Scaffold(
       appBar: AppBar(
         title: Text('문의 화면'),
@@ -174,7 +180,7 @@ class InquiryDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('문의 화면 내용'),
-            Text('제목: ${title ?? "N/A"}'), //가져온 제목 /"N/A"이건 눌 체크용
+            Text("제목: ${title ?? "N/A"}"), //가져온 제목 /"N/A"이건 눌 체크용
             Text('내용: ${content ?? "N/A"}'), //가져온 내용 /"N/A" null 첵
           ],
         ),

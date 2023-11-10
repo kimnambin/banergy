@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MaterialApp(
@@ -18,42 +20,91 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<AddProductScreen> {
-  File? _image; // 이미지 담을 변수
+  late File? _image;
   final ImagePicker picker = ImagePicker();
+  String parsedText = ''; // 추가: 이미지에서 추출된 텍스트를 저장할 변수
 
-//이미지 가져오기
+  @override
+  void initState() {
+    super.initState();
+    _image = widget.image;
+  }
+
+  // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
+  late XFile? pickedFile;
+  late String img64;
+
+  // 이미지 가져오는 부분 수정
+
   Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    pickedFile = await picker.pickImage(source: imageSource);
+
     if (pickedFile != null) {
+      // 이미지를 base64로 변환
+      var bytes = File(pickedFile!.path).readAsBytesSync();
+      img64 = base64Encode(bytes);
+
+      // OCR API 호출
+      await _performOCR();
+
       setState(() {
-        _image = File(pickedFile.path);
+        _image = File(pickedFile!.path);
       });
     }
+  }
+
+  // OCR을 수행
+  Future<void> _performOCR() async {
+    var url = 'https://api.ocr.space/parse/image';
+    var payload = {
+      "base64Image": "data:image/jpg;base64,$img64",
+      "language": "kor"
+    };
+    var header = {"apikey": "K86733705788957"};
+
+    var post = await http.post(Uri.parse(url), body: payload, headers: header);
+    var result = jsonDecode(post.body);
+
+    setState(() {
+      parsedText = result['ParsedResults'][0]['ParsedText'];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("상품 추가")),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 30, width: double.infinity),
-          _buildPhotoArea(),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildElevatedButton("카메라", ImageSource.camera),
-              const SizedBox(width: 30),
-              _buildElevatedButton("갤러리", ImageSource.gallery),
-            ],
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 30, width: double.infinity),
+            Text(
+              '상품추가',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '최대한 공백이 없어야 인식이 잘됩니다.',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            _buildPhotoArea(),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(width: 8),
+                _buildElevatedButton("카메라", ImageSource.camera),
+                const SizedBox(width: 30),
+                _buildElevatedButton("갤러리", ImageSource.gallery),
+              ],
+            ),
+          ],
+        ),
       ),
-      //bottomNavigationBar: BottomBar(),
       bottomNavigationBar: BottomNavigationBar(
-        // 바텀바 추가
+        backgroundColor: Colors.grey, // color 대신 backgroundColor를 사용
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -73,11 +124,21 @@ class _MyAppState extends State<AddProductScreen> {
   }
 
   Widget _buildPhotoArea() {
-    return _image != null || widget.image != null
-        ? SizedBox(
-            width: 300,
-            height: 300,
-            child: Image.file(_image ?? widget.image!),
+    return _image != null
+        ? Column(
+            children: [
+              SizedBox(
+                width: 300,
+                height: 300,
+                child: Image.file(_image!),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '식품 성분',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(parsedText), // 이미지에서 추출된 텍스트 표시
+            ],
           )
         : Container(
             width: 300,
@@ -95,6 +156,9 @@ class _MyAppState extends State<AddProductScreen> {
     );
   }
 }
+
+
+
 
 /*class BottomBar extends StatelessWidget {
   @override

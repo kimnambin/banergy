@@ -18,29 +18,34 @@ class ChangeNick extends StatelessWidget {
           title: Text("닉네임 변경하기"),
         ),
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '닉네임 변경',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              InputField(label: '원래 닉네임 *'), //사용자의 닉네임을 불러오는 기능 구현하면 좋을 듯
-              SizedBox(height: 20), //간격 벌리기 용
-              InputField(label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
-              SizedBox(height: 20), //간격 벌리기 용
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNickDetailScreen(),
-                    ),
-                  );
-                },
-                child: Text('닉네임 변경'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(40.0), //화면 간격부분
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 20),
+                Text(
+                  '닉네임 변경',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 60),
+                InputField(label: '원래 닉네임 *'), // 사용자의 닉네임을 불러오는 기능 구현하면 좋을 듯
+                SizedBox(height: 20), // 간격 벌리기 용
+                InputField(label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
+                SizedBox(height: 20), // 간격 벌리기 용
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChangeNickDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: Text('닉네임 변경'),
+                ),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomBar(),

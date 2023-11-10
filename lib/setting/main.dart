@@ -33,7 +33,7 @@ class CustomerServiceHome extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(40.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -55,11 +55,15 @@ class CustomerServiceHome extends StatelessWidget {
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             crossAxisCount: 1,
-            childAspectRatio: 8.0,
+            childAspectRatio: 4.0,
+            padding: EdgeInsets.all(16.0),
             children: <Widget>[
               buildGridItem(context, '닉네임 변경', ChangeNick()),
+              //SizedBox(width: 4),
               buildGridItem(context, '비밀번호/아이디 변경', Changeidpw()),
+              //SizedBox(width: 4),
               buildGridItem(context, '회원탈퇴', Delete()),
+              //SizedBox(width: 4),
               buildGridItem(
                 context,
                 '문의하기',

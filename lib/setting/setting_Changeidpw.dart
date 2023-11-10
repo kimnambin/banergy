@@ -18,37 +18,41 @@ class Changeidpw extends StatelessWidget {
           title: Text("비번 변경하기"),
         ),
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '비밀번호 변경하기',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              InputField(
-                //class InputField 적용해야 이렇게 사용 가능!!
-                title: '현재 비밀번호',
-                labels: ['', ''],
-                hintTexts: ['현재 비밀번호 입력', '현재 비밀번호 확인'],
-              ),
-              SizedBox(height: 20), //간격 벌리기 용
-              InputField(
-                title: '새 비밀번호',
-                labels: ['', ''],
-                hintTexts: ['새로운 비밀번호 입력', '새로운 비밀번호 확인'],
-              ),
-              SizedBox(height: 20), //간격 벌리기 용
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChangeidpwDetailScreen(),
-                      ),
-                    );
-                  },
-                  child: Text('비밀번호 변경')),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(40.0), //화면 간격부분
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '비밀번호 변경하기',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 30), //간격 벌리기 용
+                InputField(
+                  //class InputField 적용해야 이렇게 사용 가능!!
+                  title: '현재 비밀번호',
+                  labels: ['', ''],
+                  hintTexts: ['현재 비밀번호 입력', '현재 비밀번호 확인'],
+                ),
+                SizedBox(height: 20), //간격 벌리기 용
+                InputField(
+                  title: '새 비밀번호',
+                  labels: ['', ''],
+                  hintTexts: ['새로운 비밀번호 입력', '새로운 비밀번호 확인'],
+                ),
+                SizedBox(height: 20), //간격 벌리기 용
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangeidpwDetailScreen(),
+                        ),
+                      );
+                    },
+                    child: Text('비밀번호 변경')),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomBar(),
