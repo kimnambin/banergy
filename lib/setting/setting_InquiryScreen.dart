@@ -29,69 +29,71 @@ class _InquiryScreenState extends State<InquiryScreen> {
         appBar: AppBar(
           title: Text("문의하기"),
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0), //화면 간격부분
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '문의하기',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      InputField(
-                        label: '제목 *',
-                        // 제목 부분 null 체크 후 할당
-                        onSaved: (value) {
-                          if (value != null) {
-                            title = value;
-                          }
-                        },
-                      ),
-                      SizedBox(height: 20), //간격 벌리기용
-                      InputField(
-                        label: '내용 *',
-                        isTextArea: true,
-                        hintText: "수정 요청, 유의 사항 등등 문의",
-                        //내용 부분 null 체크 후 할당
-                        onSaved: (value) {
-                          // null 체크 후 할당
-
-                          if (value != null) {
-                            content = value;
-                          }
-                        },
-                      ),
-                    ],
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0), //화면 간격부분
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '문의하기',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(height: 20), //간격 벌리기 용
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState != null &&
-                        _formKey.currentState!.validate()) {
-                      if (title != null && content != null) {
-                        // InquiryDetailScreen으로 정보 전달
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InquiryDetailScreen(
-                              //22
-                              title: title,
-                              content: content,
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        InputField(
+                          label: '제목 *',
+                          // 제목 부분 null 체크 후 할당
+                          onSaved: (value) {
+                            if (value != null) {
+                              title = value;
+                            }
+                          },
+                        ),
+                        SizedBox(height: 20), //간격 벌리기용
+                        InputField(
+                          label: '내용 *',
+                          isTextArea: true,
+                          hintText: "수정 요청, 유의 사항 등등 문의",
+                          //내용 부분 null 체크 후 할당
+                          onSaved: (value) {
+                            // null 체크 후 할당
+
+                            if (value != null) {
+                              content = value;
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), //간격 벌리기 용
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState != null &&
+                          _formKey.currentState!.validate()) {
+                        if (title != null && content != null) {
+                          // InquiryDetailScreen으로 정보 전달
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InquiryDetailScreen(
+                                //22
+                                title: title,
+                                content: content,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
                       }
-                    }
-                  },
-                  child: Text('문의하기'),
-                ),
-              ],
+                    },
+                    child: Text('문의하기'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -212,7 +214,7 @@ class BottomBar extends StatelessWidget {
           ),
           Tab(
             icon: Icon(
-              Icons.camera,
+              Icons.lens,
               size: 20,
             ),
             text: 'camera',

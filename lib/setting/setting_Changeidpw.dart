@@ -17,31 +17,31 @@ class Changeidpw extends StatelessWidget {
         appBar: AppBar(
           title: Text("비번 변경하기"),
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0), //화면 간격부분
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '비밀번호 변경하기',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 30), //간격 벌리기 용
-                InputField(
-                  //class InputField 적용해야 이렇게 사용 가능!!
-                  title: '현재 비밀번호',
-                  labels: ['', ''],
-                  hintTexts: ['현재 비밀번호 입력', '현재 비밀번호 확인'],
-                ),
-                SizedBox(height: 20), //간격 벌리기 용
-                InputField(
-                  title: '새 비밀번호',
-                  labels: ['', ''],
-                  hintTexts: ['새로운 비밀번호 입력', '새로운 비밀번호 확인'],
-                ),
-                SizedBox(height: 20), //간격 벌리기 용
-                ElevatedButton(
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '비밀번호 변경하기',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 30),
+                  InputField(
+                    title: '현재 비밀번호',
+                    labels: ['', ''],
+                    hintTexts: ['현재 비밀번호 입력', '현재 비밀번호 확인'],
+                  ),
+                  SizedBox(height: 20),
+                  InputField(
+                    title: '새 비밀번호',
+                    labels: ['', ''],
+                    hintTexts: ['새로운 비밀번호 입력', '새로운 비밀번호 확인'],
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -50,8 +50,10 @@ class Changeidpw extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Text('비밀번호 변경')),
-              ],
+                    child: Text('비밀번호 변경'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -139,7 +141,7 @@ class BottomBar extends StatelessWidget {
           Tab(
             //여긴 나중에 카메라 모양처럼 둥글게 구현하기
             icon: Icon(
-              Icons.camera,
+              Icons.lens,
               size: 20,
             ),
             text: 'camera',

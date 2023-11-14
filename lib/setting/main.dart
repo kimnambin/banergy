@@ -134,7 +134,7 @@ class BottomBar extends StatelessWidget {
           Tab(
             //여긴 나중에 카메라 모양처럼 둥글게 구현하기
             icon: Icon(
-              Icons.camera,
+              Icons.lens,
               size: 20,
             ),
             text: 'camera',
