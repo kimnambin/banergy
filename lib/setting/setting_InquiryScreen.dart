@@ -217,7 +217,7 @@ class BottomBar extends StatelessWidget {
               Icons.lens,
               size: 20,
             ),
-            text: 'camera',
+            text: 'lens',
           ),
           Tab(
             icon: Icon(

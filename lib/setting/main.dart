@@ -60,7 +60,7 @@ class CustomerServiceHome extends StatelessWidget {
             children: <Widget>[
               buildGridItem(context, '닉네임 변경', ChangeNick()),
               //SizedBox(width: 4),
-              buildGridItem(context, '비밀번호/아이디 변경', Changeidpw()),
+              buildGridItem(context, '비밀번호 변경', Changeidpw()),
               //SizedBox(width: 4),
               buildGridItem(context, '회원탈퇴', Delete()),
               //SizedBox(width: 4),
@@ -137,7 +137,7 @@ class BottomBar extends StatelessWidget {
               Icons.lens,
               size: 20,
             ),
-            text: 'camera',
+            text: 'lens',
           ),
           Tab(
             icon: Icon(
