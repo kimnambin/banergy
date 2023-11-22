@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import '../mypage/mypage.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -75,36 +76,48 @@ class _MyAppState extends State<AddProductScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("상품 추가")),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 30, width: double.infinity),
-            Text(
-              '상품추가',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '최대한 공백이 없어야 인식이 잘됩니다.',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            _buildPhotoArea(),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(width: 8),
-                _buildElevatedButton("카메라", ImageSource.camera),
-                const SizedBox(width: 30),
-                _buildElevatedButton("갤러리", ImageSource.gallery),
+                const SizedBox(height: 30),
+                Text(
+                  '상품추가',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                InputField(label: '제목', hintText: '제목을 입력하세요'),
+                SizedBox(height: 20),
+                InputField(
+                  label: '상품 내용',
+                  hintText: '간단한 상품 내용을 적어주세요.',
+                ),
+                SizedBox(height: 20),
+                Text(
+                  '최대한 공백이 없어야 인식이 잘됩니다.',
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                _buildPhotoArea(),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 8),
+                    _buildElevatedButton("카메라", ImageSource.camera),
+                    const SizedBox(width: 30),
+                    _buildElevatedButton("갤러리", ImageSource.gallery),
+                  ],
+                ),
               ],
             ),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey, // color 대신 backgroundColor를 사용
+        backgroundColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -138,6 +151,12 @@ class _MyAppState extends State<AddProductScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Text(parsedText), // 이미지에서 추출된 텍스트 표시
+              ElevatedButton(
+                onPressed: () {
+                  _showDialog(parsedText);
+                },
+                child: Text('Show Dialog'),
+              ),
             ],
           )
         : Container(
@@ -145,6 +164,26 @@ class _MyAppState extends State<AddProductScreen> {
             height: 300,
             color: Colors.grey,
           );
+  }
+
+  void _showDialog(String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('상품 정보'),
+          content: Text(text),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
@@ -157,46 +196,28 @@ class _MyAppState extends State<AddProductScreen> {
   }
 }
 
+class InputField extends StatelessWidget {
+  final String label;
+  final String hintText;
 
+  InputField({required this.label, this.hintText = ""});
 
-
-/*class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey,
-      child: TabBar(
-        indicatorSize: TabBarIndicatorSize.label,
-        indicatorWeight: 4,
-        labelColor: Colors.black,
-        unselectedLabelColor: Colors.black38,
-        labelStyle: const TextStyle(
-          fontSize: 17,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
-        tabs: [
-          Tab(
-            icon: const Icon(
-              Icons.home,
-              size: 20,
-            ),
-            text: 'Home',
+        TextField(
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: OutlineInputBorder(),
           ),
-          Tab(
-            icon: const Icon(
-              Icons.camera,
-              size: 20,
-            ),
-            text: 'camera',
-          ),
-          Tab(
-            icon: const Icon(
-              Icons.people,
-              size: 20,
-            ),
-            text: 'My',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-}*/
+}
