@@ -1,0 +1,39 @@
+name: flutter_banergy
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+    #ocr
+  flutter_tesseract_ocr: 
+  # 다른 ocr
+  http: ^0.13.4
+  path_provider: ^2.0.8
+  image: ^3.0.1
+  cupertino_icons: ^1.0.2
+  
+  #qr 코드
+  qr_bar_code_scanner_dialog: ^0.0.5
+
+  #바코드 스캐닝
+  flutter_barcode_scanner: ^2.0.0
+  image_picker: ^1.0.4
+  google_mlkit_commons: ^0.6.1
+  camera: ^0.10.5+5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  assets:
+    - images/000.jpeg
+  uses-material-design: true
