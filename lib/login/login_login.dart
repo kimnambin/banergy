@@ -21,7 +21,7 @@ class LoginApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 29, 171, 102)),
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
         useMaterial3: true,
       ),
       home: Scaffold(
@@ -65,7 +65,11 @@ class LoginApp extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                content: Text('밴러지 로그인완료!!'),
+                                backgroundColor:
+                                    Color.fromARGB(255, 99, 255, 180), // 배경색 추가
+                                content: Text('밴러지 로그인완료!!',
+                                    style: TextStyle(
+                                        color: Colors.black)), // 글자 색상 추가
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -104,7 +108,7 @@ class LoginApp extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => JoinApp()));
+                            MaterialPageRoute(builder: (context) => joinApp()));
                       },
                       child: RichText(
                         text: TextSpan(

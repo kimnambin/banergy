@@ -1,8 +1,8 @@
-import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -22,7 +22,23 @@ class AddProductScreen extends StatefulWidget {
 class _MyAppState extends State<AddProductScreen> {
   late File? _image;
   final ImagePicker picker = ImagePicker();
-  String parsedText = ''; // 추가: 이미지에서 추출된 텍스트를 저장할 변수
+  String parsedText = '';
+
+  get langs => null; // 추가: 이미지에서 추출된 텍스트를 저장할 변수
+
+  // 이미지 가져오기
+  Future getImage(ImageSource imageSource) async {
+    final pickedFile = await picker.pickImage(source: imageSource);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+
+      // 선택된 이미지로 OCR 수행
+      _ocr(_image!.path);
+    }
+  }
 
   @override
   void initState() {
@@ -34,45 +50,117 @@ class _MyAppState extends State<AddProductScreen> {
   late XFile? pickedFile;
   late String img64;
 
-  // 이미지 가져오는 부분 수정
-
-  Future getImage(ImageSource imageSource) async {
-    pickedFile = await picker.pickImage(source: imageSource);
+  // 새로 해보는 이미지 가져오기
+  void runFilePicker(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
 
     if (pickedFile != null) {
-      var file = File(pickedFile!.path);
-      if (file.existsSync()) {
-        var bytes = await file.readAsBytes();
-        img64 = base64Encode(bytes);
-
-        await _performOCR();
-      } else {
-        errorDialog();
-      }
+      _ocr(pickedFile.path);
     }
   }
 
-// OCR을 수행
-  Future<void> _performOCR() async {
-    var url = 'https://api.ocr.space/parse/image';
-    var payload = {
-      "base64Image": "data:image/jpg;base64,$img64",
-      "language": "kor"
-    };
-    var header = {"apikey": "K86733705788957"};
-
+  // OCR 수행
+  void _ocr(String imagePath) async {
     try {
-      var post =
-          await http.post(Uri.parse(url), body: payload, headers: header);
-      var result = jsonDecode(post.body);
+      // If the imagePath is a remote image, download it and save locally
+      if (!kIsWeb &&
+          (imagePath.startsWith("http://") ||
+              imagePath.startsWith("https://"))) {
+        // You can add code here to download the image if needed
 
+        // For example, you can use the http package to download the image
+        // http.Response response = await http.get(Uri.parse(imagePath));
+        // File file = File('local_path_to_save_image.jpg');
+        // await file.writeAsBytes(response.bodyBytes);
+
+        // Set the local path of the downloaded image
+        // imagePath = file.path;
+      }
+
+      // Set the loading state to true
+      setState(() {});
+
+      // Perform OCR using flutter_tesseract_ocr
+      var ocrText =
+          await FlutterTesseractOcr.extractText(imagePath, language: 'kor');
+
+      // Set the loading state to false
       setState(() {
-        parsedText = result['ParsedResults'][0]['ParsedText'];
+        parsedText = ocrText;
       });
     } catch (e) {
       print('OCR failed: $e');
-      // OCR 실패에 대한 처리 추가 (예: 사용자에게 알리기)
+      // Handle the OCR failure, show a message, or take appropriate action
     }
+  }
+
+  Widget _buildPhotoArea() {
+    return _image != null
+        ? Column(
+            children: [
+              SizedBox(
+                width: 300,
+                height: 300,
+                child: Image.file(_image!),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '식품 성분',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              // 이미지에서 추출된 텍스트 표시
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 300, // 원하는 최대 너비 설정
+                ),
+                /*child: Text(
+                  parsedText,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ), */
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _showDialog(parsedText);
+                },
+                child: Text('자세히 보기'),
+              ),
+            ],
+          )
+        : Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey,
+          );
+  }
+
+  void _showDialog(String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('상품 정보'),
+          content: Text(text),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('상품 추가하기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
+    return ElevatedButton(
+      onPressed: () {
+        getImage(imageSource);
+      },
+      child: Text(label),
+    );
   }
 
   @override
@@ -120,97 +208,6 @@ class _MyAppState extends State<AddProductScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildPhotoArea() {
-    return _image != null
-        ? Column(
-            children: [
-              SizedBox(
-                width: 300,
-                height: 300,
-                child: Image.file(_image!),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '식품 성분',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              // 이미지에서 추출된 텍스트 표시
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 300, // 원하는 최대 너비 설정
-                ),
-                child: Text(
-                  parsedText,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _showDialog(parsedText);
-                },
-                child: Text('자세히 보기'),
-              ),
-            ],
-          )
-        : Container(
-            width: 300,
-            height: 300,
-            color: Colors.grey,
-          );
-  }
-
-// ocr 다이얼로그로 보여주기
-  void _showDialog(String text) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('상품 정보'),
-          content: Text(text),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('상품 추가하기'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-//에러 다이얼로그
-  void errorDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('이미지 오류'),
-          content: Text('죄송합니다. 다른 이미지를 사용해주세요 😭😭'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('확인'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
-    return ElevatedButton(
-      onPressed: () {
-        getImage(imageSource);
-      },
-      child: Text(label),
     );
   }
 }

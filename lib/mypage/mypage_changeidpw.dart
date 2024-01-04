@@ -36,6 +36,13 @@ class _ChangeidpwState extends State<Changeidpw>
 
   @override
   Widget build(BuildContext context) {
+    theme:
+    ThemeData(
+      colorScheme:
+          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+      useMaterial3: true,
+    );
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(

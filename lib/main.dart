@@ -3,7 +3,6 @@ import '../appbar/menu.dart';
 import 'appbar/search.dart';
 import '../mypage/mypage.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-//import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 void main() {
   runApp(const MainpageApp());
@@ -17,7 +16,8 @@ class MainpageApp extends StatelessWidget {
     return MaterialApp(
       title: '식품 알레르기 관리 앱',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
         useMaterial3: true,
       ),
       home: const HomeScreen(),
@@ -129,8 +129,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     //qr 코드 기능
-    //final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-    //String? code;
+    final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+    String? code;
     return BottomNavigationBar(
       items: const [
         BottomNavigationBarItem(

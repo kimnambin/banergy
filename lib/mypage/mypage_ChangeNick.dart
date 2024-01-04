@@ -33,6 +33,12 @@ class _ChangeNickState extends State<ChangeNick>
 
   @override
   Widget build(BuildContext context) {
+    theme:
+    ThemeData(
+      colorScheme:
+          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+      useMaterial3: true,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text("닉네임 변경하기"),

@@ -42,10 +42,11 @@ android {
 
     defaultConfig {
         applicationId "com.example.flutter_banergy"
-        minSdkVersion 21
+        minSdkVersion 20
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -63,5 +64,6 @@ flutter {
 
 dependencies {
     // Add your dependencies here
+    implementation 'com.android.support:multidex:1.0.3'
 }
 
