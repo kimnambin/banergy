@@ -34,25 +34,31 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('식품 알레르기 관리 앱'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              // 검색 아이콘을 눌렀을 때 검색 페이지로 이동
+          InkWell(
+            onTap: () {
+              // 검색 페이지로 이동
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SearchScreen()),
               );
             },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.search),
+            ),
           ),
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              // 메뉴 아이콘을 눌렀을 때의 메뉴 페이지로 이동
+          InkWell(
+            onTap: () {
+              // 메뉴 페이지로 이동
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const MenuScreen()),
               );
             },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.menu),
+            ),
           ),
         ],
       ),

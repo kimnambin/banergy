@@ -5,13 +5,10 @@ import 'package:flutter_banergy/mypage/mypage_Changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addProductScreen.dart';
-import '../mypage/mypage.dart';
 import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
-import '../mypage/mypage_addProductScreen.dart';
 import '../mypage/mypage_freeboard.dart';
-import 'package:flutter_banergy/login/login_login.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 void main() {
