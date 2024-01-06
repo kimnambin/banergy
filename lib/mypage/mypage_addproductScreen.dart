@@ -108,17 +108,17 @@ class _MyAppState extends State<AddProductScreen> {
                 '식품 성분',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              // 이미지에서 추출된 텍스트 표시
+              /* 이미지에서 추출된 텍스트 표시
               ConstrainedBox(
                 constraints: BoxConstraints(
                   maxWidth: 300, // 원하는 최대 너비 설정
                 ),
-                /*child: Text(
+                child: Text(
                   parsedText,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ), */
-              ),
+                  
+                ),
+              ),*/
               ElevatedButton(
                 onPressed: () {
                   _showDialog(parsedText);
@@ -140,7 +140,9 @@ class _MyAppState extends State<AddProductScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('상품 정보'),
-          content: Text(text),
+          content: SingleChildScrollView(
+            child: Text(text),
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {

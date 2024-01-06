@@ -257,18 +257,25 @@ class _MyHomePageState extends State<MyHomePage>
           children: [
             // 나의 알러지
             _buildSectionTitle("나의 알러지", Icons.accessibility),
+
             _buildButton("알러지 정보"),
+            const SizedBox(height: 10),
             _buildButton("알러지 반응 기록"),
+            const SizedBox(height: 10),
             _buildButton("알러지 필터링"),
             // 설정
             _buildSectionTitle("설정", Icons.settings),
             _buildButton("닉네임 변경"),
+            const SizedBox(height: 10),
             _buildButton("비밀번호 변경"),
+            const SizedBox(height: 10),
             _buildButton("탈퇴하기"),
             // 추가 지원
             _buildSectionTitle("추가 지원", Icons.support),
             _buildButton("문의하기"),
+            const SizedBox(height: 10),
             _buildButton("상품추가"),
+            const SizedBox(height: 10),
             _buildButton("자유게시판"),
           ],
         ),

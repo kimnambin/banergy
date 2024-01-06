@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/login/login_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
 import 'package:flutter_banergy/main.dart';
 
@@ -34,25 +35,33 @@ class LoginApp extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 20),
+                    SizedBox(height: 100),
 
                     Image.asset(
                       'images/000.jpeg',
-                      width: 100,
-                      height: 100,
+                      width: 200,
+                      height: 200,
                     ),
                     Text('밴러지'),
                     SizedBox(height: 60),
                     Column(
                       children: [
                         InputField(
-                          hintText: 'ID *',
+                          hintText: '아이디를 입력해주세요.',
                           label: '',
+                          icon: Icons.account_box,
+                          iconColor: Colors.grey,
+                          hintTextColor: Colors.grey,
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         SizedBox(height: 10),
                         InputField(
-                          hintText: 'PW *',
+                          hintText: '비밀번호를 입력해주세요.',
                           label: '',
+                          icon: Icons.lock_open,
+                          iconColor: Colors.grey,
+                          hintTextColor: Colors.grey,
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                       ],
                     ),
@@ -93,10 +102,16 @@ class LoginApp extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: Center(
-                          child: Text('밴러지 로그인'),
+                          child: Text('로그인'),
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromRGBO(38, 159, 115, 1.0),
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -105,28 +120,45 @@ class LoginApp extends StatelessWidget {
                     SizedBox(height: 10),
 
                     //텍스트 클릭 시 회원가입 창으로...
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => joinApp()));
-                      },
-                      child: RichText(
-                        text: TextSpan(
-                          text: '밴러지가 처음이신가요? ',
-                          style: TextStyle(
-                            color: Colors.grey,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => joinApp()),
+                            );
+                          },
+                          child: Text(
+                            '회원가입',
+                            style: TextStyle(color: Colors.black),
                           ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: '회원가입',
-                              style: TextStyle(
-                                color: Colors.red,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ],
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FindApp()),
+                            );
+                          },
+                          child: Text('아이디 찾기',
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FindApp()),
+                            );
+                          },
+                          child: Text('비밀번호 찾기',
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                      ],
                     )
                   ],
                 ),
@@ -141,12 +173,19 @@ class LoginApp extends StatelessWidget {
 
 // 인풋 필드 선언
 class InputField extends StatelessWidget {
+  final String label;
   final String hintText;
+  final IconData icon;
+  final Color iconColor; // 아이콘 색상 추가
+  final Color hintTextColor; // 힌트 텍스트 색상 추가
 
-  InputField({
-    required this.hintText,
-    required String label,
-  });
+  InputField(
+      {required this.label,
+      this.hintText = "",
+      required this.icon,
+      required this.iconColor,
+      required this.hintTextColor,
+      required BorderRadius borderRadius});
 
 //인풋 필드 내용
   @override
@@ -163,7 +202,9 @@ class InputField extends StatelessWidget {
           },
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: TextStyle(color: hintTextColor),
             border: OutlineInputBorder(),
+            prefixIcon: Icon(icon, color: iconColor),
           ),
         ),
       ],

@@ -1,15 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/product/information.dart';
+import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
 import '../appbar/menu.dart';
 import 'appbar/search.dart';
 import '../mypage/mypage.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+//import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 void main() {
   runApp(const MainpageApp());
 }
 
 class MainpageApp extends StatelessWidget {
-  const MainpageApp({Key? key}) : super(key: key);
+  final File? image;
+  const MainpageApp({Key? key, this.image}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -128,15 +134,18 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  final QrBarCodeScannerDialog _qrBarCodeScannerDialogPlugin =
-      QrBarCodeScannerDialog();
+  final ImagePicker _imagePicker = ImagePicker();
   String? code;
+  String parsedText = '';
+
+  late File? pickedImage; // 수정: 이미지 파일을 저장할 변수
+  late File? _image;
+  // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
+  late XFile? pickedFile;
+  late String img64;
 
   @override
   Widget build(BuildContext context) {
-    //qr 코드 기능
-    final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-    String? code;
     return BottomNavigationBar(
       items: const [
         BottomNavigationBarItem(
@@ -153,25 +162,116 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
       ],
       onTap: (index) {
-        // Handle navigation based on the tapped item index
         if (index == 0) {
-          // Home icon is tapped, restart the current page
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MainpageApp()),
           );
         } else if (index == 1) {
-          //qr코드 부분
-          _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
+          showModalBottomSheet(
             context: context,
-            onCode: (code) {
-              setState(() {
-                this.code = code;
-              });
+            builder: (BuildContext context) {
+              return SingleChildScrollView(
+                  child: Container(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 카메라 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+
+                          final pickedFile = await _imagePicker.pickImage(
+                            source: ImageSource.camera,
+                          );
+
+                          if (pickedFile != null) {
+                            // OCR 수행
+                            var ocrText = await FlutterTesseractOcr.extractText(
+                              pickedFile.path,
+                              language: 'kor',
+                            );
+
+                            // Information 화면으로 이동하여 OCR 결과값 전달
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Information(
+                                  image: File(pickedFile.path),
+                                  parsedText: ocrText,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Camera'),
+                      ),
+                    ),
+                    // 갤러리 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+
+                          final pickedFile = await _imagePicker.pickImage(
+                              source: ImageSource.gallery);
+
+                          if (pickedFile != null) {
+                            // OCR 수행
+                            var ocrText = await FlutterTesseractOcr.extractText(
+                              pickedFile.path,
+                              language: 'kor',
+                            );
+
+                            // Information 화면으로 이동하여 OCR 결과값 전달
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Information(
+                                  image: File(pickedFile.path),
+                                  parsedText: ocrText,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Gallery'),
+                      ),
+                    ),
+
+                    /* qr 코드 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
+                            context: context,
+                            onCode: (code) {
+                              setState(() {
+                                this.code = code;
+                              });
+                            },
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: Text('QR code'),
+                      ),
+                    ),*/
+                    // 바코드 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Barcode'),
+                      ),
+                    ),
+                  ],
+                ),
+              ));
             },
           );
         } else if (index == 2) {
-          // My icon is tapped, navigate to MypageApp
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const MypageApp()),
