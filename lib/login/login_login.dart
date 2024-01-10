@@ -113,7 +113,7 @@ class LoginApp extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
                     ),
@@ -178,14 +178,16 @@ class InputField extends StatelessWidget {
   final IconData icon;
   final Color iconColor; // 아이콘 색상 추가
   final Color hintTextColor; // 힌트 텍스트 색상 추가
+  final BorderRadius borderRadius;
 
-  InputField(
-      {required this.label,
-      this.hintText = "",
-      required this.icon,
-      required this.iconColor,
-      required this.hintTextColor,
-      required BorderRadius borderRadius});
+  InputField({
+    required this.label,
+    this.hintText = "",
+    required this.icon,
+    required this.iconColor,
+    required this.hintTextColor,
+    required this.borderRadius,
+  });
 
 //인풋 필드 내용
   @override
@@ -203,7 +205,9 @@ class InputField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: hintTextColor),
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: borderRadius,
+            ),
             prefixIcon: Icon(icon, color: iconColor),
           ),
         ),
