@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
@@ -5,11 +7,14 @@ import 'package:flutter_banergy/mypage/mypage_Changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addProductScreen.dart';
+import 'package:flutter_banergy/product/information.dart';
+import 'package:flutter_tesseract_ocr/android_ios.dart';
+import 'package:image_picker/image_picker.dart';
 import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
 import '../mypage/mypage_freeboard.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+//import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 void main() {
   runApp(const MypageApp());
@@ -42,7 +47,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedIndex = 0;
 
   set code(String? code) {}
 
@@ -50,8 +54,6 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(
-        () => setState(() => _selectedIndex = _tabController.index));
   }
 
   @override
@@ -135,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+    //final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
     String? code;
     return Scaffold(
       appBar: AppBar(
@@ -144,98 +146,7 @@ class _MyHomePageState extends State<MyHomePage>
       body: SingleChildScrollView(
         child: _buildlist(),
       ),
-
-      //바텀바
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: Expanded(
-          child: TabBar(
-            controller: _tabController,
-            labelColor: Colors.black,
-            tabs: [
-              Tab(
-                icon: GestureDetector(
-                  onTap: () {
-                    // home 아이콘이 눌렸을 때 main.dart 페이지로 이동
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MainpageApp()),
-                    );
-                  },
-                  child: Icon(Icons.home),
-                ),
-                text: "Home",
-              ),
-              Tab(
-                //렌즈 누르면 버튼 3개 나오게 하기
-                icon: GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Container(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              //카메라 부분
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('camera'),
-                              ),
-                              //qr 코드 부분
-                              ElevatedButton(
-                                onPressed: () {
-                                  _qrBarCodeScannerDialogPlugin
-                                      .getScannedQrBarCode(
-                                    context: context,
-                                    onCode: (code) {
-                                      setState(() {
-                                        this.code = code;
-                                      });
-                                    },
-                                  );
-                                  Navigator.pop(context);
-                                },
-                                child: Text('QR code'),
-                              ),
-                              //바코드 부분
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Barcode'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Icon(Icons.adjust),
-                ),
-                text: "Lens",
-              ),
-              Tab(
-                icon: GestureDetector(
-                  onTap: () {
-                    // home 아이콘이 눌렸을 때 main.dart 페이지로 이동
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MypageApp()),
-                    );
-                  },
-                  child: Icon(Icons.person),
-                ),
-                text: "My",
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 
@@ -317,4 +228,160 @@ class _MyHomePageState extends State<MyHomePage>
           child: Text(buttonText),
         ),
       );
+}
+
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({Key? key}) : super(key: key);
+
+  @override
+  _BottomNavBarState createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends State<BottomNavBar> {
+  final ImagePicker _imagePicker = ImagePicker();
+  String? code;
+  String parsedText = '';
+
+  late File? pickedImage; // 수정: 이미지 파일을 저장할 변수
+  late File? _image;
+  // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
+  late XFile? pickedFile;
+  late String img64;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.adjust),
+          label: "Lens",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'My',
+        ),
+      ],
+      onTap: (index) {
+        if (index == 0) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainpageApp()),
+          );
+        } else if (index == 1) {
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return SingleChildScrollView(
+                  child: Container(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 카메라 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+
+                          final pickedFile = await _imagePicker.pickImage(
+                            source: ImageSource.camera,
+                          );
+
+                          if (pickedFile != null) {
+                            // OCR 수행
+                            var ocrText = await FlutterTesseractOcr.extractText(
+                              pickedFile.path,
+                              language: 'kor',
+                            );
+
+                            // Information 화면으로 이동하여 OCR 결과값 전달
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Information(
+                                  image: File(pickedFile.path),
+                                  parsedText: ocrText,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Camera'),
+                      ),
+                    ),
+                    // 갤러리 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+
+                          final pickedFile = await _imagePicker.pickImage(
+                              source: ImageSource.gallery);
+
+                          if (pickedFile != null) {
+                            // OCR 수행
+                            var ocrText = await FlutterTesseractOcr.extractText(
+                              pickedFile.path,
+                              language: 'kor',
+                            );
+
+                            // Information 화면으로 이동하여 OCR 결과값 전달
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Information(
+                                  image: File(pickedFile.path),
+                                  parsedText: ocrText,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Gallery'),
+                      ),
+                    ),
+
+                    /* qr 코드 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
+                            context: context,
+                            onCode: (code) {
+                              setState(() {
+                                this.code = code;
+                              });
+                            },
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: Text('QR code'),
+                      ),
+                    ),*/
+                    // 바코드 부분
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Barcode'),
+                      ),
+                    ),
+                  ],
+                ),
+              ));
+            },
+          );
+        } else if (index == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MypageApp()),
+          );
+        }
+      },
+    );
+  }
 }

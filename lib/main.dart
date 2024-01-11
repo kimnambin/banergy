@@ -15,7 +15,7 @@ void main() {
 
 class MainpageApp extends StatelessWidget {
   final File? image;
-  const MainpageApp({Key? key, this.image}) : super(key: key);
+  const MainpageApp({super.key, this.image});
 
   @override
   Widget build(BuildContext context) {

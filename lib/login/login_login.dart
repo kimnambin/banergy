@@ -128,7 +128,7 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => joinApp()),
+                                  builder: (context) => JoinApp()),
                             );
                           },
                           child: Text(

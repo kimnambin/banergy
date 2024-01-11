@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
+//import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 
 void main() async {
