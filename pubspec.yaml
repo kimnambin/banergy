@@ -27,5 +27,5 @@ flutter:
   assets:
     - assets/
     - assets/tessdata/
-    - images/000.jpeg
+    - images/
   uses-material-design: true

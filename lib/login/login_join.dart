@@ -240,8 +240,8 @@ class _DatePickerButtonState extends State<DatePickerButton> {
         shape: RoundedRectangleBorder(
           borderRadius: widget.borderRadius,
           side: BorderSide(
-            color: Colors.grey,
-          ),
+              //color: Colors.black,
+              ),
         ),
       ),
       child: Row(
@@ -258,13 +258,17 @@ class _DatePickerButtonState extends State<DatePickerButton> {
               controller: _dateController,
               enabled: false,
               style: TextStyle(
-                //color: Colors.black,
                 fontSize: widget.hintTextSize,
+                //color: Colors.black,
               ),
               decoration: InputDecoration(
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
                 border: InputBorder.none,
+                hintText: widget.hintText,
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),

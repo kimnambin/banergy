@@ -13,6 +13,9 @@ class IntroPageB extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            SizedBox(
+              height: 60,
+            ),
             Text(
               '밴러지',
               style: TextStyle(
@@ -20,11 +23,15 @@ class IntroPageB extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.green),
             ),
+            SizedBox(
+              height: 60,
+            ),
             Image.asset('images/000.jpeg', width: 200, height: 200),
             Text(
               '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
               style: TextStyle(fontSize: 13),
             ),
+            Image.asset('images/intropage2.png', width: 100, height: 100),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     //final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-    String? code;
+    //String? code;
     return Scaffold(
       appBar: AppBar(
         title: const Text("마이페이지"),
@@ -243,7 +243,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   String parsedText = '';
 
   late File? pickedImage; // 수정: 이미지 파일을 저장할 변수
-  late File? _image;
   // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
   late XFile? pickedFile;
   late String img64;
@@ -298,10 +297,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             );
 
                             // Information 화면으로 이동하여 OCR 결과값 전달
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Information(
+                                builder: (BuildContext context) => Information(
                                   image: File(pickedFile.path),
                                   parsedText: ocrText,
                                 ),
@@ -316,8 +315,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          Navigator.pop(context);
-
                           final pickedFile = await _imagePicker.pickImage(
                               source: ImageSource.gallery);
 
@@ -329,10 +326,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             );
 
                             // Information 화면으로 이동하여 OCR 결과값 전달
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Information(
+                                builder: (BuildContext context) => Information(
                                   image: File(pickedFile.path),
                                   parsedText: ocrText,
                                 ),

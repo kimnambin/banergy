@@ -14,6 +14,9 @@ class IntroPageC extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            SizedBox(
+              height: 60,
+            ),
             Text(
               '밴러지',
               style: TextStyle(
@@ -21,11 +24,15 @@ class IntroPageC extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.green),
             ),
+            SizedBox(
+              height: 60,
+            ),
             Image.asset('images/000.jpeg', width: 200, height: 200),
             Text(
               'OCR, 바코드 기술로 간편하게\n찾아보는 음식 성분들!',
               style: TextStyle(fontSize: 13),
             ),
+            Image.asset('images/intropage3.png', width: 100, height: 100),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -42,7 +42,7 @@ class LoginApp extends StatelessWidget {
                       width: 200,
                       height: 200,
                     ),
-                    Text('밴러지'),
+                    //Text('밴러지'),
                     SizedBox(height: 60),
                     Column(
                       children: [

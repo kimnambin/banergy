@@ -193,10 +193,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             );
 
                             // Information 화면으로 이동하여 OCR 결과값 전달
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Information(
+                                builder: (BuildContext context) => Information(
                                   image: File(pickedFile.path),
                                   parsedText: ocrText,
                                 ),
@@ -211,8 +211,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          Navigator.pop(context);
-
                           final pickedFile = await _imagePicker.pickImage(
                               source: ImageSource.gallery);
 
@@ -224,10 +222,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             );
 
                             // Information 화면으로 이동하여 OCR 결과값 전달
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Information(
+                                builder: (BuildContext context) => Information(
                                   image: File(pickedFile.path),
                                   parsedText: ocrText,
                                 ),
