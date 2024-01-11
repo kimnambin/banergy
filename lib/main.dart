@@ -139,7 +139,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   String parsedText = '';
 
   late File? pickedImage; // 수정: 이미지 파일을 저장할 변수
-  late File? _image;
   // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
   late XFile? pickedFile;
   late String img64;

@@ -65,7 +65,7 @@ class LoginApp extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState != null &&
@@ -174,18 +174,18 @@ class LoginApp extends StatelessWidget {
 // 인풋 필드 선언
 class InputField extends StatelessWidget {
   final String label;
-  final String hintText;
+  final String? hintText;
   final IconData icon;
   final Color iconColor; // 아이콘 색상 추가
-  final Color hintTextColor; // 힌트 텍스트 색상 추가
+  final Color? hintTextColor; // 힌트 텍스트 색상 추가
   final BorderRadius borderRadius;
 
   InputField({
     required this.label,
-    this.hintText = "",
+    this.hintText,
     required this.icon,
     required this.iconColor,
-    required this.hintTextColor,
+    this.hintTextColor,
     required this.borderRadius,
   });
 
