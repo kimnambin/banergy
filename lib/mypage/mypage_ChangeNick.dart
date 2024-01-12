@@ -86,7 +86,7 @@ class _ChangeNickState extends State<ChangeNick>
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavBar(),
+      //bottomNavigationBar: BottomNavBar(),
     );
   }
 }
@@ -116,7 +116,7 @@ class InputField extends StatelessWidget {
     );
   }
 }
-
+/*
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({Key? key}) : super(key: key);
 
@@ -155,4 +155,4 @@ class BottomNavBar extends StatelessWidget {
       },
     );
   }
-}
+}*/

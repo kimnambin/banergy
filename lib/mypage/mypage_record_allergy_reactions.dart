@@ -58,7 +58,10 @@ class _MyHomePageState extends State<MyHomePage>
       ),
       // body: _selectedIndex == 0
       body: Container(),
-
+    );
+  }
+}
+/*
       bottomNavigationBar: SizedBox(
         height: 80,
         child: TabBar(
@@ -101,4 +104,4 @@ class _MyHomePageState extends State<MyHomePage>
       ),
     );
   }
-}
+}*/

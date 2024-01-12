@@ -13,7 +13,6 @@ class Delete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData(
       colorScheme:
           ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
@@ -70,7 +69,7 @@ class Delete extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavBar(),
+      //bottomNavigationBar: BottomNavBar(),
     );
   }
 }
@@ -100,7 +99,7 @@ class InputField extends StatelessWidget {
     );
   }
 }
-
+/*
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({Key? key}) : super(key: key);
 
@@ -139,4 +138,4 @@ class BottomNavBar extends StatelessWidget {
       },
     );
   }
-}
+}*/

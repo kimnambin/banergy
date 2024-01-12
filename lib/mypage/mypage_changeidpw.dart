@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
-import '../mypage/mypage.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: Changeidpw(),
   ));
 }
 
 class Changeidpw extends StatefulWidget {
-  const Changeidpw({Key? key}) : super(key: key);
+  const Changeidpw({super.key});
 
   @override
   _ChangeidpwState createState() => _ChangeidpwState();
@@ -18,14 +16,11 @@ class Changeidpw extends StatefulWidget {
 class _ChangeidpwState extends State<Changeidpw>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(
-        () => setState(() => _selectedIndex = _tabController.index));
   }
 
   @override
@@ -36,7 +31,6 @@ class _ChangeidpwState extends State<Changeidpw>
 
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData(
       colorScheme:
           ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
@@ -66,7 +60,7 @@ class _ChangeidpwState extends State<Changeidpw>
                     labels: ['', ''],
                     hintTexts: ['현재 비밀번호 입력', '현재 비밀번호 확인'],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   InputField(
                     title: '새 비밀번호',
                     labels: ['', ''],
@@ -99,7 +93,7 @@ class _ChangeidpwState extends State<Changeidpw>
             ),
           ),
         ),
-        bottomNavigationBar: SizedBox(
+        /* bottomNavigationBar: SizedBox(
           height: 80,
           child: TabBar(
             controller: _tabController,
@@ -139,7 +133,7 @@ class _ChangeidpwState extends State<Changeidpw>
               ),
             ],
           ),
-        ),
+        ),*/
       ),
     );
   }
@@ -150,7 +144,7 @@ class InputField extends StatelessWidget {
   final List<String> labels;
   final List<String> hintTexts;
 
-  InputField(
+  const InputField(
       {required this.title, required this.labels, required this.hintTexts});
 
   @override
@@ -163,22 +157,21 @@ class InputField extends StatelessWidget {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         for (int i = 0; i < labels.length; i++)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Column(
-              children: [
-                Text(
-                  labels[i],
-                  style: TextStyle(fontWeight: FontWeight.bold),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                labels[i],
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: hintTexts[i],
+                  border: OutlineInputBorder(),
+                  //contentPadding: EdgeInsets.symmetric(vertical: 1.0),
                 ),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: hintTexts[i],
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
       ],
     );
