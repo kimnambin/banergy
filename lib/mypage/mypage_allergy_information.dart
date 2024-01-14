@@ -24,6 +24,43 @@ class allergyinformation extends StatelessWidget {
   }
 }
 
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(
+        () => setState(() => _selectedIndex = _tabController.index));
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("나의 알레르기"),
+      ),
+      // body: _selectedIndex == 0
+      body: Container(),
+    );
+  }
+}
 
 /*
 class MyHomePage extends StatefulWidget {

@@ -7,9 +7,11 @@ import 'package:flutter_banergy/mypage/mypage_Changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addProductScreen.dart';
+import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/information.dart';
 import 'package:flutter_tesseract_ocr/android_ios.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
@@ -239,6 +241,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final ImagePicker _imagePicker = ImagePicker();
+  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
   String? code;
   String parsedText = '';
 
@@ -341,30 +344,25 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       ),
                     ),
 
-                    /* qr 코드 부분
+                    // qr 코드 + 바코드 부분
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
                             context: context,
                             onCode: (code) {
-                              setState(() {
-                                this.code = code;
-                              });
+                              // 화면 이동만 처리
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CodeScreen(
+                                      resultCode: code ?? "스캔된 정보 없음"),
+                                ),
+                              );
                             },
                           );
-                          Navigator.pop(context);
                         },
-                        child: Text('QR code'),
-                      ),
-                    ),*/
-                    // 바코드 부분
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Barcode'),
+                        child: Text('QR/Barcode'),
                       ),
                     ),
                   ],
