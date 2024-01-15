@@ -13,7 +13,7 @@ void main() {
 class AddProductScreen extends StatefulWidget {
   final File? image;
 
-  const AddProductScreen({Key? key, this.image}) : super(key: key);
+  const AddProductScreen({super.key, this.image});
 
   @override
   State<AddProductScreen> createState() => _MyAppState();
@@ -27,7 +27,20 @@ class _MyAppState extends State<AddProductScreen> {
   get langs => null; // 추가: 이미지에서 추출된 텍스트를 저장할 변수
 
   // 이미지 가져오기
-  Future getImage(ImageSource imageSource) async {
+  /*Future getImage(ImageSource imageSource) async {
+    final pickedFile = await picker.pickImage(source: imageSource);
+
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+
+      // 선택된 이미지로 OCR 수행
+      _ocr(_image!.path);
+    }
+  }*/
+  Future _getImageAndPerformOCR(ImageSource imageSource) async {
     final pickedFile = await picker.pickImage(source: imageSource);
 
     if (pickedFile != null) {
@@ -156,12 +169,24 @@ class _MyAppState extends State<AddProductScreen> {
     );
   }
 
+/*
   ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
     return ElevatedButton(
       onPressed: () {
         getImage(imageSource);
       },
       child: Text(label),
+    );
+  }*/
+  ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
+    return ElevatedButton(
+      onPressed: () {
+        _getImageAndPerformOCR(imageSource);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+      ),
+      child: Text(label, style: TextStyle(color: Colors.white)),
     );
   }
 
@@ -200,7 +225,10 @@ class _MyAppState extends State<AddProductScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(width: 8),
-                    _buildElevatedButton("카메라", ImageSource.camera),
+                    _buildElevatedButton(
+                      "카메라",
+                      ImageSource.camera,
+                    ),
                     const SizedBox(width: 30),
                     _buildElevatedButton("갤러리", ImageSource.gallery),
                   ],

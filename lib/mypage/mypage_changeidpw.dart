@@ -33,8 +33,8 @@ class _ChangeidpwState extends State<Changeidpw>
   Widget build(BuildContext context) {
     ThemeData(
       colorScheme:
-          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
-      useMaterial3: true,
+          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 29, 171, 102)),
+      useMaterial3: false,
     );
 
     return DefaultTabController(
@@ -54,7 +54,7 @@ class _ChangeidpwState extends State<Changeidpw>
                     '비밀번호 변경하기',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   InputField(
                     title: '현재 비밀번호',
                     labels: ['', ''],
@@ -86,7 +86,11 @@ class _ChangeidpwState extends State<Changeidpw>
                         },
                       );
                     },
-                    child: Text('비밀번호 변경'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    ),
+                    child:
+                        Text('비밀번호 변경', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

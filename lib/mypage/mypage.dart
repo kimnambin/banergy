@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
@@ -31,7 +30,7 @@ class MypageApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 29, 171, 102)),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -154,41 +153,58 @@ class _MyHomePageState extends State<MyHomePage>
 
   Widget _buildlist() {
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(6.0),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(20.0), // 내부 여백 추가
-        decoration: BoxDecoration(
+
+        /*decoration: BoxDecoration(
           border: Border.all(
             color: Colors.green, // 테두리 색상 설정
             width: 2.0, // 테두리 두께 설정
           ),
           borderRadius: BorderRadius.circular(12.0), // 테두리 모서리를 둥글게 만듦
-        ),
+        ),*/
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // 나의 알러지
             _buildSectionTitle("나의 알러지", Icons.accessibility),
 
-            _buildButton("알러지 정보"),
-            const SizedBox(height: 10),
-            _buildButton("알러지 반응 기록"),
-            const SizedBox(height: 10),
+            _buildButton(
+              "알러지 정보",
+            ),
+            const SizedBox(height: 20),
+            _buildButton(
+              "알러지 반응 기록",
+            ),
+            const SizedBox(height: 20),
             _buildButton("알러지 필터링"),
+            const SizedBox(height: 20),
+            Divider(
+              color: Colors.grey[200],
+              thickness: 2.0,
+              //height: 0.05,
+            ),
             // 설정
             _buildSectionTitle("설정", Icons.settings),
             _buildButton("닉네임 변경"),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             _buildButton("비밀번호 변경"),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             _buildButton("탈퇴하기"),
+            const SizedBox(height: 20),
+            Divider(
+              color: Colors.grey[200],
+              thickness: 2.0,
+              //height: 10.0,
+            ),
             // 추가 지원
             _buildSectionTitle("추가 지원", Icons.support),
             _buildButton("문의하기"),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             _buildButton("상품추가"),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             _buildButton("자유게시판"),
           ],
         ),
@@ -208,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage>
             Text(
               title,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -218,16 +234,28 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  Widget _buildButton(String buttonText) => Container(
-        width: double.infinity, // Set a fixed width, you can adjust this value
+  Widget _buildButton(String buttonText) => SizedBox(
+        width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
             _navigateToPage(buttonText);
           },
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20), 여뱍을 나타내는 코드
+            fixedSize: Size(double.infinity, 45),
+            backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
           ),
-          child: Text(buttonText),
+          child: Text(
+            buttonText,
+            style: TextStyle(
+              fontSize: 18,
+              //fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       );
 }
@@ -245,8 +273,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   String? code;
   String parsedText = '';
 
-  late File? pickedImage; // 수정: 이미지 파일을 저장할 변수
-  // getImage 함수 안에서 사용될 변수들을 함수 밖으로 이동
+  late File? pickedImage;
   late XFile? pickedFile;
   late String img64;
 

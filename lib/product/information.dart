@@ -53,7 +53,10 @@ class Information extends StatelessWidget {
                 String modifiedText = '식품 정보';
                 Navigator.pop(context, modifiedText);
               },
-              child: Text('닫기'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+              ),
+              child: Text('닫기', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

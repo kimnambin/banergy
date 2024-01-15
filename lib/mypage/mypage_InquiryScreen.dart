@@ -87,7 +87,10 @@ class _InquiryScreenState extends State<InquiryScreen> {
                         );
                       }
                     },
-                    child: Text('문의하기'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    ),
+                    child: Text('문의하기', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

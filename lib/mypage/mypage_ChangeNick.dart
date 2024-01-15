@@ -79,7 +79,10 @@ class _ChangeNickState extends State<ChangeNick>
                       },
                     );
                   },
-                  child: Text('닉네임 변경'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                  ),
+                  child: Text('닉네임 변경', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),

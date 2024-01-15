@@ -62,7 +62,10 @@ class Delete extends StatelessWidget {
                       },
                     );
                   },
-                  child: Text('회원탈퇴'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                  ),
+                  child: Text('회원탈퇴', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../mypage/mypage.dart';
+import 'package:flutter_banergy/main.dart';
 
 void main() {
   runApp(const Freeboard());
@@ -65,13 +65,17 @@ class Freeboard extends StatelessWidget {
                         },
                       );
                     },
-                    child: Text('글 올리기'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    ),
+                    child: Text('글 올리기', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
             ),
           ),
         ),
+        bottomNavigationBar: const BottomNavBar(),
       ),
     );
   }
