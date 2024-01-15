@@ -11,7 +11,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 void main() {
-  runApp(const MainpageApp());
+  runApp(
+    const MaterialApp(home: MainpageApp()),
+  );
 }
 
 class MainpageApp extends StatelessWidget {

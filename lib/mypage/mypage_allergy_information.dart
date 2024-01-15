@@ -55,7 +55,17 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("나의 알레르기"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
+          },
+        ),
       ),
+
       // body: _selectedIndex == 0
       body: Container(),
     );

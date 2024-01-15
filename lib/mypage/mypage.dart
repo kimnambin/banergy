@@ -30,7 +30,7 @@ class MypageApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 29, 171, 102)),
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 255, 255)),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -138,11 +138,20 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    //final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-    //String? code;
+    // final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+    // String? code;
     return Scaffold(
       appBar: AppBar(
         title: const Text("마이페이지"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: _buildlist(),
@@ -241,19 +250,20 @@ class _MyHomePageState extends State<MyHomePage>
             _navigateToPage(buttonText);
           },
           style: ElevatedButton.styleFrom(
-            //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20), 여뱍을 나타내는 코드
-            fixedSize: Size(double.infinity, 45),
-            backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+            fixedSize: const Size(double.infinity, 45),
+            backgroundColor: Color.fromARGB(255, 255, 255, 255), // 직접 지정한 색상 코드
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              side: BorderSide(color: Color(0xFFEBEBEB)), // 테두리 색상
+              borderRadius: BorderRadius.circular(8.0), // 테두리 둥글기
             ),
           ),
           child: Text(
             buttonText,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
-              //fontWeight: FontWeight.bold,
-              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              //color: Color.fromARGB(255, 29, 171, 102),
+              color: Color.fromARGB(0xFF, 38, 159, 115),
             ),
           ),
         ),
@@ -261,7 +271,7 @@ class _MyHomePageState extends State<MyHomePage>
 }
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
+  const BottomNavBar({super.key});
 
   @override
   _BottomNavBarState createState() => _BottomNavBarState();

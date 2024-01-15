@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+import 'package:flutter_banergy/mypage/mypage.dart';
+
 class Information extends StatelessWidget {
   final File image;
   final String parsedText;
@@ -12,6 +14,15 @@ class Information extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('식품 정보'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(

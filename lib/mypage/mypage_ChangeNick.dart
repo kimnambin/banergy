@@ -42,6 +42,15 @@ class _ChangeNickState extends State<ChangeNick>
     return Scaffold(
       appBar: AppBar(
         title: Text("닉네임 변경하기"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(

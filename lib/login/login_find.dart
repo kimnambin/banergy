@@ -25,6 +25,9 @@ class FindApp extends StatelessWidget {
       home: DefaultTabController(
         length: 3,
         child: Scaffold(
+          appBar: AppBar(
+            title: Text('밴러지 회원찾기'),
+          ),
           body: SingleChildScrollView(
             child: Center(
               child: Padding(

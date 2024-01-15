@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 
 void main() {
   runApp(const FilteringAllergies());
@@ -34,6 +35,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("알러지 필터링"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(

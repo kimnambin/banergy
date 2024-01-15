@@ -30,6 +30,18 @@ class _JoinAppState extends State<JoinApp> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginApp()),
+              );
+            },
+          ),
+          title: const Text("회원가입"),
+        ),
         body: SingleChildScrollView(
           child: Center(
             child: Padding(

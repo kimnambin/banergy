@@ -21,6 +21,15 @@ class Delete extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("회원 탈퇴하기"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(

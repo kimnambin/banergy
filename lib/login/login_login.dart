@@ -3,6 +3,7 @@ import 'package:flutter_banergy/login/login_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
 import 'package:flutter_banergy/main.dart';
 
+/*
 void main() {
   runApp(
     MaterialApp(
@@ -10,7 +11,7 @@ void main() {
     ),
   );
 }
-
+*/
 //글로벌 키 -->> validator 사용하기 위함
 class LoginApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

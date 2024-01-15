@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -42,6 +43,15 @@ class _ChangeidpwState extends State<Changeidpw>
       child: Scaffold(
         appBar: AppBar(
           title: Text("비번 변경하기"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MypageApp()),
+              );
+            },
+          ),
         ),
         body: SingleChildScrollView(
           child: Center(
