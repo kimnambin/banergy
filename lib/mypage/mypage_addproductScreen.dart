@@ -137,7 +137,10 @@ class _MyAppState extends State<AddProductScreen> {
                 onPressed: () {
                   _showDialog(parsedText);
                 },
-                child: Text('자세히 보기'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                ),
+                child: Text('자세히 보기', style: TextStyle(color: Colors.white)),
               ),
             ],
           )
@@ -206,6 +209,7 @@ class _MyAppState extends State<AddProductScreen> {
           },
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(

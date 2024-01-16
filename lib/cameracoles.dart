@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/information.dart';
+
+//import 'package:flutter_banergy/product/information.dart';
+import 'package:flutter_banergy/product/product.dart';
 import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
-import '../appbar/menu.dart';
-import 'appbar/search.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import '../mypage/mypage.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-//메인화면
 void main() {
   runApp(
     const MaterialApp(home: MainpageApp()),
@@ -18,7 +18,7 @@ void main() {
 
 class MainpageApp extends StatelessWidget {
   final File? image;
-  const MainpageApp({super.key, this.image});
+  const MainpageApp({Key? key, this.image}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,98 +42,16 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('식품 알레르기 관리 앱'),
-        actions: [
-          InkWell(
-            onTap: () {
-              // 검색 페이지로 이동
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchScreen()),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              // 메뉴 페이지로 이동
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MenuScreen()),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.menu),
-            ),
-          ),
-        ],
       ),
-      body: const ProductGrid(),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
 
-class ProductGrid extends StatelessWidget {
-  const ProductGrid({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemBuilder: (context, index) {
-        // 상품 아이콘을 가져오거나 사용하는 코드 작성
-        return Card(
-          child: InkWell(
-              onTap: () {
-                //아이콘 클릭 시 실행할 동작 추가
-                _handleProductClick(context, index);
-              },
-              child: Column(
-                children: [
-                  const Icon(Icons.fastfood, size: 48), // 아이콘 예시 (음식 아이콘)
-                  Text('Product $index'),
-                  Text('Description of Product $index'),
-                ],
-              )),
-        );
-      },
-    );
-  }
-}
-
-void _handleProductClick(BuildContext context, int index) {
-  // 아이콘 클릭 시 실행할 동작을 여기에 추가
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('상품 정보'),
-        content: Text('Product $index의 상세 정보를 표시합니다.'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('닫기'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-//바텀 바 내용 구현
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  const BottomNavBar({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _BottomNavBarState createState() => _BottomNavBarState();
 }
 
@@ -146,6 +64,38 @@ class _BottomNavBarState extends State<BottomNavBar> {
   late File? pickedImage;
   late XFile? pickedFile;
   late String img64;
+
+  // _saveImageToGallery 함수 수정
+  Future<void> _saveImageToGallery(
+      XFile pickedFile, BuildContext context) async {
+    final File imageFile = File(pickedFile.path);
+    final savedFile = await ImageGallerySaver.saveFile(imageFile.path);
+    print('Image saved to gallery: $savedFile');
+
+    // NavigatorState를 얻어오기 전에 현재 상태를 확인
+    if (mounted) {
+      final NavigatorState? navigator = Navigator.of(context);
+      if (navigator != null) {
+        navigator.pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => camerainformation(
+              imagePath: savedFile, // imagePath를 savedFile로 수정
+            ),
+          ),
+        );
+      } else {
+        // Navigator가 null인 경우에는 기본적인 Navigator.push를 사용
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => camerainformation(
+              imagePath: savedFile, // imagePath를 savedFile로 수정
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +114,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           label: 'My',
         ),
       ],
-      onTap: (index) {
+      onTap: (index) async {
         if (index == 0) {
           Navigator.pushReplacement(
             context,
@@ -178,7 +128,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // 카메라 부분
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
@@ -189,29 +138,21 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         );
 
                         if (pickedFile != null) {
-                          // OCR 수행
-                          var ocrText = await FlutterTesseractOcr.extractText(
-                            pickedFile.path,
-                            language: 'kor',
-                          );
+                          try {
+                            // OCR 수행
 
-                          // 다른 화면으로 이동하여 OCR 결과값 전달
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => Information(
-                                image: File(pickedFile.path),
-                                parsedText: ocrText,
-                              ),
-                            ),
-                          );
+                            print('Before Navigator.push');
+                            _saveImageToGallery(pickedFile, context);
+                            print('After Navigator.push');
+                          } catch (e) {
+                            print('OCR failed: $e');
+                            print('Exception caught in catch block');
+                          }
                         }
                       },
                       child: Text('Camera'),
                     ),
                   ),
-
-                  // 갤러리 부분
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
@@ -219,19 +160,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             source: ImageSource.gallery);
 
                         if (pickedFile != null) {
-                          // OCR 수행
                           var ocrText = await FlutterTesseractOcr.extractText(
                             pickedFile.path,
                             language: 'kor',
                           );
 
-                          // Information 화면으로 이동하여 OCR 결과값 전달
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (BuildContext context) => Information(
-                                image: File(pickedFile.path),
-                                parsedText: ocrText,
+                              builder: (BuildContext context) =>
+                                  camerainformation(
+                                imagePath: pickedFile.path,
                               ),
                             ),
                           );
@@ -240,15 +179,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       child: Text('Gallery'),
                     ),
                   ),
-
-                  //qr+barcode 코드 부분
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
                         _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
                           context: context,
                           onCode: (code) {
-                            // 화면 이동만 처리
                             Navigator.push(
                               context,
                               MaterialPageRoute(

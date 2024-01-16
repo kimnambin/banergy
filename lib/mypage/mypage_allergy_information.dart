@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
 import '../mypage/mypage.dart';
 
 void main() {
@@ -34,14 +33,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(
-        () => setState(() => _selectedIndex = _tabController.index));
   }
 
   @override
@@ -65,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage>
           },
         ),
       ),
-
+      bottomNavigationBar: const BottomNavBar(),
       // body: _selectedIndex == 0
       body: Container(),
     );

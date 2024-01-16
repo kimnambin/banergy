@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,

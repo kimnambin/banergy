@@ -53,6 +53,7 @@ class _ChangeidpwState extends State<Changeidpw>
             },
           ),
         ),
+        bottomNavigationBar: const BottomNavBar(),
         body: SingleChildScrollView(
           child: Center(
             child: Padding(

@@ -17,6 +17,9 @@ dependencies:
   
   animated_switcher_plus: ^1.1.0
   beamer: ^0.14.1
+  permission_handler: ^11.1.0
+  camera: ^0.10.5+9
+  image_gallery_saver: ^2.0.3
 
 dev_dependencies:
   flutter_test:

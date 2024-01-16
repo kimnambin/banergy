@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_find.dart';
+import 'package:flutter_banergy/login/login_id_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
+import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
 
-/*
 void main() {
   runApp(
     MaterialApp(
@@ -11,7 +11,7 @@ void main() {
     ),
   );
 }
-*/
+
 //글로벌 키 -->> validator 사용하기 위함
 class LoginApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -23,7 +23,7 @@ class LoginApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 255, 255)),
         useMaterial3: true,
       ),
       home: Scaffold(
@@ -36,15 +36,22 @@ class LoginApp extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 100),
+                    SizedBox(height: 60),
 
                     Image.asset(
                       'images/000.jpeg',
                       width: 200,
                       height: 200,
                     ),
-                    //Text('밴러지'),
-                    SizedBox(height: 60),
+                    Text(
+                      '밴러지',
+                      style: TextStyle(
+                        fontSize: 16, // 원하는 폰트 크기 설정
+                        fontWeight: FontWeight.bold, // 글자를 볼드로 설정
+                      ),
+                    ),
+                    SizedBox(height: 50),
+
                     Column(
                       children: [
                         InputField(
@@ -55,7 +62,7 @@ class LoginApp extends StatelessWidget {
                           hintTextColor: Colors.grey,
                           borderRadius: BorderRadius.circular(12.0),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 20),
                         InputField(
                           hintText: '비밀번호를 입력해주세요.',
                           label: '',
@@ -66,7 +73,7 @@ class LoginApp extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState != null &&
@@ -76,7 +83,8 @@ class LoginApp extends StatelessWidget {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 backgroundColor:
-                                    Color.fromARGB(255, 99, 255, 180), // 배경색 추가
+                                    //Color.fromARGB(255, 99, 255, 180), // 배경색 추가
+                                    Colors.white,
                                 content: Text('밴러지 로그인완료!!',
                                     style: TextStyle(
                                         color: Colors.black)), // 글자 색상 추가
@@ -118,7 +126,7 @@ class LoginApp extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 15),
 
                     //텍스트 클릭 시 회원가입 창으로...
                     Row(
@@ -142,7 +150,7 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FindApp()),
+                                  builder: (context) => IDFindApp()),
                             );
                           },
                           child: Text('아이디 찾기',
@@ -153,7 +161,7 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FindApp()),
+                                  builder: (context) => PWFindApp()),
                             );
                           },
                           child: Text('비밀번호 찾기',

@@ -1,5 +1,4 @@
 import 'package:beamer/beamer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/intro/splash_screen.dart';
 import 'package:flutter_banergy/intro/auth_screen.dart';
@@ -16,7 +15,7 @@ final _routerDelegate = BeamerDelegate(
     ],
     locationBuilder:
         BeamerLocationBuilder(beamLocations: [HomeLocation()]).call);
-
+//인트로의 첫 화면
 void main() {
   runApp(const MyApp());
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
 import '../mypage/mypage.dart';
 
 void main() {
@@ -81,7 +80,7 @@ class Delete extends StatelessWidget {
           ),
         ),
       ),
-      //bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

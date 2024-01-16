@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class IntroPageA extends StatelessWidget {
   PageController controller;
   IntroPageA(this.controller, {Key? key}) : super(key: key);

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
 import '../mypage/mypage.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ChangeNick(),
   ));
 }
@@ -33,7 +32,6 @@ class _ChangeNickState extends State<ChangeNick>
 
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData(
       colorScheme:
           ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
@@ -52,6 +50,7 @@ class _ChangeNickState extends State<ChangeNick>
           },
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(

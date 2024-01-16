@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -21,7 +21,6 @@ class InquiryScreen extends StatefulWidget {
 class _InquiryScreenState extends State<InquiryScreen> {
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData(
       colorScheme:
           ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
@@ -33,6 +32,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
         appBar: AppBar(
           title: Text("문의하기"),
         ),
+        bottomNavigationBar: const BottomNavBar(),
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
