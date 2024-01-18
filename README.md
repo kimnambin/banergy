@@ -6,6 +6,15 @@
 <br> -문의하기 페이지에 FAQ 넣음
 
 
-https://github.com/kimnambin/banergy/assets/127464935/e0831777-e0df-4147-b8f5-65415ca528ca
+https://github.com/kimnambin/banergy/assets/127464935/e0831777-e0df-4147-b8f5-65415ca528ca 
 
-![KakaoTalk_20240119_023204302](https://github.com/kimnambin/banergy/assets/127464935/ac4c1a65-de58-4bd5-9470-0fd8092eabda)
+
+
+
+
+
+
+
+<img src="https://github.com/kimnambin/banergy/assets/127464935/ac4c1a65-de58-4bd5-9470-0fd8092eabda" width="300" height="500">
+
+
