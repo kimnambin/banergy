@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class IntroPageB extends StatelessWidget {
   PageController controller;
-  IntroPageB(this.controller, {Key? key}) : super(key: key);
+  IntroPageB(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +13,21 @@ class IntroPageB extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
-            Text(
+            const Text(
               '밴러지',
               style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.green),
             ),
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             Image.asset('images/000.jpeg', width: 200, height: 200),
-            Text(
+            const Text(
               '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
               style: TextStyle(fontSize: 13),
             ),
@@ -39,14 +38,14 @@ class IntroPageB extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     controller.animateToPage(2,
-                        duration: Duration(milliseconds: 700),
+                        duration: const Duration(milliseconds: 700),
                         curve: Curves.easeOut);
                   },
-                  child: Text(
+                  style: TextButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text(
                     '다음',
                     style: TextStyle(color: Colors.white),
                   ),
-                  style: TextButton.styleFrom(backgroundColor: Colors.green),
                 ),
               ],
             ),

@@ -1,25 +1,26 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import '../mypage/mypage.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: Delete(),
   ));
 }
 
 class Delete extends StatelessWidget {
-  const Delete({Key? key}) : super(key: key);
+  const Delete({super.key});
 
   @override
   Widget build(BuildContext context) {
     ThemeData(
-      colorScheme:
-          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 50, 160, 107)),
       useMaterial3: true,
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text("회원 탈퇴하기"),
+        title: const Text("회원 탈퇴하기"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -37,18 +38,18 @@ class Delete extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   '탈퇴하기',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 40),
-                InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
-                SizedBox(height: 20),
-                InputField(
+                const SizedBox(height: 40),
+                const InputField(label: '계정 비밀번호', hintText: '계정 비밀번호를 입력하세요'),
+                const SizedBox(height: 20),
+                const InputField(
                   label: '탈퇴 사유',
                   hintText: '간단한 탈퇴 사유를 적어주세요.',
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     // 다이얼로그를 표시
@@ -56,14 +57,14 @@ class Delete extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('회원 탈퇴 완료'),
-                          content: Text('회원 탈퇴가 성공적으로 처리되었습니다.'),
+                          title: const Text('회원 탈퇴 완료'),
+                          content: const Text('회원 탈퇴가 성공적으로 처리되었습니다.'),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop(); // 다이얼로그를 닫음
                               },
-                              child: Text('확인'),
+                              child: const Text('확인'),
                             ),
                           ],
                         );
@@ -73,7 +74,8 @@ class Delete extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                   ),
-                  child: Text('회원탈퇴', style: TextStyle(color: Colors.white)),
+                  child:
+                      const Text('회원탈퇴', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -89,7 +91,7 @@ class InputField extends StatelessWidget {
   final String label;
   final String hintText;
 
-  InputField({required this.label, this.hintText = ""});
+  const InputField({super.key, required this.label, this.hintText = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -98,12 +100,12 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         TextField(
           decoration: InputDecoration(
             hintText: hintText,
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
           ),
         ),
       ],

@@ -4,7 +4,7 @@ import 'package:flutter_banergy/login/login_login.dart';
 // ignore: must_be_immutable
 class IntroPageC extends StatelessWidget {
   PageController controller;
-  IntroPageC(this.controller, {Key? key}) : super(key: key);
+  IntroPageC(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +14,21 @@ class IntroPageC extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
-            Text(
+            const Text(
               '밴러지',
               style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.green),
             ),
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             Image.asset('images/000.jpeg', width: 200, height: 200),
-            Text(
+            const Text(
               'OCR, 바코드 기술로 간편하게\n찾아보는 음식 성분들!',
               style: TextStyle(fontSize: 13),
             ),
@@ -45,11 +45,11 @@ class IntroPageC extends StatelessWidget {
                               LoginApp()), //HomeScreen부분을 수정하기
                     );
                   },
-                  child: Text(
+                  style: TextButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text(
                     '다음',
                     style: TextStyle(color: Colors.white),
                   ),
-                  style: TextButton.styleFrom(backgroundColor: Colors.green),
                 ),
               ],
             ),

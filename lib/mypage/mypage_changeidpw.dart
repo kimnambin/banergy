@@ -11,6 +11,7 @@ class Changeidpw extends StatefulWidget {
   const Changeidpw({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChangeidpwState createState() => _ChangeidpwState();
 }
 
@@ -33,8 +34,8 @@ class _ChangeidpwState extends State<Changeidpw>
   @override
   Widget build(BuildContext context) {
     ThemeData(
-      colorScheme:
-          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 29, 171, 102)),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 29, 171, 102)),
       useMaterial3: false,
     );
 
@@ -42,7 +43,7 @@ class _ChangeidpwState extends State<Changeidpw>
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("비번 변경하기"),
+          title: const Text("비번 변경하기"),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -61,30 +62,30 @@ class _ChangeidpwState extends State<Changeidpw>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     '비밀번호 변경하기',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20),
-                  InputField(
+                  const SizedBox(height: 20),
+                  const InputField(
                     title: '현재 비밀번호',
                     labels: ['', ''],
                     hintTexts: ['현재 비밀번호 입력', '현재 비밀번호 확인'],
                   ),
-                  SizedBox(height: 10),
-                  InputField(
+                  const SizedBox(height: 10),
+                  const InputField(
                     title: '새 비밀번호',
                     labels: ['', ''],
                     hintTexts: ['새로운 비밀번호 입력', '새로운 비밀번호 확인'],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text('비밀번호가 성공적으로 변경되었습니다.'),
+                            content: const Text('비밀번호가 성공적으로 변경되었습니다.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -100,8 +101,8 @@ class _ChangeidpwState extends State<Changeidpw>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                     ),
-                    child:
-                        Text('비밀번호 변경', style: TextStyle(color: Colors.white)),
+                    child: const Text('비밀번호 변경',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
@@ -160,7 +161,10 @@ class InputField extends StatelessWidget {
   final List<String> hintTexts;
 
   const InputField(
-      {required this.title, required this.labels, required this.hintTexts});
+      {super.key,
+      required this.title,
+      required this.labels,
+      required this.hintTexts});
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +173,7 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         for (int i = 0; i < labels.length; i++)
           Column(
@@ -177,12 +181,12 @@ class InputField extends StatelessWidget {
             children: [
               Text(
                 labels[i],
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               TextField(
                 decoration: InputDecoration(
                   hintText: hintTexts[i],
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   //contentPadding: EdgeInsets.symmetric(vertical: 1.0),
                 ),
               ),

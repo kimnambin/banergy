@@ -8,9 +8,10 @@ void main() {
 }
 
 class ChangeNick extends StatefulWidget {
-  const ChangeNick({Key? key}) : super(key: key);
+  const ChangeNick({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChangeNickState createState() => _ChangeNickState();
 }
 
@@ -33,13 +34,13 @@ class _ChangeNickState extends State<ChangeNick>
   @override
   Widget build(BuildContext context) {
     ThemeData(
-      colorScheme:
-          ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 50, 160, 107)),
       useMaterial3: true,
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text("닉네임 변경하기"),
+        title: const Text("닉네임 변경하기"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -58,29 +59,30 @@ class _ChangeNickState extends State<ChangeNick>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   '닉네임 변경',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 60),
-                InputField(label: '원래 닉네임 *'),
-                SizedBox(height: 20),
-                InputField(label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
-                SizedBox(height: 20),
+                const SizedBox(height: 60),
+                const InputField(label: '원래 닉네임 *'),
+                const SizedBox(height: 20),
+                const InputField(
+                    label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          content: Text('닉네임이 성공적으로 변경되었습니다.'),
+                          content: const Text('닉네임이 성공적으로 변경되었습니다.'),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text('확인'),
+                              child: const Text('확인'),
                             ),
                           ],
                         );
@@ -90,7 +92,8 @@ class _ChangeNickState extends State<ChangeNick>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                   ),
-                  child: Text('닉네임 변경', style: TextStyle(color: Colors.white)),
+                  child: const Text('닉네임 변경',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -106,7 +109,7 @@ class InputField extends StatelessWidget {
   final String label;
   final String hintText;
 
-  InputField({required this.label, this.hintText = ""});
+  const InputField({super.key, required this.label, this.hintText = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -115,12 +118,12 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         TextField(
           decoration: InputDecoration(
             hintText: hintText,
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
           ),
         ),
       ],

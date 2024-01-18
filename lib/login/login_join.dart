@@ -17,7 +17,7 @@ void main() async {
 }
 
 class JoinApp extends StatefulWidget {
-  JoinApp({Key? key}) : super(key: key);
+  const JoinApp({super.key});
 
   @override
   State<JoinApp> createState() => _JoinAppState();
@@ -156,7 +156,7 @@ class _JoinAppState extends State<JoinApp> {
 // 달력 위젯 http://rwdb.kr/datepicker/
 class DatePickerButton extends StatefulWidget {
   const DatePickerButton({
-    Key? key,
+    super.key,
     this.label = '',
     this.hintText = '',
     this.icon,
@@ -168,7 +168,7 @@ class DatePickerButton extends StatefulWidget {
     this.iconSize = 24.0,
     this.hintTextSize = 16.0,
     this.backgroundColor = Colors.white,
-  }) : super(key: key);
+  });
 
   final String label;
   final String hintText;
@@ -183,6 +183,7 @@ class DatePickerButton extends StatefulWidget {
   final Color backgroundColor;
 
   @override
+  // ignore: library_private_types_in_public_api
   _DatePickerButtonState createState() => _DatePickerButtonState();
 }
 
@@ -210,12 +211,12 @@ class _DatePickerButtonState extends State<DatePickerButton> {
     return ElevatedButton(
       onPressed: () => _selectDate(context),
       style: ElevatedButton.styleFrom(
-        primary: widget.backgroundColor,
+        backgroundColor: widget.backgroundColor,
         //shadowColor: Colors.transparent,
         minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: widget.borderRadius,
-          side: BorderSide(
+          side: const BorderSide(
             color: Colors.grey,
           ),
         ),
@@ -228,7 +229,7 @@ class _DatePickerButtonState extends State<DatePickerButton> {
             color: widget.iconColor,
             size: widget.iconSize,
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Text(
             widget.hintText,
             style: TextStyle(

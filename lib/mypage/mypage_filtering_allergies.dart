@@ -13,8 +13,8 @@ class FilteringAllergies extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 50, 160, 107)),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -26,6 +26,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyHomePageState createState() => _MyHomePageState();
 }
 
@@ -47,40 +48,38 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.only(left: 20.0, top: 20.0),
+                padding: const EdgeInsets.only(left: 20.0, top: 20.0),
                 child: Column(
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
                     ),
-                    Container(
-                      child: Column(
-                        children: checkList2
-                            .map<Widget>((String v) => Container(
-                                  margin: EdgeInsets.all(20.0),
-                                  child: CheckboxListTile(
-                                    onChanged: (bool? check) {
-                                      setState(() {
-                                        if (checkListValue2.indexOf(v) > -1) {
-                                          checkListValue2.remove(v);
-                                          return;
-                                        }
-                                        checkListValue2.add(v);
-                                      });
-                                    },
-                                    title: Text(v),
-                                    value: checkListValue2.indexOf(v) > -1
-                                        ? true
-                                        : false,
-                                  ),
-                                ))
-                            .toList(),
-                      ),
+                    Column(
+                      children: checkList2
+                          .map<Widget>((String v) => Container(
+                                margin: const EdgeInsets.all(20.0),
+                                child: CheckboxListTile(
+                                  onChanged: (bool? check) {
+                                    setState(() {
+                                      if (checkListValue2.contains(v)) {
+                                        checkListValue2.remove(v);
+                                        return;
+                                      }
+                                      checkListValue2.add(v);
+                                    });
+                                  },
+                                  title: Text(v),
+                                  value: checkListValue2.contains(v)
+                                      ? true
+                                      : false,
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ],
                 ),

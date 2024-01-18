@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +14,8 @@ class SplashScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset('images/000.jpeg', width: 200, height: 200),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   '밴러지',
                   style: TextStyle(
                     fontSize: 20,
@@ -24,12 +23,12 @@ class SplashScreen extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
                   style: TextStyle(fontSize: 13),
                 ),
-                CircularProgressIndicator(
+                const CircularProgressIndicator(
                   color: Colors.red,
                 ),
               ],

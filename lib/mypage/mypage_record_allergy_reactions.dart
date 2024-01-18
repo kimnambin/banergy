@@ -5,6 +5,7 @@ void main() {
   runApp(const recordallergyreactions());
 }
 
+// ignore: camel_case_types
 class recordallergyreactions extends StatelessWidget {
   const recordallergyreactions({super.key});
 
@@ -14,8 +15,8 @@ class recordallergyreactions extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 50, 160, 107)),
         useMaterial3: true,
       ),
       home: const MyHomePage(),

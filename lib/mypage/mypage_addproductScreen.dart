@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
@@ -79,17 +80,7 @@ class _MyAppState extends State<AddProductScreen> {
       // If the imagePath is a remote image, download it and save locally
       if (!kIsWeb &&
           (imagePath.startsWith("http://") ||
-              imagePath.startsWith("https://"))) {
-        // You can add code here to download the image if needed
-
-        // For example, you can use the http package to download the image
-        // http.Response response = await http.get(Uri.parse(imagePath));
-        // File file = File('local_path_to_save_image.jpg');
-        // await file.writeAsBytes(response.bodyBytes);
-
-        // Set the local path of the downloaded image
-        // imagePath = file.path;
-      }
+              imagePath.startsWith("https://"))) {}
 
       // Set the loading state to true
       setState(() {});
@@ -118,21 +109,36 @@ class _MyAppState extends State<AddProductScreen> {
                 child: Image.file(_image!),
               ),
               const SizedBox(height: 20),
-              Text(
+              const Text(
                 '식품 성분',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              /* 이미지에서 추출된 텍스트 표시
               ConstrainedBox(
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   maxWidth: 300, // 원하는 최대 너비 설정
                 ),
-                child: Text(
-                  parsedText,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  
+                child: RichText(
+                  text: TextSpan(
+                    text: parsedText,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // 일반 텍스트 색상
+                    ),
+                    /*
+                    children: <TextSpan>[
+                      if (parsedText.toLowerCase().contains('복 숭 아'))
+                        const TextSpan(
+                          text: '복숭아',
+                          style: TextStyle(
+                            color: Colors.yellow,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                    ],*/
+                  ),
                 ),
-              ),*/
+              ),
               ElevatedButton(
                 onPressed: () {
                   _showDialog(parsedText);
@@ -140,7 +146,8 @@ class _MyAppState extends State<AddProductScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                 ),
-                child: Text('자세히 보기', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('자세히 보기', style: TextStyle(color: Colors.white)),
               ),
             ],
           )
@@ -156,7 +163,7 @@ class _MyAppState extends State<AddProductScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('상품 정보'),
+          title: const Text('상품 정보'),
           content: SingleChildScrollView(
             child: Text(text),
           ),
@@ -165,7 +172,7 @@ class _MyAppState extends State<AddProductScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('상품 추가하기'),
+              child: const Text('상품 추가하기'),
             ),
           ],
         );
@@ -190,7 +197,7 @@ class _MyAppState extends State<AddProductScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 29, 171, 102),
       ),
-      child: Text(label, style: TextStyle(color: Colors.white)),
+      child: Text(label, style: const TextStyle(color: Colors.white)),
     );
   }
 
@@ -218,19 +225,19 @@ class _MyAppState extends State<AddProductScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 30),
-                Text(
+                const Text(
                   '상품추가',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                InputField(label: '제목', hintText: '제목을 입력하세요'),
-                SizedBox(height: 20),
-                InputField(
+                const InputField(label: '제목', hintText: '제목을 입력하세요'),
+                const SizedBox(height: 20),
+                const InputField(
                   label: '상품 내용',
                   hintText: '간단한 상품 내용을 적어주세요.',
                 ),
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   '최대한 공백이 없어야 인식이 잘됩니다.',
                   style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                 ),
@@ -240,7 +247,7 @@ class _MyAppState extends State<AddProductScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     _buildElevatedButton(
                       "카메라",
                       ImageSource.camera,
@@ -262,7 +269,7 @@ class InputField extends StatelessWidget {
   final String label;
   final String hintText;
 
-  InputField({required this.label, this.hintText = ""});
+  const InputField({super.key, required this.label, this.hintText = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -271,12 +278,12 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         TextField(
           decoration: InputDecoration(
             hintText: hintText,
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
           ),
         ),
       ],

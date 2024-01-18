@@ -14,8 +14,8 @@ class allergyinformation extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 50, 160, 107)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 50, 160, 107)),
         useMaterial3: true,
       ),
       home: const MyHomePage(),

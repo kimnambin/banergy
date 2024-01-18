@@ -22,8 +22,8 @@ class LoginApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 255, 255)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 255, 255, 255)),
         useMaterial3: true,
       ),
       home: Scaffold(
@@ -36,21 +36,21 @@ class LoginApp extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 60),
+                    const SizedBox(height: 60),
 
                     Image.asset(
                       'images/000.jpeg',
                       width: 200,
                       height: 200,
                     ),
-                    Text(
+                    const Text(
                       '밴러지',
                       style: TextStyle(
                         fontSize: 16, // 원하는 폰트 크기 설정
                         fontWeight: FontWeight.bold, // 글자를 볼드로 설정
                       ),
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
 
                     Column(
                       children: [
@@ -62,7 +62,7 @@ class LoginApp extends StatelessWidget {
                           hintTextColor: Colors.grey,
                           borderRadius: BorderRadius.circular(12.0),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         InputField(
                           hintText: '비밀번호를 입력해주세요.',
                           label: '',
@@ -85,7 +85,7 @@ class LoginApp extends StatelessWidget {
                                 backgroundColor:
                                     //Color.fromARGB(255, 99, 255, 180), // 배경색 추가
                                     Colors.white,
-                                content: Text('밴러지 로그인완료!!',
+                                content: const Text('밴러지 로그인완료!!',
                                     style: TextStyle(
                                         color: Colors.black)), // 글자 색상 추가
                                 actions: [
@@ -95,11 +95,12 @@ class LoginApp extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => MainpageApp(),
+                                          builder: (context) =>
+                                              const MainpageApp(),
                                         ),
                                       );
                                     },
-                                    child: Text('확인'),
+                                    child: const Text('확인'),
                                   ),
                                 ],
                               );
@@ -107,13 +108,6 @@ class LoginApp extends StatelessWidget {
                           );
                         }
                       },
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        child: Center(
-                          child: Text('로그인'),
-                        ),
-                      ),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor:
@@ -125,8 +119,15 @@ class LoginApp extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text('로그인'),
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
 
                     //텍스트 클릭 시 회원가입 창으로...
                     Row(
@@ -137,10 +138,10 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => JoinApp()),
+                                  builder: (context) => const JoinApp()),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             '회원가입',
                             style: TextStyle(color: Colors.black),
                           ),
@@ -150,10 +151,10 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => IDFindApp()),
+                                  builder: (context) => const IDFindApp()),
                             );
                           },
-                          child: Text('아이디 찾기',
+                          child: const Text('아이디 찾기',
                               style: TextStyle(color: Colors.black)),
                         ),
                         GestureDetector(
@@ -164,7 +165,7 @@ class LoginApp extends StatelessWidget {
                                   builder: (context) => PWFindApp()),
                             );
                           },
-                          child: Text('비밀번호 찾기',
+                          child: const Text('비밀번호 찾기',
                               style: TextStyle(color: Colors.black)),
                         ),
                       ],
@@ -189,7 +190,8 @@ class InputField extends StatelessWidget {
   final Color? hintTextColor; // 힌트 텍스트 색상 추가
   final BorderRadius borderRadius;
 
-  InputField({
+  const InputField({
+    super.key,
     required this.label,
     this.hintText,
     required this.icon,

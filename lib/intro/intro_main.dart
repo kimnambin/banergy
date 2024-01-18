@@ -11,7 +11,7 @@ final _routerDelegate = BeamerDelegate(
           check: (context, location) {
             return false;
           },
-          showPage: BeamPage(child: AuthScreen()))
+          showPage: BeamPage(child: const AuthScreen()))
     ],
     locationBuilder:
         BeamerLocationBuilder(beamLocations: [HomeLocation()]).call);
@@ -39,17 +39,17 @@ class MyApp extends StatelessWidget {
   StatelessWidget _splashLodingWidget(AsyncSnapshot<Object> snapshot) {
     if (snapshot.hasError) {
       print('에러 발생');
-      return Text('Error');
+      return const Text('Error');
     } else if (snapshot.hasData) {
-      return RadishApp();
+      return const RadishApp();
     } else {
-      return SplashScreen();
+      return const SplashScreen();
     }
   }
 }
 
 class RadishApp extends StatelessWidget {
-  const RadishApp({Key? key}) : super(key: key);
+  const RadishApp({super.key});
 
   @override
   Widget build(BuildContext context) {

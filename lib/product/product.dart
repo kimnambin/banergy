@@ -1,20 +1,23 @@
 // camerainformation.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
 
 // camerainformation.dart
+// ignore: camel_case_types
 class camerainformation extends StatefulWidget {
   final String imagePath;
 
   // 생성자 수정이 필요한 부분
-  const camerainformation({Key? key, required this.imagePath})
-      : super(key: key);
+  const camerainformation({super.key, required this.imagePath});
 
   @override
+  // ignore: library_private_types_in_public_api
   _camerainformationState createState() => _camerainformationState();
 }
 
+// ignore: camel_case_types
 class _camerainformationState extends State<camerainformation> {
   String parsedText = '';
   bool isOcrInProgress = true;
@@ -35,9 +38,6 @@ class _camerainformationState extends State<camerainformation> {
       setState(() {
         parsedText = ocrText;
       });
-    } catch (e) {
-      print('OCR failed: $e');
-      // OCR 실패 처리
     } finally {
       setState(() {
         isOcrInProgress = false;
@@ -49,7 +49,16 @@ class _camerainformationState extends State<camerainformation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('상품 정보'),
+        title: const Text('상품 정보'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -79,7 +88,7 @@ class _camerainformationState extends State<camerainformation> {
               ),
             ),
             if (isOcrInProgress)
-              CircularProgressIndicator()
+              const CircularProgressIndicator()
             else
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -91,7 +100,7 @@ class _camerainformationState extends State<camerainformation> {
               onPressed: () {
                 Navigator.pop(context); // 현재 화면 닫기
               },
-              child: Text('닫기'),
+              child: const Text('닫기'),
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+//일단 사용안함
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_banergy/mypage/mypage.dart';

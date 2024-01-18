@@ -1,18 +1,28 @@
+//문의하기 내용
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main.dart';
 
 void main() {
   runApp(MaterialApp(
     initialRoute: '/',
     onGenerateRoute: (settings) {
-      if (settings.name == '/inquiryDetail') {
+      if (settings.name == '/') {
+        return MaterialPageRoute(
+          builder: (context) => const InquiryScreen(),
+        );
+      } else if (settings.name == '/inquiryDetail') {
         return MaterialPageRoute(
           builder: (context) => const InquiryDetailScreen(),
         );
       }
       return null;
     },
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color.fromARGB(255, 50, 160, 107),
+      ),
+      useMaterial3: true,
+    ),
   ));
 }
 
@@ -27,22 +37,14 @@ class InquiryScreen extends StatefulWidget {
 }
 
 class _InquiryScreenState extends State<InquiryScreen> {
-  bool isFAQVisible = false;
-
   @override
   Widget build(BuildContext context) {
-    ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107)),
-      useMaterial3: true,
-    );
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("문의하기"),
         ),
-        // bottomNavigationBar: const BottomNavBar(), // 주석 처리
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
@@ -75,9 +77,26 @@ class _InquiryScreenState extends State<InquiryScreen> {
                     onPressed: () {
                       if (_formKey.currentState != null &&
                           _formKey.currentState!.validate()) {
-                        setState(() {
-                          isFAQVisible = true;
-                        });
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: const Text('문의가 성공적으로 접수되었습니다.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/inquiryDetail',
+                                    );
+                                  },
+                                  child: const Text('확인'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -86,14 +105,11 @@ class _InquiryScreenState extends State<InquiryScreen> {
                     child: const Text('문의하기',
                         style: TextStyle(color: Colors.white)),
                   ),
-                  const SizedBox(height: 40),
-                  if (isFAQVisible) const FAQList(),
                 ],
               ),
             ),
           ),
         ),
-        bottomNavigationBar: const BottomNavBar(),
       ),
     );
   }
@@ -122,7 +138,7 @@ class InputField extends StatelessWidget {
         ),
         if (isTextArea)
           TextFormField(
-            maxLines: 4,
+            maxLines: 10,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return '필수 입력 항목입니다.';
@@ -191,7 +207,7 @@ class FAQList extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 3.0),
+        padding: EdgeInsets.all(40.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
