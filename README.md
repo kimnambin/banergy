@@ -1,3 +1,9 @@
+2024년 01월 27일
+<br> <h4>📍플러터 + 파이썬 연동해보기 </h4>
+<br>
+
+
+<hr>
 2024년 01월 22일
 
 -구현된 부분-
@@ -7,13 +13,6 @@
 
 
 https://github.com/kimnambin/banergy/assets/127464935/e0831777-e0df-4147-b8f5-65415ca528ca 
-
-
-
-
-
-
-
 
 <img src="https://github.com/kimnambin/banergy/assets/127464935/ac4c1a65-de58-4bd5-9470-0fd8092eabda" width="300" height="500">
 
