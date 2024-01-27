@@ -1,6 +1,10 @@
 2024년 01월 27일
 <br> <h4>📍플러터 + 파이썬 연동해보기 </h4>
-<br>
+<br> <div style="display: flex; justify-content: space-between;">
+<img src="https://github.com/kimnambin/banergy/assets/127464935/9869817f-5b5f-4888-af02-2dc9327f5094" width="500" height="400">
+<img src="https://github.com/kimnambin/banergy/assets/127464935/05b9d243-3106-4843-b7f7-be388122288e" width="300" height="500">
+
+</div>
 
 
 <hr>
