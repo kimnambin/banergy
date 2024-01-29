@@ -125,17 +125,6 @@ class _MyAppState extends State<AddProductScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black, // 일반 텍스트 색상
                     ),
-                    /*
-                    children: <TextSpan>[
-                      if (parsedText.toLowerCase().contains('복 숭 아'))
-                        const TextSpan(
-                          text: '복숭아',
-                          style: TextStyle(
-                            color: Colors.yellow,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                    ],*/
                   ),
                 ),
               ),
@@ -143,11 +132,7 @@ class _MyAppState extends State<AddProductScreen> {
                 onPressed: () {
                   _showDialog(parsedText);
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                ),
-                child:
-                    const Text('자세히 보기', style: TextStyle(color: Colors.white)),
+                child: const Text('자세히 보기'),
               ),
             ],
           )
@@ -189,23 +174,13 @@ class _MyAppState extends State<AddProductScreen> {
       child: Text(label),
     );
   }*/
-  ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
-    return ElevatedButton(
-      onPressed: () {
-        _getImageAndPerformOCR(imageSource);
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-      ),
-      child: Text(label, style: const TextStyle(color: Colors.white)),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("상품 추가"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -224,7 +199,12 @@ class _MyAppState extends State<AddProductScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 30),
+                Image.asset(
+                  'images/000.jpeg',
+                  width: 80,
+                  height: 80,
+                ),
+                //const SizedBox(height: 30),
                 const Text(
                   '상품추가',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -248,12 +228,35 @@ class _MyAppState extends State<AddProductScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(width: 8),
-                    _buildElevatedButton(
-                      "카메라",
-                      ImageSource.camera,
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _getImageAndPerformOCR(ImageSource.camera);
+                      },
+                      icon: const Icon(Icons.camera_alt, color: Colors.grey),
+                      label: const Text("카메라",
+                          style: TextStyle(color: Colors.grey)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 254, 254),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        minimumSize: const Size(120, 0),
+                      ),
                     ),
                     const SizedBox(width: 30),
-                    _buildElevatedButton("갤러리", ImageSource.gallery),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _getImageAndPerformOCR(ImageSource.gallery);
+                      },
+                      icon: const Icon(Icons.perm_media, color: Colors.grey),
+                      label: const Text("갤러리",
+                          style: TextStyle(color: Colors.grey)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        minimumSize: const Size(120, 0),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -278,12 +281,23 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        TextField(
-          decoration: InputDecoration(
-            hintText: hintText,
-            border: const OutlineInputBorder(),
+        const SizedBox(height: 8), // 간격 조절을 위한 SizedBox 추가
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0), // 모서리를 둥글게 설정
+            border: Border.all(color: Colors.grey), // 테두리 색상 설정
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: hintText,
+                border: InputBorder.none, // 테두리 제거
+              ),
+              style: const TextStyle(color: Colors.grey), // 텍스트 색상 설정
+            ),
           ),
         ),
       ],

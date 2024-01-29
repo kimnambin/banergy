@@ -20,6 +20,8 @@ dependencies:
   camera: ^0.10.5+9
   image_gallery_saver: ^2.0.3
   http: ^1.1.2
+  #비밀번호 검사
+  #flutter_pw_validator: ^1.6.0
 
 dev_dependencies:
   flutter_test:

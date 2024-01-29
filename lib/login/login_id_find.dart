@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/login/login_login.dart';
+import 'package:flutter_banergy/login/widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 서버 연동을 위함
   runApp(
-    MaterialApp(
+    const MaterialApp(
       home: IDFindApp(),
     ),
   );
@@ -61,13 +62,14 @@ class IDFindApp extends StatelessWidget {
                       const SizedBox(height: 10),
                       Column(
                         children: [
-                          InputField(
+                          BanergyInputField(
                             label: '',
                             hintText: '이름',
                             iconColor: Colors.grey,
                             hintTextColor: Colors.grey,
                             icon: Icons.account_circle,
                             borderRadius: BorderRadius.circular(12.0),
+                            controller: TextEditingController(),
                           ),
                           const SizedBox(height: 35),
                           const Align(
@@ -81,13 +83,14 @@ class IDFindApp extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          InputField(
+                          BanergyInputField(
                             label: '',
                             hintText: '비밀번호를 입력해주세요.',
                             iconColor: Colors.grey,
                             hintTextColor: Colors.grey,
                             icon: Icons.lock_open,
                             borderRadius: BorderRadius.circular(12.0),
+                            controller: TextEditingController(),
                           ),
                           const SizedBox(height: 35),
                           const Align(
@@ -163,96 +166,6 @@ class IDFindApp extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-// 달력 위젯 http://rwdb.kr/datepicker/
-class DatePickerButton extends StatefulWidget {
-  const DatePickerButton({
-    super.key,
-    this.label = '',
-    this.hintText = '',
-    this.icon,
-    this.iconColor = Colors.grey,
-    this.hintTextColor = Colors.grey,
-    this.borderRadius = const BorderRadius.all(Radius.circular(12.0)),
-    this.buttonWidth = double.infinity,
-    this.buttonHeight = 60.0,
-    this.iconSize = 24.0,
-    this.hintTextSize = 16.0,
-    this.backgroundColor = Colors.white,
-  });
-
-  final String label;
-  final String hintText;
-  final IconData? icon;
-  final Color iconColor;
-  final Color hintTextColor;
-  final BorderRadius borderRadius;
-  final double buttonWidth;
-  final double buttonHeight;
-  final double iconSize;
-  final double hintTextSize;
-  final Color backgroundColor;
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _DatePickerButtonState createState() => _DatePickerButtonState();
-}
-
-//달력 설정
-class _DatePickerButtonState extends State<DatePickerButton> {
-  final TextEditingController _dateController = TextEditingController();
-
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
-    );
-
-    if (pickedDate != null && pickedDate != DateTime.now()) {
-      setState(() {
-        _dateController.text = pickedDate.toLocal().toString().split(' ')[0];
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _selectDate(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: widget.backgroundColor,
-        //shadowColor: Colors.transparent,
-        minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
-        shape: RoundedRectangleBorder(
-          borderRadius: widget.borderRadius,
-          side: const BorderSide(
-            color: Colors.grey,
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Icon(
-            widget.icon,
-            color: widget.iconColor,
-            size: widget.iconSize,
-          ),
-          const SizedBox(width: 8.0),
-          Text(
-            widget.hintText,
-            style: TextStyle(
-              color: widget.hintTextColor,
-              fontSize: widget.hintTextSize,
-            ),
-          ),
-        ],
       ),
     );
   }

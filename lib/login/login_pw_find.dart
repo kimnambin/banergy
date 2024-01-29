@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/login/login_login.dart';
+import 'package:flutter_banergy/login/widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 서버 연동을 위함
   runApp(
-    MaterialApp(
+    const MaterialApp(
       home: PWFindApp(),
     ),
   );
@@ -61,13 +62,14 @@ class PWFindApp extends StatelessWidget {
                       const SizedBox(height: 10),
                       Column(
                         children: [
-                          InputField(
+                          BanergyInputField(
                             label: '',
                             hintText: '이름',
                             iconColor: Colors.grey,
                             hintTextColor: Colors.grey,
                             icon: Icons.account_circle,
                             borderRadius: BorderRadius.circular(12.0),
+                            controller: TextEditingController(),
                           ),
                           const SizedBox(height: 35),
                           const Align(
@@ -81,13 +83,14 @@ class PWFindApp extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          InputField(
+                          BanergyInputField(
                             label: '',
                             hintText: '아이디를 입력해주세요.',
                             icon: Icons.account_box,
                             iconColor: Colors.grey,
                             hintTextColor: Colors.grey,
                             borderRadius: BorderRadius.circular(12.0),
+                            controller: TextEditingController(),
                           ),
                           const SizedBox(height: 35),
                           const Align(

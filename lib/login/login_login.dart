@@ -3,6 +3,7 @@ import 'package:flutter_banergy/login/login_id_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
 import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/login/widget.dart';
 
 void main() {
   runApp(
@@ -54,22 +55,24 @@ class LoginApp extends StatelessWidget {
 
                     Column(
                       children: [
-                        InputField(
+                        BanergyInputField(
                           hintText: '아이디를 입력해주세요.',
                           label: '',
                           icon: Icons.account_box,
                           iconColor: Colors.grey,
                           hintTextColor: Colors.grey,
                           borderRadius: BorderRadius.circular(12.0),
+                          controller: TextEditingController(),
                         ),
                         const SizedBox(height: 20),
-                        InputField(
+                        BanergyInputField(
                           hintText: '비밀번호를 입력해주세요.',
                           label: '',
                           icon: Icons.lock_open,
                           iconColor: Colors.grey,
                           hintTextColor: Colors.grey,
                           borderRadius: BorderRadius.circular(12.0),
+                          controller: TextEditingController(),
                         ),
                       ],
                     ),
@@ -162,7 +165,7 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PWFindApp()),
+                                  builder: (context) => const PWFindApp()),
                             );
                           },
                           child: const Text('비밀번호 찾기',
@@ -177,52 +180,6 @@ class LoginApp extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-// 인풋 필드 선언
-class InputField extends StatelessWidget {
-  final String label;
-  final String? hintText;
-  final IconData icon;
-  final Color iconColor; // 아이콘 색상 추가
-  final Color? hintTextColor; // 힌트 텍스트 색상 추가
-  final BorderRadius borderRadius;
-
-  const InputField({
-    super.key,
-    required this.label,
-    this.hintText,
-    required this.icon,
-    required this.iconColor,
-    this.hintTextColor,
-    required this.borderRadius,
-  });
-
-//인풋 필드 내용
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '필수 입력 항목입니다.';
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: TextStyle(color: hintTextColor),
-            border: OutlineInputBorder(
-              borderRadius: borderRadius,
-            ),
-            prefixIcon: Icon(icon, color: iconColor),
-          ),
-        ),
-      ],
     );
   }
 }
