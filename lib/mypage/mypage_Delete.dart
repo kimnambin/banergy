@@ -21,6 +21,7 @@ class Delete extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("회원 탈퇴하기"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

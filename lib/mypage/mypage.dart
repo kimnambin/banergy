@@ -137,6 +137,7 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("마이페이지"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

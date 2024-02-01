@@ -44,6 +44,7 @@ class _ChangeidpwState extends State<Changeidpw>
       child: Scaffold(
         appBar: AppBar(
           title: const Text("비번 변경하기"),
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {

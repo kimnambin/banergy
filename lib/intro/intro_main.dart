@@ -17,11 +17,12 @@ final _routerDelegate = BeamerDelegate(
         BeamerLocationBuilder(beamLocations: [HomeLocation()]).call);
 //인트로의 첫 화면
 void main() {
-  runApp(const MyApp());
+  runApp(const introApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// ignore: camel_case_types
+class introApp extends StatelessWidget {
+  const introApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -41,6 +41,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("문의하기"),
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         ),
         // bottomNavigationBar: const BottomNavBar(), // 주석 처리
         body: SingleChildScrollView(

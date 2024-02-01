@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'login_login.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,35 +26,42 @@ class JoinApp extends StatefulWidget {
 }
 
 class _JoinAppState extends State<JoinApp> {
+  //유효성 검사 부분
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   late final GlobalKey<FormState> _formKey;
+  late final TextEditingController _dateController;
+  String? _selectedGender;
 
 //회원가입 페이지만에 글로벌 키를 사용하기 위함
   @override
   void initState() {
     super.initState();
     _formKey = GlobalKey<FormState>();
+    _dateController = TextEditingController();
   }
 
   // 각 필드에 대한 유효성 검사 함수 정의
   bool isIdValid() {
-    String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$';
+    String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$'; //영어 + 숫자 조합을 위함
     RegExp regex = RegExp(pattern);
-    return regex.hasMatch(idController.text) && idController.text.length >= 5;
+    return regex.hasMatch(idController.text) &&
+        idController.text.length >= 5; //5글자 이상
   }
 
   bool isPasswordValid() {
-    String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
+    String pattern =
+        r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$'; //영어+숫자+특수기호 조합을 위함
     RegExp regex = RegExp(pattern);
     return regex.hasMatch(passwordController.text) &&
         passwordController.text.length >= 5;
   }
 
   bool isConfirmPasswordValid() {
-    return confirmPasswordController.text.isNotEmpty &&
+    return confirmPasswordController
+            .text.isNotEmpty && //비었는지 + 위에 입력한 비밀번호와 동일한지 확인
         confirmPasswordController.text == passwordController.text;
   }
 
@@ -186,6 +195,7 @@ class _JoinAppState extends State<JoinApp> {
                     const SizedBox(height: 15),
                     // 생년월일 달력
                     DatePickerButton(
+                      controller: _dateController,
                       label: '',
                       hintText: '생년월일',
                       iconColor: Colors.grey,
@@ -197,6 +207,7 @@ class _JoinAppState extends State<JoinApp> {
                     const SizedBox(height: 15),
                     // 성별 부분
                     genderbox(
+                      controller: _selectedGender,
                       label: '',
                       hintText: '성별',
                       iconColor: Colors.grey,
@@ -219,7 +230,13 @@ class _JoinAppState extends State<JoinApp> {
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop(); // 다이얼로그 닫기
-
+                                      sendLoginData(
+                                        idController.text,
+                                        passwordController.text,
+                                        nameController.text,
+                                        _dateController.text,
+                                        _selectedGender ?? '',
+                                      );
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -243,6 +260,13 @@ class _JoinAppState extends State<JoinApp> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
+                                      sendLoginData(
+                                        idController.text, // 아이디
+                                        passwordController.text, // 비밀번호
+                                        nameController.text, // 이름
+                                        _dateController.text, // 생년월일
+                                        _selectedGender ?? '', //
+                                      );
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text('확인'),
@@ -280,6 +304,31 @@ class _JoinAppState extends State<JoinApp> {
   }
 }
 
+void sendLoginData(String username, String password, String name, String date,
+    String wc) async {
+  final url = Uri.parse('http://127.0.0.1:5000/join');
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'username': username,
+      'password': password,
+      'name': name,
+      'date': date,
+      'wc': wc
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    // 서버 응답이 성공적인 경우
+    Map<String, dynamic> responseData = json.decode(response.body);
+    print('Server Response: $responseData');
+  } else {
+    // 서버 응답이 실패한 경우
+    print('Failed to login: ${response.statusCode}');
+  }
+}
+
 // 달력 위젯 http://rwdb.kr/datepicker/
 class DatePickerButton extends StatefulWidget {
   const DatePickerButton({
@@ -295,6 +344,7 @@ class DatePickerButton extends StatefulWidget {
     this.iconSize = 24.0,
     this.hintTextSize = 16.0,
     this.backgroundColor = Colors.white,
+    required TextEditingController controller,
   });
 
   final String label;
@@ -456,6 +506,7 @@ class genderbox extends StatefulWidget {
     this.iconSize = 24.0,
     this.hintTextSize = 16.0,
     this.backgroundColor = Colors.white,
+    String? controller,
   });
   final String label;
   final String hintText;

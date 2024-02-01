@@ -41,6 +41,7 @@ class _ChangeNickState extends State<ChangeNick>
     return Scaffold(
       appBar: AppBar(
         title: const Text("닉네임 변경하기"),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

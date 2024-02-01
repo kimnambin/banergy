@@ -28,20 +28,6 @@ class _MyAppState extends State<AddProductScreen> {
 
   get langs => null; // 추가: 이미지에서 추출된 텍스트를 저장할 변수
 
-  // 이미지 가져오기
-  /*Future getImage(ImageSource imageSource) async {
-    final pickedFile = await picker.pickImage(source: imageSource);
-
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-
-      // 선택된 이미지로 OCR 수행
-      _ocr(_image!.path);
-    }
-  }*/
   Future _getImageAndPerformOCR(ImageSource imageSource) async {
     final pickedFile = await picker.pickImage(source: imageSource);
 
@@ -164,16 +150,6 @@ class _MyAppState extends State<AddProductScreen> {
       },
     );
   }
-
-/*
-  ElevatedButton _buildElevatedButton(String label, ImageSource imageSource) {
-    return ElevatedButton(
-      onPressed: () {
-        getImage(imageSource);
-      },
-      child: Text(label),
-    );
-  }*/
 
   @override
   Widget build(BuildContext context) {

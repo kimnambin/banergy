@@ -20,6 +20,7 @@ class Freeboard extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("자유게시판"),
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         ),
         body: SingleChildScrollView(
           child: Center(
