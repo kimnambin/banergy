@@ -1,19 +1,8 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 
 void main() {
-  runApp(MaterialApp(
-    initialRoute: '/',
-    onGenerateRoute: (settings) {
-      if (settings.name == '/inquiryDetail') {
-        return MaterialPageRoute(
-          builder: (context) => const InquiryDetailScreen(),
-        );
-      }
-      return null;
-    },
-  ));
+  runApp(const InquiryScreen());
 }
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -111,7 +100,6 @@ class InputField extends StatelessWidget {
     this.isTextArea = false,
     this.hintText = "",
   });
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -149,38 +137,6 @@ class InputField extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-class InquiryDetailScreen extends StatelessWidget {
-  const InquiryDetailScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('문의 화면'),
-      ),
-      body: const SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  '자주 묻는 내용',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              FAQList(),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -246,7 +202,6 @@ class _FAQItemState extends State<FAQItem> {
   @override
   Widget build(BuildContext context) {
     double containerWidth = MediaQuery.of(context).size.width - 32;
-
     return Container(
       decoration: BoxDecoration(
         border: Border.all(

@@ -7,6 +7,7 @@ import '../mypage/mypage.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
 //import 'package:flutter_banergy/intro/intro_main.dart';
 
 //메인화면

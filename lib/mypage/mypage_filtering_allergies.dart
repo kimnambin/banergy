@@ -31,7 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String? checkListValue1;
   List<String?> checkListValue2 = [];
 
   List<String> checkList2 = [
@@ -57,11 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // 왼쪽 필터 리스트와 오른쪽 필터 리스트를 나누기
-    int halfLength = checkList2.length ~/ 2;
-    List<String> leftFilterList = checkList2.sublist(0, halfLength);
-    List<String> rightFilterList = checkList2.sublist(halfLength);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("알러지 필터링"),
@@ -75,39 +69,61 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              print("저장된 값: $checkListValue1, $checkListValue2");
-            },
-          ),
-        ],
       ),
       bottomNavigationBar: const BottomNavBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                // 왼쪽 필터
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20.0),
-                    child: buildFilterList(leftFilterList),
-                  ),
-                ),
-                // 오른쪽 필터
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20.0),
-                    child: buildFilterList(rightFilterList),
-                  ),
-                ),
-              ],
+      body: Column(
+        children: [
+          // Image 추가
+          Container(
+            color: Colors.white,
+            child: Image.asset(
+              'images/000.jpeg',
+              width: 80,
+              height: 80,
             ),
-          ],
-        ),
+          ),
+          // 중앙에 정렬된 필터 영역
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  // 왼쪽 필터
+                  Expanded(
+                    child: buildFilterList(checkList2),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // 적용 버튼 추가
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            color: Colors.white,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: const Color.fromARGB(255, 29, 171, 102),
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              onPressed: () {
+                // 적용 버튼을 눌렀을 때 수행할 동작
+                print("저장된 값: $checkListValue2");
+              },
+              child: const Text(
+                '적용',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

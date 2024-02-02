@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 문의하기 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const InquiryScreen()),
+          MaterialPageRoute(builder: (context) => InquiryScreen()),
         );
 
         break;
