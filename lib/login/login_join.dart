@@ -1,7 +1,9 @@
-import 'dart:convert';
+//import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/login/loginDB/loginDB.dart';
 import 'login_login.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -218,7 +220,6 @@ class _JoinAppState extends State<JoinApp> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
-                        // 모든 필드의 유효성 검사를 수행
                         if (_formKey.currentState != null &&
                             _formKey.currentState!.validate()) {
                           showDialog(
@@ -228,15 +229,16 @@ class _JoinAppState extends State<JoinApp> {
                                 content: const Text('밴러지 회원가입완료!!'),
                                 actions: [
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(); // 다이얼로그 닫기
-                                      sendLoginData(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      await UserData(
                                         idController.text,
                                         passwordController.text,
                                         nameController.text,
                                         _dateController.text,
                                         _selectedGender ?? '',
                                       );
+                                      // ignore: use_build_context_synchronously
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -251,7 +253,6 @@ class _JoinAppState extends State<JoinApp> {
                             },
                           );
                         } else {
-                          // 어떤 필드라도 유효하지 않은 경우 사용자에게 메시지 표시
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -260,13 +261,6 @@ class _JoinAppState extends State<JoinApp> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      sendLoginData(
-                                        idController.text, // 아이디
-                                        passwordController.text, // 비밀번호
-                                        nameController.text, // 이름
-                                        _dateController.text, // 생년월일
-                                        _selectedGender ?? '', //
-                                      );
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text('확인'),
@@ -301,31 +295,6 @@ class _JoinAppState extends State<JoinApp> {
         ),
       ),
     );
-  }
-}
-
-void sendLoginData(String username, String password, String name, String date,
-    String wc) async {
-  final url = Uri.parse('http://127.0.0.1:5000/join');
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'username': username,
-      'password': password,
-      'name': name,
-      'date': date,
-      'wc': wc
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    // 서버 응답이 성공적인 경우
-    Map<String, dynamic> responseData = json.decode(response.body);
-    print('Server Response: $responseData');
-  } else {
-    // 서버 응답이 실패한 경우
-    print('Failed to login: ${response.statusCode}');
   }
 }
 

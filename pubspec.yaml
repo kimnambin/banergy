@@ -21,6 +21,9 @@ dependencies:
   image_gallery_saver: ^2.0.3
   http: ^1.1.2
   shared_preferences: ^2.2.2
+  sqflite: ^2.3.2
+  path: ^1.8.3
+  crypto: ^3.0.3
   #비밀번호 검사
   #flutter_pw_validator: ^1.6.0
 

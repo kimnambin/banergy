@@ -1,66 +1,38 @@
-//플러터 + 플라스크 연동해보기
-// 임포트 -->> 서버 가져올 변수 지정 -->> 서버에 요청 -->> 결과 출력
-
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // 1단계
+import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _MyAppState createState() => _MyAppState();
 }
 
-//2단계 -->> 변수들 지정 (메시지 : 헬로우 월드 / 유저 : 남빈)
 class _MyAppState extends State<MyApp> {
-  String serverMessage = '';
-  String serverUser = '';
+  List<Product> products = [];
 
   @override
   void initState() {
     super.initState();
-    // 3단계 -> 앱이 처음 시작될 때 서버에 요청 보내기
-    fetchServerData();
+    fetchData(); // 앱이 시작될 때 데이터를 불러옵니다.
   }
 
-  Future<void> fetchServerData() async {
-    //플라스크 서버 주소
-    const String serverUrl = 'http://127.0.0.1:5000/';
-
-    try {
-      // GET 요청
-      final response = await http.get(Uri.parse(serverUrl));
-
-      // 응답 처리
-      if (response.statusCode == 200) {
-        // JSON 데이터 가져오기
-        Map<String, dynamic> data = json.decode(response.body);
-
-        // 서버 응답을 변수에 저장
-        setState(() {
-          serverMessage = data['message']; //헬로우 월드
-          serverUser = data['user']; //남빈
-        });
-      } else {
-        // 오류 처리
-        setState(() {
-          serverMessage = '서버 응답 오류: ${response.statusCode}';
-          serverUser = ''; // 오류 발생 시 user를 비우거나 다른 값으로 초기화
-        });
-      }
-    } catch (e) {
-      // 에러 처리
+  Future<void> fetchData() async {
+    final response = await http.get(
+        Uri.parse('http://127.0.0.1:5000/')); // Flask 앱의 루트 URL로 GET 요청을 보냅니다.
+    if (response.statusCode == 200) {
       setState(() {
-        serverMessage = '에러: $e';
-        serverUser = ''; // 에러 발생 시 user를 비우거나 다른 값으로 초기화
+        // JSON 데이터를 Product 객체로 변환하여 리스트에 추가합니다.
+        final List<dynamic> productList = json.decode(response.body);
+        products = productList.map((item) => Product.fromJson(item)).toList();
       });
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 
@@ -69,28 +41,53 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('플러터 파이썬 연동해보기'),
+          title: const Text('Products'),
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 서버에서 가져온 데이터
-              Text(
-                '메시지: $serverMessage',
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-
-              Text(
-                '사용자: $serverUser',
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
+        body: ListView.builder(
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(products[index].name),
+              subtitle: Text(products[index].barcode),
+              leading: products[index].image1.isNotEmpty
+                  ? Image.network(products[index].image1)
+                  : Container(), // 이미지가 없는 경우 빈 컨테이너를 표시합니다.
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class Product {
+  final int id;
+  final String barcode;
+  final String name;
+  final String category;
+  final String image1;
+  final String image2;
+  final String allergens;
+
+  Product({
+    required this.id,
+    required this.barcode,
+    required this.name,
+    required this.category,
+    required this.image1,
+    required this.image2,
+    required this.allergens,
+  });
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      barcode: json['barcode'],
+      name: json['name'],
+      category: json['category'],
+      image1: json['image1'],
+      image2: json['image2'],
+      allergens: json['allergens'],
     );
   }
 }
