@@ -15,8 +15,8 @@ db = SQLAlchemy(app)
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     barcode = db.Column(db.String(20), nullable=False)
-    kategorie = db.Column(db.String(255), nullable=True)
     name = db.Column(db.String(80), nullable=False)
+    kategorie = db.Column(db.String(255), nullable=True)
     frontproduct = db.Column(db.String(255), nullable=True)
     backproduct = db.Column(db.String(255), nullable=False)
     allergens = db.Column(db.String(255), nullable=True)
@@ -31,8 +31,7 @@ if __name__ == '__main__':
 
         # CSV 파일에서 데이터를 읽어와 데이터베이스에 추가
         with open('C:/Users/82109/Desktop/src/flutter_banergy/lib/DB/product.csv', 'r', encoding='utf-8') as csvfile:
-
-            csvreader = csv.DictReader(csvfile, fieldnames=['barcode', 'kategorie', 'name', 'frontproduct', 'backproduct', 'allergens'])
+            csvreader = csv.DictReader(csvfile, fieldnames=['barcode', 'name', 'kategorie', 'frontproduct', 'backproduct', 'allergens'])
             for idx, row in enumerate(csvreader):
                 if idx == 0:  # 첫 번째 행은 헤더이므로 건너뜁니다.
                     continue
@@ -45,8 +44,8 @@ if __name__ == '__main__':
 
                 new_product = Product(
                     barcode=row['barcode'],
-                    kategorie=row['kategorie'],
                     name=row['name'],
+                    kategorie=row['kategorie'],
                     frontproduct=row['frontproduct'],
                     backproduct=row['backproduct'],
                     allergens=row['allergens']
@@ -55,17 +54,26 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-# 라우팅: 제품 목록 조회
+# 검색 바 부분
 @app.route('/', methods=['GET'])
 def get_products():
-    products = Product.query.all()
+    # 검색어 가져오기
+    query = request.args.get('query', '')
+    
+    # 해당 내용 없으면 반환
+    if not query:
+        products = Product.query.all()
+    else:
+        # 검색어와 일치하는 제품 찾기
+        products = Product.query.filter(Product.name.like(f"%{query}%")).all()
+        
     product_list = []
     for product in products:
         product_data = {
             'id': product.id,
             'barcode': product.barcode,
-            'kategorie': product.kategorie,
             'name': product.name,
+            'kategorie': product.kategorie,
             'frontproduct': product.frontproduct,
             'backproduct': product.backproduct,
             'allergens': product.allergens
@@ -86,8 +94,8 @@ def add_product():
 
         new_product = Product(
             barcode=data['barcode'],
-            kategorie=data['kategorie'],
             name=data['name'],
+            kategorie=data['kategorie'],
             frontproduct=data['frontproduct'],
             backproduct=data['backproduct'],
             allergens=data['allergens']
@@ -97,4 +105,4 @@ def add_product():
         return jsonify({'message': '제품이 성공적으로 추가되었습니다.'}), 201
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

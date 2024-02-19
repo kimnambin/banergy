@@ -22,7 +22,7 @@ class CodeScreen extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text(': $resultCode'),
+        child: Text(resultCode),
       ),
     );
   }

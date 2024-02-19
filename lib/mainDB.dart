@@ -1,3 +1,5 @@
+// DB Product
+
 class Product {
   final int id;
   final String barcode;

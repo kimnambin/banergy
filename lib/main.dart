@@ -40,7 +40,7 @@ class MainpageApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class ProductGrid extends StatefulWidget {
-  const ProductGrid({super.key});
+  const ProductGrid({Key? key}) : super(key: key);
 
   @override
   _ProductGridState createState() => _ProductGridState();
@@ -125,16 +125,20 @@ class _ProductGridState extends State<ProductGrid> {
               _handleProductClick(context, products[index]);
             },
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(
-                  products[index].frontproduct,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.cover,
+                Expanded(
+                  child: Image.network(
+                    products[index].frontproduct,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const SizedBox(height: 30.0),
-                Text(products[index].name),
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 8.0),
+                Text(
+                  products[index].name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4.0),
                 Text(products[index].allergens),
               ],
             ),
