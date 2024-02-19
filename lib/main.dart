@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/product/code.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/product/product.dart';
 import '../appbar/menu.dart';
 import 'appbar/search.dart';
@@ -7,18 +9,19 @@ import '../mypage/mypage.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter_banergy/mainDB.dart';
 
-//import 'package:flutter_banergy/intro/intro_main.dart';
-
-//메인화면
 void main() {
   runApp(
-    const MaterialApp(home: MainpageApp()),
+    const MaterialApp(
+      home: MainpageApp(),
+    ),
   );
 }
 
 class MainpageApp extends StatelessWidget {
   final File? image;
+
   const MainpageApp({super.key, this.image});
 
   @override
@@ -27,7 +30,8 @@ class MainpageApp extends StatelessWidget {
       title: '식품 알레르기 관리 앱',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 50, 160, 107)),
+          seedColor: const Color.fromARGB(255, 50, 160, 107),
+        ),
         useMaterial3: true,
       ),
       home: const HomeScreen(),
@@ -47,7 +51,6 @@ class HomeScreen extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
-              // 검색 페이지로 이동
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SearchScreen()),
@@ -60,7 +63,6 @@ class HomeScreen extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              // 메뉴 페이지로 이동
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const MenuScreen()),
@@ -79,8 +81,35 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class ProductGrid extends StatelessWidget {
+class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
+
+  @override
+  _ProductGridState createState() => _ProductGridState();
+}
+
+class _ProductGridState extends State<ProductGrid> {
+  late List<Product> products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // initState에서 데이터를 불러옵니다.
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('http://127.0.0.1:5000/'),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        final List<dynamic> productList = json.decode(response.body);
+        products = productList.map((item) => Product.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,46 +117,61 @@ class ProductGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
+      itemCount: products.length,
       itemBuilder: (context, index) {
-        // 상품 아이콘을 가져오거나 사용하는 코드 작성
         return Card(
           child: InkWell(
-              onTap: () {
-                //아이콘 클릭 시 실행할 동작 추가
-                _handleProductClick(context, index);
-              },
-              child: Column(
-                children: [
-                  const Icon(Icons.fastfood, size: 48), // 아이콘 예시 (음식 아이콘)
-                  Text('Product $index'),
-                  Text('Description of Product $index'),
-                ],
-              )),
+            onTap: () {
+              _handleProductClick(context, products[index]);
+            },
+            child: Column(
+              children: [
+                Image.network(
+                  products[index].frontproduct,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+                const SizedBox(height: 30.0),
+                Text(products[index].name),
+                const SizedBox(height: 30.0),
+                Text(products[index].allergens),
+              ],
+            ),
+          ),
         );
       },
     );
   }
-}
 
-void _handleProductClick(BuildContext context, int index) {
-  // 아이콘 클릭 시 실행할 동작을 여기에 추가
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('상품 정보'),
-        content: Text('Product $index의 상세 정보를 표시합니다.'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('닫기'),
+  void _handleProductClick(BuildContext context, Product product) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('상품 정보'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('카테고리: ${product.kategorie}'),
+              Text('이름: ${product.name}'),
+              Text('정면 이미지: ${product.frontproduct}'),
+              Text('후면 이미지: ${product.backproduct}'),
+              Text('알레르기 식품: ${product.allergens}'),
+            ],
           ),
-        ],
-      );
-    },
-  );
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 //바텀 바 내용 구현
