@@ -49,8 +49,8 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: const [
-          Expanded(
-            child: SearchWidget(),
+          Flexible(
+            child: SearchWidget(), // Flexible 추가
           ),
         ],
       ),
@@ -210,7 +210,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:5000/'),
+      Uri.parse('http://10.55.4.107:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/BottomNavBar.dart';
-import 'package:flutter_banergy/main.dart';
 
 void main() {
   runApp(const InquiryScreen());

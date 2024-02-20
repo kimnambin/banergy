@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/menu.dart';
+import 'package:flutter_banergy/appbar/search.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -53,6 +54,13 @@ class _SearchWidgetState extends State<SearchWidget> {
                       onPressed: () {
                         // 검색 아이콘을 눌러서 검색 실행
                         _performSearch();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SearchScreen(
+                                    searchText: '',
+                                  )),
+                        );
                       },
                       icon: const Icon(Icons.search),
                     ),
@@ -92,8 +100,13 @@ class _SearchWidgetState extends State<SearchWidget> {
 
 // 검색 결과부분 (여기는 밑에 뜨는 거 )
   Widget _buildSearchResults() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return ListView.builder(
+      itemCount: _products.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(_products[index]['name']),
+        );
+      },
     );
   }
 
@@ -113,7 +126,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
 
     final response =
-        await http.get(Uri.parse('http://127.0.0.1:5000/?query=$query'));
+        await http.get(Uri.parse('http://10.55.4.107:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
