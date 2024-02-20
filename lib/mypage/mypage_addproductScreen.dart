@@ -99,6 +99,7 @@ class _MyAppState extends State<AddProductScreen> {
                 '식품 성분',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
+              _buildTextWithHighlight(parsedText),
               ConstrainedBox(
                 constraints: const BoxConstraints(
                   maxWidth: 300, // 원하는 최대 너비 설정
@@ -299,20 +300,86 @@ final List<String> texts = [
   "땅콩",
   "아몬드",
   "조개류",
-  "기타"
+  "기타",
+  "계 란",
+  "밀",
+  "대 두",
+  "우 유",
+  "게",
+  "새 우",
+  "돼 지 고 기",
+  "닭 고 기",
+  "소 고 기",
+  "고 등 어",
+  "복 숭 아",
+  "토 마 토",
+  "호 두",
+  "땅 콩",
+  "아 몬 드",
+  "조 개 류",
+  "기 타"
 ];
 
-List<InlineSpan> generateTextSpans(String parsedText) {
-  return texts.map<InlineSpan>((text) {
-    if (parsedText.toLowerCase().contains(text)) {
-      return TextSpan(
-        text: text,
+Widget _buildTextWithHighlight(String parsedText) {
+  List<TextSpan> inlineSpans = [];
+  List<String> highlightedWords = [];
+
+  for (String word in texts) {
+    int index = parsedText.toLowerCase().indexOf(word.toLowerCase());
+    while (index != -1) {
+      // 강조되지 않은 텍스트를 추가합니다.
+      inlineSpans.add(TextSpan(
+        text: parsedText.substring(0, index),
         style: const TextStyle(
-          color: Colors.yellow, // 원하는 색상으로 변경
-          fontWeight: FontWeight.bold, // 원하는 폰트 두께로 변경
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
         ),
-      );
+      ));
+      // 강조된 단어를 추가합니다.
+      inlineSpans.add(TextSpan(
+        text: parsedText.substring(index, index + word.length),
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.yellow,
+        ),
+      ));
+      // 처리한 부분을 제외한 나머지 텍스트를 갱신합니다.
+      parsedText = parsedText.substring(index + word.length);
+      index = parsedText.toLowerCase().indexOf(word.toLowerCase());
+      highlightedWords.add(word);
     }
-    return TextSpan(text: parsedText);
-  }).toList();
+  }
+
+  // 나머지 텍스트를 추가합니다.
+  if (parsedText.isNotEmpty) {
+    inlineSpans.add(TextSpan(
+      text: parsedText,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    ));
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        highlightedWords.join(', '),
+        style: TextStyle(
+          color: Colors.yellow,
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+        ),
+        overflow: TextOverflow.ellipsis, // 텍스트가 너무 길 경우 생략 (...) 표시
+      ),
+      SizedBox(height: 8),
+      RichText(
+        text: TextSpan(children: inlineSpans),
+      ),
+    ],
+  );
 }
