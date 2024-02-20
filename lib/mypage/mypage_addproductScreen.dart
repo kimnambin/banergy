@@ -280,3 +280,39 @@ class InputField extends StatelessWidget {
     );
   }
 }
+
+final List<String> texts = [
+  "계란",
+  "밀",
+  "대두",
+  "우유",
+  "게",
+  "새우",
+  "돼지고기",
+  "닭고기",
+  "소고기",
+  "고등어",
+  "복숭아",
+  "토마토",
+  "호두",
+  "잣",
+  "땅콩",
+  "아몬드",
+  "조개류",
+  "기타"
+];
+
+List<InlineSpan> generateTextSpans(String parsedText) {
+  return texts.map<InlineSpan>((text) {
+    if (parsedText.toLowerCase().contains(text)) {
+      return TextSpan(
+        text: text,
+        style: const TextStyle(
+          color: Colors.yellow, // 원하는 색상으로 변경
+          fontWeight: FontWeight.bold, // 원하는 폰트 두께로 변경
+        ),
+      );
+    }
+    return TextSpan(text: parsedText);
+  }).toList();
+}

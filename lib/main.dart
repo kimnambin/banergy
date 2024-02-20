@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/product/code.dart';
+import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/main_category/Cake.dart';
+import 'package:flutter_banergy/main_category/Dessert.dart';
+import 'package:flutter_banergy/main_category/Drink.dart';
+import 'package:flutter_banergy/main_category/Fastfood.dart';
+import 'package:flutter_banergy/main_category/Food.dart';
+import 'package:flutter_banergy/main_category/Mealkit.dart';
+import 'package:flutter_banergy/main_category/Sandwich.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_banergy/product/product.dart';
-import '../appbar/menu.dart';
-import 'appbar/search.dart';
 import '../mypage/mypage.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
 
@@ -40,49 +42,158 @@ class MainpageApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('식품 알레르기 관리 앱'),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-        actions: [
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchScreen()),
-              );
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MenuScreen()),
-              );
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.menu),
-            ),
+        actions: const [
+          Expanded(
+            child: SearchWidget(),
           ),
         ],
       ),
-      body: const ProductGrid(),
+      body: const Column(
+        children: [
+          // 여기에 아이콘 슬라이드를 넣어줍니다.
+          IconSlider(),
+          SizedBox(height: 16),
+          Expanded(
+            child: ProductGrid(),
+          ),
+        ],
+      ),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
 
+class IconSlider extends StatelessWidget {
+  const IconSlider({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 80,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: const [
+          IconItem(icon: Icons.fastfood, label: 'Fast Food'),
+          IconItem(icon: Icons.cookie, label: 'Dessert'),
+          IconItem(icon: Icons.bakery_dining, label: 'Sandwich'),
+          IconItem(icon: Icons.lunch_dining, label: 'Food'),
+          IconItem(icon: Icons.cake, label: 'Cake'),
+          IconItem(icon: Icons.local_cafe, label: 'Drink'),
+          IconItem(icon: Icons.food_bank, label: 'MealKit'),
+        ],
+      ),
+    );
+  }
+}
+
+class IconItem extends StatefulWidget {
+  final IconData icon;
+  final String label;
+
+  const IconItem({super.key, required this.icon, required this.label});
+
+  @override
+  _IconItemState createState() => _IconItemState();
+}
+
+class _IconItemState extends State<IconItem> {
+  bool isHovered = false; // 아이콘 위에 마우스 커서가 올려졌는지 여부를 관리하는 변수
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          isHovered = true; // 아이콘이 마우스 커서 위에 있을 때 상태를 변경합니다.
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          isHovered = false; // 아이콘이 마우스 커서 밖으로 나갈 때 상태를 변경합니다.
+        });
+      },
+      child: GestureDetector(
+        onTap: () {
+          // 아이콘을 탭했을 때의 동작
+          _handleIconTap(context);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                widget.icon,
+                size: 36,
+                color: isHovered
+                    ? Colors.grey
+                    : Colors.black, // 마우스 커서 상태에 따라 색상을 변경합니다.
+              ),
+              const SizedBox(height: 4),
+              Text(widget.label),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleIconTap(BuildContext context) {
+    switch (widget.label) {
+      case 'Fast Food':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FastfoodScreen()),
+        );
+        break;
+      case 'Dessert':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const DessertScreen()),
+        );
+        break;
+      case 'Sandwich':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SandwichScreen()),
+        );
+        break;
+      case 'Food':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FoodScreen()),
+        );
+        break;
+      case 'Cake':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CakeScreen()),
+        );
+        break;
+      case 'Drink':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const DrinkScreen()),
+        );
+        break;
+      case 'MealKit':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MealkitScreen()),
+        );
+        break;
+    }
+  }
+}
+
 class ProductGrid extends StatefulWidget {
-  const ProductGrid({Key? key}) : super(key: key);
+  const ProductGrid({super.key});
 
   @override
   _ProductGridState createState() => _ProductGridState();
@@ -173,172 +284,6 @@ class _ProductGridState extends State<ProductGrid> {
             ),
           ],
         );
-      },
-    );
-  }
-}
-
-//바텀 바 내용 구현
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _BottomNavBarState createState() => _BottomNavBarState();
-}
-
-class _BottomNavBarState extends State<BottomNavBar> {
-  final ImagePicker _imagePicker = ImagePicker();
-  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-  String? code;
-  String parsedText = '';
-
-  late File? pickedImage;
-  late XFile? pickedFile;
-  late String img64;
-
-  // _saveImageToGallery 사진 찍은 후 갤러리에 저장
-  Future<void> _saveImageToGallery(
-      XFile pickedFile, BuildContext context) async {
-    final File imageFile = File(pickedFile.path);
-
-    try {
-      // OCR 수행
-      final String imagePath = await _performOCR(imageFile);
-
-      // 다음 화면으로 이동
-      if (mounted) {
-        final NavigatorState navigator = Navigator.of(context);
-        navigator.pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => camerainformation(
-              imagePath: imagePath,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      print('OCR failed: $e');
-      // OCR 오류 시
-    }
-  }
-
-//카메라 찍은 거 이미지
-  Future<String> _performOCR(File imageFile) async {
-    try {
-      return imageFile.path;
-    } catch (e) {
-      //오류 떴을때 확인
-      print('OCR failed: $e');
-      rethrow;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.adjust),
-          label: "Lens",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'My',
-        ),
-      ],
-      onTap: (index) async {
-        if (index == 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MainpageApp()),
-          );
-        } else if (index == 1) {
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return SingleChildScrollView(
-                  child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        final pickedFile = await _imagePicker.pickImage(
-                          source: ImageSource.camera,
-                        );
-
-                        if (pickedFile != null) {
-                          try {
-                            // OCR 수행
-                            print('Before Navigator.push');
-                            // ignore: use_build_context_synchronously
-                            _saveImageToGallery(pickedFile, context);
-                            print('After Navigator.push');
-                          } catch (e) {
-                            print('OCR failed: $e');
-                            print('Exception caught in catch block');
-                          }
-                        }
-                      },
-                      child: const Text('Camera'),
-                    ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        final pickedFile = await _imagePicker.pickImage(
-                            source: ImageSource.gallery);
-
-                        if (pickedFile != null) {
-                          // ignore: use_build_context_synchronously
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  camerainformation(
-                                imagePath: pickedFile.path,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: const Text('Gallery'),
-                    ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
-                          context: context,
-                          onCode: (code) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CodeScreen(resultCode: code ?? "스캔된 정보 없음"),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: const Text('QR/Barcode'),
-                    ),
-                  ),
-                ],
-              ));
-            },
-          );
-        } else if (index == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
-          );
-        }
       },
     );
   }

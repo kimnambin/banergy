@@ -1,16 +1,18 @@
+// appbar 검색하는 부분
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class SearchWidget extends StatefulWidget {
+  const SearchWidget({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<SearchWidget> createState() => _SearchWidgetState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _SearchWidgetState extends State<SearchWidget> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
   bool _isSearching = false;
