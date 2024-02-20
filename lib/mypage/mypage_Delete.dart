@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/BottomNavBar.dart';
 import '../mypage/mypage.dart';
 
 void main() {

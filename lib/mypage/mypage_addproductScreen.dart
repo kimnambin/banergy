@@ -1,6 +1,7 @@
 // ignore: file_names
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/BottomNavBar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';

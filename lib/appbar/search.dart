@@ -1,9 +1,9 @@
 //앱바에서 검색한 후 보여지는 부분
 
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/BottomNavBar.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/mainDB.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

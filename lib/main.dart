@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/BottomNavBar.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/main_category/Cake.dart';
 import 'package:flutter_banergy/main_category/Dessert.dart';
@@ -70,7 +71,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class IconSlider extends StatelessWidget {
-  const IconSlider({Key? key}) : super(key: key);
+  const IconSlider({super.key});
 
   @override
   Widget build(BuildContext context) {
