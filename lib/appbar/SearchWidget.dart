@@ -57,9 +57,9 @@ class _SearchWidgetState extends State<SearchWidget> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SearchScreen(
-                                    searchText: '',
-                                  )),
+                            builder: (context) => SearchScreen(
+                                searchText: _searchController.text),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.search),
