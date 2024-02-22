@@ -54,19 +54,23 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-# 검색 바 부분
+
 @app.route('/', methods=['GET'])
 def get_products():
-    # 검색어 가져오기
     query = request.args.get('query', '')
-    
-    # 해당 내용 없으면 반환
-    if not query:
-        products = Product.query.all()
-    else:
-        # 검색어와 일치하는 제품 찾기
+    barcode = request.args.get('barcode', '')
+
+    if barcode:
+        # 바코드가 있는 경우 바코드에 해당하는 제품 정보를 반환합니다.
+        products = Product.query.filter_by(barcode=barcode).all()
+    elif query:
+        # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
         products = Product.query.filter(Product.name.like(f"%{query}%")).all()
-        
+    else:
+        # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
+        products = Product.query.all()
+
+    
     product_list = []
     for product in products:
         product_data = {
@@ -80,6 +84,41 @@ def get_products():
         }
         product_list.append(product_data)
     return jsonify(product_list)
+
+@app.route('/scan', methods=['GET'])
+def scan_products():
+    query = request.args.get('query', '')
+    barcode = request.args.get('barcode', '')
+
+    if barcode:
+        # 바코드가 있는 경우 바코드에 해당하는 제품 정보를 반환합니다.
+        products = Product.query.filter_by(barcode=barcode).all()
+    elif query:
+        # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
+        products = Product.query.filter(Product.name.like(f"%{query}%")).all()
+    else:
+        # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
+        products = Product.query.all()
+
+    product_list = []
+    for product in products:
+        product_data = {
+            'id': product.id,
+            'barcode': product.barcode,
+            'name': product.name,
+            'kategorie': product.kategorie,
+            'frontproduct': product.frontproduct,
+            'backproduct': product.backproduct,
+            'allergens': product.allergens
+        }
+        product_list.append(product_data)
+    return jsonify(product_list)
+
+
+
+
+
+
 
 # 라우팅: 제품 추가
 @app.route('/add', methods=['POST'])

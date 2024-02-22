@@ -1,16 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/BottomNavBar.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
 import 'package:flutter_banergy/mypage/mypage_Changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addProductScreen.dart';
-import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/product.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
@@ -138,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("마이페이지"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        backgroundColor: const Color.fromARGB(255, 50, 160, 107),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

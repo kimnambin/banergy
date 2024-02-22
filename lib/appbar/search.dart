@@ -1,7 +1,7 @@
 //앱바에서 검색한 후 보여지는 부분
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/BottomNavBar.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://10.55.4.107:8000/?query=$searchText'),
+      Uri.parse('http://192.168.216.174:8000/?query=$searchText'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -48,7 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         actions: const [
           Flexible(
-            child: SearchWidget(), // Flexible 추가
+            child: SearchWidget(),
           ),
         ],
       ),

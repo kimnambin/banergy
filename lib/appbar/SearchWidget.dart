@@ -126,7 +126,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
 
     final response =
-        await http.get(Uri.parse('http://10.55.4.107:8000/?query=$query'));
+        await http.get(Uri.parse('http://192.168.216.174:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/BottomNavBar.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/main_category/Cake.dart';
 import 'package:flutter_banergy/main_category/Dessert.dart';
@@ -211,7 +211,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://10.55.4.107:8000/'),
+      Uri.parse('http://192.168.216.174:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

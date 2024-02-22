@@ -22,6 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
   String? code;
   String parsedText = '';
+  String resultCode = '';
 
   late File? pickedImage;
   late XFile? pickedFile;
@@ -149,8 +150,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    CodeScreen(resultCode: code ?? "스캔된 정보 없음"),
+                                builder: (context) => CodeScreen(
+                                  resultCode: code ?? "스캔된 정보 없음",
+                                ),
                               ),
                             );
                           },
