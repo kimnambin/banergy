@@ -10,7 +10,6 @@ import 'package:flutter_banergy/main_category/Food.dart';
 import 'package:flutter_banergy/main_category/Mealkit.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
 import 'package:http/http.dart' as http;
-import '../mypage/mypage.dart';
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
 

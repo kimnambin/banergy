@@ -6,3 +6,5 @@ appbar\search.dart
 appbar\SearchWidget
 
 product\code.dart
+
+main_category 폴더 부분

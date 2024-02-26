@@ -58,19 +58,23 @@ if __name__ == '__main__':
 @app.route('/', methods=['GET'])
 def get_products():
     query = request.args.get('query', '')
-    barcode = request.args.get('barcode', '')
-
-    if barcode:
-        # 바코드가 있는 경우 바코드에 해당하는 제품 정보를 반환합니다.
-        products = Product.query.filter_by(barcode=barcode).all()
-    elif query:
+    
+    if query:
         # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
-        products = Product.query.filter(Product.name.like(f"%{query}%")).all()
+        if query == '라면':
+            products = Product.query.filter(Product.kategorie.like("%라면%")).all()
+        elif query == '디저트':
+            products = Product.query.filter(Product.kategorie.like("%디저트%")).all()
+        elif query == '음료':
+            products = Product.query.filter(Product.kategorie.like("%음료%")).all()
+        #나중에 여기다 나머지 카테고리들 추가하기 (케이크 , 패스트푸드 , 밀키드 ,샌드위치)    
+        else:
+            # 다른 검색어의 경우 제품명에 검색어를 포함하는 제품 정보를 반환합니다.
+            products = Product.query.filter(Product.name.like(f"%{query}%")).all()
     else:
         # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
         products = Product.query.all()
 
-    
     product_list = []
     for product in products:
         product_data = {
@@ -84,6 +88,7 @@ def get_products():
         }
         product_list.append(product_data)
     return jsonify(product_list)
+
 
 @app.route('/scan', methods=['GET'])
 def scan_products():
@@ -96,6 +101,7 @@ def scan_products():
     elif query:
         # 검색어가 있는 경우 검색어를 포함하는 제품 정보를 반환합니다.
         products = Product.query.filter(Product.name.like(f"%{query}%")).all()
+
     else:
         # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
         products = Product.query.all()
@@ -113,11 +119,6 @@ def scan_products():
         }
         product_list.append(product_data)
     return jsonify(product_list)
-
-
-
-
-
 
 
 # 라우팅: 제품 추가
