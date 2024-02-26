@@ -1,5 +1,11 @@
 # 식품 알레르기 환자를 위한 애플리케이션
+<h3>📍바코드 스캔 성공!!(서버연동)</h3>
 
+
+https://github.com/kimnambin/banergy/assets/127464935/871b166f-f836-4976-8c12-f1e46a249bd9
+
+
+<br><hr>
 <h3>📍서버연동 (메인 페이지 + 검색 바)</h3>
 <div style="display: flex; justify-content: space-around;">
    <img src="https://github.com/kimnambin/banergy/assets/127464935/cd6d0cb5-dd9b-4d26-8c80-c92ce1031e6c" width="300" height="800">
