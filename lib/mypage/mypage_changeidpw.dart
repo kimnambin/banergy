@@ -101,6 +101,7 @@ class _ChangeidpwState extends State<Changeidpw>
                       );
                     },
                     style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
                       backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                     ),
                     child: const Text('비밀번호 변경',

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
-class DessertScreen extends StatelessWidget {
-  const DessertScreen({super.key});
+class instantfoodScreen extends StatelessWidget {
+  const instantfoodScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _DessertGridState extends State<DessertGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/?query=디저트'),
+      Uri.parse('http://192.168.216.174:8000/?query=패스트푸드'),
     );
     if (response.statusCode == 200) {
       setState(() {

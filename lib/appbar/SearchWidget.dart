@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:flutter_banergy/appbar/search.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -38,7 +39,18 @@ class _SearchWidgetState extends State<SearchWidget> {
         backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         title: Row(
           children: [
-            const Text('밴러지'),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MainpageApp()),
+                );
+              },
+              child: const Text(
+                '밴러지',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: SizedBox(

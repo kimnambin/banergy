@@ -3,21 +3,20 @@ import 'package:flutter_banergy/bottombar.dart';
 import '../mypage/mypage.dart';
 
 void main() {
-  runApp(const recordallergyreactions());
+  runApp(const Recordallergyreactions());
 }
 
-// ignore: camel_case_types
-class recordallergyreactions extends StatelessWidget {
-  const recordallergyreactions({super.key});
+class Recordallergyreactions extends StatelessWidget {
+  const Recordallergyreactions({Key? key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 50, 160, 107)),
+          seedColor: const Color.fromARGB(255, 50, 160, 107),
+        ),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -26,7 +25,7 @@ class recordallergyreactions extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -35,11 +34,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(
+        () => setState(() => _selectedIndex = _tabController.index));
   }
 
   @override
@@ -63,53 +65,19 @@ class _MyHomePageState extends State<MyHomePage>
             );
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () {
+              // 달력 아이콘을 눌렀을 때의 동작 추가
+              // 예를 들어 달력 팝업을 표시하거나 원하는 기능을 수행
+            },
+          ),
+        ],
       ),
+      // body: _selectedIndex == 0
       body: Container(),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
-/*
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: TabBar(
-          controller: _tabController,
-          labelColor: Colors.black,
-          tabs: [
-            Tab(
-              icon: GestureDetector(
-                onTap: () {
-                  // home 아이콘이 눌렸을 때 main.dart 페이지로 이동
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MainpageApp()),
-                  );
-                },
-                child: Icon(Icons.home),
-              ),
-              text: "Home",
-            ),
-            Tab(
-              icon: Icon(Icons.adjust),
-              text: "Lens",
-            ),
-            Tab(
-              icon: GestureDetector(
-                onTap: () {
-                  // home 아이콘이 눌렸을 때 main.dart 페이지로 이동
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MypageApp()),
-                  );
-                },
-                child: Icon(Icons.person),
-              ),
-              text: "My",
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}*/

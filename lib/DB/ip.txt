@@ -8,3 +8,4 @@ appbar\SearchWidget
 product\code.dart
 
 main_category 폴더 부분
+현재 러면  음료 , 스낵 완료

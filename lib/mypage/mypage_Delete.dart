@@ -74,6 +74,7 @@ class Delete extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                   ),
                   child:
@@ -107,7 +108,9 @@ class InputField extends StatelessWidget {
         TextField(
           decoration: InputDecoration(
             hintText: hintText,
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
           ),
         ),
       ],

@@ -10,6 +10,7 @@ import '../mypage/mypage_allergy_information.dart';
 import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
 import '../mypage/mypage_freeboard.dart';
+
 //import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 void main() {
@@ -21,9 +22,14 @@ class MypageApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 29, 171, 102)),
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(),
     );
   }
 }
@@ -68,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage>
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const recordallergyreactions()),
+              builder: (context) => const Recordallergyreactions()),
         );
         break;
       case "알러지 필터링":
@@ -104,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 문의하기 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => InquiryScreen()),
+          MaterialPageRoute(builder: (context) => const InquiryScreen()),
         );
 
         break;
@@ -133,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("마이페이지"),
-        backgroundColor: const Color.fromARGB(255, 50, 160, 107),
+        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -243,10 +249,10 @@ class _MyHomePageState extends State<MyHomePage>
           style: ElevatedButton.styleFrom(
             fixedSize: const Size(double.infinity, 45),
             backgroundColor:
-                const Color.fromARGB(255, 255, 255, 255), // 직접 지정한 색상 코드
+                const Color.fromARGB(255, 29, 171, 102), // 직접 지정한 색상 코드
             shape: RoundedRectangleBorder(
               side: const BorderSide(color: Color(0xFFEBEBEB)), // 테두리 색상
-              borderRadius: BorderRadius.circular(8.0), // 테두리 둥글기
+              borderRadius: BorderRadius.circular(30.0), // 테두리 둥글기
             ),
           ),
           child: Text(
@@ -255,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage>
               fontSize: 18,
               fontWeight: FontWeight.bold,
               //color: Color.fromARGB(255, 29, 171, 102),
-              color: Color.fromARGB(0xFF, 38, 159, 115),
+              color: Colors.white,
             ),
           ),
         ),

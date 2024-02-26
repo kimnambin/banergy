@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
-class CakeScreen extends StatelessWidget {
-  const CakeScreen({super.key});
+class lunchboxScreen extends StatelessWidget {
+  const lunchboxScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _DessertGridState extends State<DessertGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/?query=케이크'),
+      Uri.parse('http://192.168.216.174:8000/?query=밀키트'),
     );
     if (response.statusCode == 200) {
       setState(() {

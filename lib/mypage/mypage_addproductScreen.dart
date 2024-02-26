@@ -264,7 +264,7 @@ class InputField extends StatelessWidget {
         const SizedBox(height: 8), // 간격 조절을 위한 SizedBox 추가
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0), // 모서리를 둥글게 설정
+            borderRadius: BorderRadius.circular(30.0), // 모서리를 둥글게 설정
             border: Border.all(color: Colors.grey), // 테두리 색상 설정
           ),
           child: Padding(

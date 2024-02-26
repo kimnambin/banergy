@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
-class FoodScreen extends StatelessWidget {
-  const FoodScreen({super.key});
+class gimbapScreen extends StatelessWidget {
+  const gimbapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class FoodScreen extends StatelessWidget {
           IconSlider(),
           SizedBox(height: 16),
           Expanded(
-            child: FoodGrid(),
+            child: DessertGrid(),
           ),
         ],
       ),
@@ -34,14 +35,14 @@ class FoodScreen extends StatelessWidget {
   }
 }
 
-class FoodGrid extends StatefulWidget {
-  const FoodGrid({super.key});
+class DessertGrid extends StatefulWidget {
+  const DessertGrid({super.key});
 
   @override
-  _FoodGridState createState() => _FoodGridState();
+  _DessertGridState createState() => _DessertGridState();
 }
 
-class _FoodGridState extends State<FoodGrid> {
+class _DessertGridState extends State<DessertGrid> {
   late List<Product> products = [];
 
   @override
@@ -52,7 +53,7 @@ class _FoodGridState extends State<FoodGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/?query=라면'),
+      Uri.parse('http://192.168.216.174:8000/?query=김밥'),
     );
     if (response.statusCode == 200) {
       setState(() {

@@ -124,9 +124,10 @@ class InputField extends StatelessWidget {
         ),
         TextField(
           decoration: InputDecoration(
-            hintText: hintText,
-            border: const OutlineInputBorder(),
-          ),
+              hintText: hintText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              )),
         ),
       ],
     );

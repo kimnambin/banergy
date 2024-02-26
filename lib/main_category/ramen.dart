@@ -1,42 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
 
-void main() {
-  runApp(
-    const MaterialApp(
-      home: MainpageApp(),
-    ),
-  );
-}
-
-class MainpageApp extends StatelessWidget {
-  final File? image;
-
-  const MainpageApp({super.key, this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '식품 알레르기 관리 앱',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107),
-        ),
-        useMaterial3: true,
-      ),
-      home: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class ramenScreen extends StatelessWidget {
+  const ramenScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +26,7 @@ class HomeScreen extends StatelessWidget {
           IconSlider(),
           SizedBox(height: 16),
           Expanded(
-            child: ProductGrid(),
+            child: FoodGrid(),
           ),
         ],
       ),
@@ -63,14 +35,14 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class ProductGrid extends StatefulWidget {
-  const ProductGrid({super.key});
+class FoodGrid extends StatefulWidget {
+  const FoodGrid({super.key});
 
   @override
-  _ProductGridState createState() => _ProductGridState();
+  _FoodGridState createState() => _FoodGridState();
 }
 
-class _ProductGridState extends State<ProductGrid> {
+class _FoodGridState extends State<FoodGrid> {
   late List<Product> products = [];
 
   @override
@@ -81,7 +53,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/'),
+      Uri.parse('http://192.168.216.174:8000/?query=라면'),
     );
     if (response.statusCode == 200) {
       setState(() {

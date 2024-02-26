@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from random import shuffle #랜덤을 위함
 import csv
 
 # Flask 앱 초기화
@@ -74,6 +75,8 @@ def get_products():
     else:
         # 바코드와 검색어가 모두 없는 경우 모든 제품 정보를 반환합니다.
         products = Product.query.all()
+
+    shuffle(products) #랜덤으로 보여줌
 
     product_list = []
     for product in products:
