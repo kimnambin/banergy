@@ -1,7 +1,0 @@
-CREATE TABLE users (
-    username TEXT, 
-    password TEXT, 
-    name TEXT, 
-    date TEXT, 
-    gender TEXT
-);

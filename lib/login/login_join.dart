@@ -1,7 +1,6 @@
 //import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/loginDB/loginDB.dart';
 import 'login_login.dart';
 //import 'package:http/http.dart' as http;
 
@@ -231,13 +230,13 @@ class _JoinAppState extends State<JoinApp> {
                                   TextButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
-                                      await UserData(
-                                        idController.text,
-                                        passwordController.text,
-                                        nameController.text,
-                                        _dateController.text,
-                                        _selectedGender ?? '',
-                                      );
+                                      // await UserData(
+                                      //   idController.text,
+                                      //   passwordController.text,
+                                      //   nameController.text,
+                                      //   _dateController.text,
+                                      //   _selectedGender ?? '',
+                                      // );
                                       // ignore: use_build_context_synchronously
                                       Navigator.push(
                                         context,
