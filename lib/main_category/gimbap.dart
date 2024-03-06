@@ -81,9 +81,11 @@ class _DessertGridState extends State<DessertGrid> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Image.network(
-                    products[index].frontproduct,
-                    fit: BoxFit.cover,
+                  child: Center(
+                    child: Image.network(
+                      products[index].frontproduct,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8.0),

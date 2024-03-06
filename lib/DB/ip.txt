@@ -9,3 +9,5 @@ product\code.dart
 
 main_category 폴더 부분
 현재 러면  음료 , 스낵 완료
+
+신라면 ,너구리 ,짜파게티만 후면 이미지가 나옴
