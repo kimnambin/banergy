@@ -1,4 +1,12 @@
 # 식품 알레르기 환자를 위한 애플리케이션
+<h3>📍상품에 이미지 넣기</h3> <h6></h6>후면 이미지는 수정필요...<h6>
+<div style="display: flex; justify-content: space-around;">
+<img src="https://github.com/kimnambin/banergy/assets/127464935/aa8aa39c-5fd7-4686-a9a4-479212a38ffb" width="350" height="800">
+ <img src="https://github.com/kimnambin/banergy/assets/127464935/399dded9-40b7-4bfa-bf5a-c882f94ad455" width="350" height="800">
+</div><br><hr>
+
+
+
 <h3>📍바코드 스캔 성공!!(서버연동)</h3>
 
 
