@@ -25,6 +25,7 @@ dependencies:
   path: ^1.8.3
   crypto: ^3.0.3
   image: ^3.0.1
+  dio: ^5.4.1
 
 dev_dependencies:
   flutter_test:

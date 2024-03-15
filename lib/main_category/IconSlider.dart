@@ -11,7 +11,7 @@ import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
 
 class IconSlider extends StatelessWidget {
-  const IconSlider({super.key});
+  const IconSlider({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +20,14 @@ class IconSlider extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: const [
-          IconItem(icon: Icons.ramen_dining, label: '라면'),
-          IconItem(icon: Icons.local_cafe, label: '음료'),
-          IconItem(icon: Icons.dining, label: '김밥류'), //김밥 아이콘 필요
-          IconItem(icon: Icons.dining, label: '도시락'), //도시락 아이콘 필요
-          IconItem(icon: Icons.cookie, label: '과자류'), //과자
-          IconItem(icon: Icons.dining, label: '간식류'), // 간식류
-          IconItem(icon: Icons.fastfood, label: '즉석식품'),
-          IconItem(icon: Icons.food_bank, label: '샌드위치'),
+          IconItem(imagePath: 'images/noodle.png', label: '라면'),
+          IconItem(imagePath: 'images/drinkcan.png', label: '음료'),
+          //IconItem(imagePath: 'images/oni.png', label: '김밥류'),
+          IconItem(imagePath: 'images/onigiri.png', label: '도시락'),
+          IconItem(imagePath: 'images/snackchip.png', label: '과자류'),
+          IconItem(imagePath: 'images/candy.png', label: '간식류'),
+          IconItem(imagePath: 'images/fastfood.png', label: '즉석식품'),
+          IconItem(imagePath: 'images/sandwich.png', label: '샌드위치'),
         ],
       ),
     );
@@ -35,34 +35,34 @@ class IconSlider extends StatelessWidget {
 }
 
 class IconItem extends StatefulWidget {
-  final IconData icon;
+  final String imagePath;
   final String label;
 
-  const IconItem({super.key, required this.icon, required this.label});
+  const IconItem({Key? key, required this.imagePath, required this.label})
+      : super(key: key);
 
   @override
   _IconItemState createState() => _IconItemState();
 }
 
 class _IconItemState extends State<IconItem> {
-  bool isHovered = false; // 아이콘 위에 마우스 커서가 올려졌는지 여부를 관리하는 변수
+  bool isHovered = false;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) {
         setState(() {
-          isHovered = true; // 아이콘이 마우스 커서 위에 있을 때 상태를 변경합니다.
+          isHovered = true;
         });
       },
       onExit: (_) {
         setState(() {
-          isHovered = false; // 아이콘이 마우스 커서 밖으로 나갈 때 상태를 변경합니다.
+          isHovered = false;
         });
       },
       child: GestureDetector(
         onTap: () {
-          // 아이콘을 탭했을 때의 동작
           _handleIconTap(context);
         },
         child: Padding(
@@ -70,12 +70,11 @@ class _IconItemState extends State<IconItem> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                widget.icon,
-                size: 36,
-                color: isHovered
-                    ? Colors.grey
-                    : Colors.black, // 마우스 커서 상태에 따라 색상을 변경합니다.
+              Image.asset(
+                widget.imagePath,
+                width: 36,
+                height: 36,
+                color: isHovered ? Colors.grey : Colors.black,
               ),
               const SizedBox(height: 4),
               Text(widget.label),

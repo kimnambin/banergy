@@ -81,7 +81,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/'),
+      Uri.parse('http://192.168.1.174:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

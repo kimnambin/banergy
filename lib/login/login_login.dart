@@ -1,12 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/login/login_id_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
 import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
-import 'package:flutter_banergy/login/widget.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-//import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(
@@ -16,18 +15,109 @@ void main() {
   );
 }
 
-//글로벌 키 -->> validator 사용하기 위함
 class LoginApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  LoginApp({super.key});
+  LoginApp({Key? key}) : super(key: key);
+
+  // 로그인 함수
+  Future<void> _login(BuildContext context) async {
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+    print('Username: $username'); // 사용자 이름을 출력하여 확인
+    print('Password: $password'); // 비밀번호를 출력하여 확인
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.174:3000/login'),
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // 로그인 성공 시
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('로그인 성공'),
+              content: const Text('밴러지에 로그인하였습니다.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainpageApp(),
+                      ),
+                    );
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // 로그인 실패 시
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('로그인 실패'),
+              content: const Text('아이디 또는 비밀번호가 일치하지 않습니다.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      // 오류 발생 시
+      print('서버에서 오류가 발생했음');
+    }
+  }
+
+  // 데이터 가져오는 함수
+  Future<void> fetchData() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.216.174:3000/sign'),
+      );
+      if (response.statusCode == 200) {
+        _login;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      // 오류 발생 시 처리
+      // 예: 오류 메시지 표시
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 255, 255, 255)),
+          seedColor: const Color.fromARGB(255, 255, 255, 255),
+        ),
         useMaterial3: true,
       ),
       home: Scaffold(
@@ -41,7 +131,6 @@ class LoginApp extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 60),
-
                     Image.asset(
                       'images/000.jpeg',
                       width: 200,
@@ -55,106 +144,39 @@ class LoginApp extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 50),
-
                     Column(
                       children: [
-                        BanergyInputField(
-                          hintText: '아이디를 입력해주세요.',
-                          label: '',
-                          icon: Icons.account_box,
-                          iconColor: Colors.grey,
-                          hintTextColor: Colors.grey,
-                          borderRadius: BorderRadius.circular(12.0),
-                          controller: TextEditingController(),
+                        TextField(
+                          decoration: InputDecoration(
+                            labelText: '아이디를 입력해주세요.',
+                            prefixIcon: const Icon(Icons.account_box,
+                                color: Colors.grey),
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          controller: _usernameController,
                         ),
                         const SizedBox(height: 20),
-                        BanergyInputField(
-                          hintText: '비밀번호를 입력해주세요.',
-                          label: '',
-                          icon: Icons.lock_open,
-                          iconColor: Colors.grey,
-                          hintTextColor: Colors.grey,
-                          borderRadius: BorderRadius.circular(12.0),
-                          controller: TextEditingController(),
+                        TextField(
+                          decoration: InputDecoration(
+                            labelText: '비밀번호를 입력해주세요.',
+                            prefixIcon:
+                                const Icon(Icons.lock_open, color: Colors.grey),
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          controller: _passwordController,
+                          obscureText: true, // 비밀번호를 숨기는 옵션
                         ),
                       ],
                     ),
                     const SizedBox(height: 15),
                     ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState != null &&
-                            _formKey.currentState!.validate()) {
-                          // 입력한 아이디와 비밀번호 가져오기
-                          String username = '사용자가 입력한 아이디';
-                          String password = '사용자가 입력한 비밀번호';
-
-                          // 데이터베이스에서 사용자 정보 조회
-                          final database = await openDatabase(
-                            join(await getDatabasesPath(), 'user_database.db'),
-                          );
-                          final List<Map<String, dynamic>> users =
-                              await database.query(
-                            'users',
-                            where: 'username = ? AND password = ?',
-                            whereArgs: [username, password],
-                          );
-
-                          if (users.isNotEmpty) {
-                            // 로그인 성공
-                            // ignore: use_build_context_synchronously
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: Colors.white,
-                                  content: const Text(
-                                    '밴러지 로그인!!',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // 다이얼로그 닫기
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const MainpageApp(),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('확인'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            // 로그인 실패
-                            // ignore: use_build_context_synchronously
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: Colors.white,
-                                  content: const Text(
-                                    '아이디 또는 비밀번호가 일치하지 않습니다.',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // 다이얼로그 닫기
-                                      },
-                                      child: const Text('확인'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                        }
-                      },
+                      onPressed: () => _login(context),
                       child: const SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -164,7 +186,6 @@ class LoginApp extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-
                     //텍스트 클릭 시 회원가입 창으로...
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -174,7 +195,8 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const JoinApp()),
+                                builder: (context) => const JoinApp(),
+                              ),
                             );
                           },
                           child: const Text(
@@ -187,7 +209,8 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const IDFindApp()),
+                                builder: (context) => const IDFindApp(),
+                              ),
                             );
                           },
                           child: const Text('아이디 찾기',
@@ -198,7 +221,8 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const PWFindApp()),
+                                builder: (context) => const PWFindApp(),
+                              ),
                             );
                           },
                           child: const Text('비밀번호 찾기',

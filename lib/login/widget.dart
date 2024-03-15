@@ -10,6 +10,7 @@ class BanergyInputField extends StatelessWidget {
   final Color iconColor;
   final Color? hintTextColor;
   final BorderRadius borderRadius;
+  final TextEditingController controller;
 
   const BanergyInputField({
     super.key,
@@ -19,7 +20,7 @@ class BanergyInputField extends StatelessWidget {
     required this.iconColor,
     this.hintTextColor,
     required this.borderRadius,
-    required TextEditingController controller,
+    required this.controller,
   });
 
 //인풋 필드 내용
@@ -277,3 +278,4 @@ class _DatePickerButtonState extends State<DatePickerButton> {
     );
   }
 }
+

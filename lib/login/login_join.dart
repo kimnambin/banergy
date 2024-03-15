@@ -1,8 +1,9 @@
-//import 'dart:convert';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/login/joinwidget.dart';
 import 'login_login.dart';
-//import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,13 +29,95 @@ class JoinApp extends StatefulWidget {
 
 class _JoinAppState extends State<JoinApp> {
   //유효성 검사 부분
-  TextEditingController idController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   late final GlobalKey<FormState> _formKey;
   late final TextEditingController _dateController;
   String? _selectedGender;
+
+  // 회원가입 함수
+  Future<void> _signup(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+    final String name = _nameController.text;
+    final String date = _dateController.text;
+    final String? gender = _selectedGender;
+    print('Username: $username'); // 사용자 이름을 출력하여 확인
+    print('Password: $password'); // 비밀번호를 출력하여 확인
+    print('name: $name'); // 사용자 이름을 출력하여 확인
+    print('date: $date'); // 비밀번호를 출력하여 확인
+    print('gender: $gender'); // 사용자 이름을 출력하여 확인
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.174:3000/sign'),
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+          'name': name,
+          'date': date,
+          'gender': gender,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      print('Response status: ${response.statusCode}');
+
+      if (response.statusCode == 201) {
+        // 회원가입 성공 시
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('밴러지 회원가입완료!!'),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginApp(),
+                      ),
+                    );
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // 실패 시
+        // ignore: use_build_context_synchronously
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: const Text('입력한 정보를 확인해주세요.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('확인'),
+                  ),
+                ],
+              );
+            });
+      }
+    } catch (e) {
+      print('Error sending request: $e');
+    }
+  }
 
 //회원가입 페이지만에 글로벌 키를 사용하기 위함
   @override
@@ -48,26 +131,26 @@ class _JoinAppState extends State<JoinApp> {
   bool isIdValid() {
     String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$'; //영어 + 숫자 조합을 위함
     RegExp regex = RegExp(pattern);
-    return regex.hasMatch(idController.text) &&
-        idController.text.length >= 5; //5글자 이상
+    return regex.hasMatch(_usernameController.text) &&
+        _usernameController.text.length >= 5; //5글자 이상
   }
 
   bool isPasswordValid() {
     String pattern =
         r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$'; //영어+숫자+특수기호 조합을 위함
     RegExp regex = RegExp(pattern);
-    return regex.hasMatch(passwordController.text) &&
-        passwordController.text.length >= 5;
+    return regex.hasMatch(_passwordController.text) &&
+        _passwordController.text.length >= 5;
   }
 
   bool isConfirmPasswordValid() {
-    return confirmPasswordController
+    return _confirmPasswordController
             .text.isNotEmpty && //비었는지 + 위에 입력한 비밀번호와 동일한지 확인
-        confirmPasswordController.text == passwordController.text;
+        _confirmPasswordController.text == _passwordController.text;
   }
 
   bool isNameValid() {
-    return nameController.text.isNotEmpty;
+    return _nameController.text.isNotEmpty;
   }
 
   // 모든 필드에 대한 유효성 검사를 수행하는 함수
@@ -106,7 +189,7 @@ class _JoinAppState extends State<JoinApp> {
 
                     const SizedBox(height: 20),
                     TextFormField(
-                      controller: idController,
+                      controller: _usernameController,
                       decoration: InputDecoration(
                         hintText: '아이디를 입력해주세요.',
                         prefixIcon:
@@ -130,7 +213,8 @@ class _JoinAppState extends State<JoinApp> {
                     ),
                     const SizedBox(height: 15), // 간격 벌리기 용
                     TextFormField(
-                      controller: passwordController,
+                      controller: _passwordController,
+                      obscureText: true,
                       decoration: InputDecoration(
                         hintText: '비밀번호를 입력해주세요.',
                         prefixIcon:
@@ -156,7 +240,8 @@ class _JoinAppState extends State<JoinApp> {
 
                     const SizedBox(height: 15),
                     TextFormField(
-                      controller: confirmPasswordController,
+                      controller: _confirmPasswordController,
+                      obscureText: true,
                       decoration: InputDecoration(
                         hintText: '비밀번호를 다시 입력해주세요.',
                         prefixIcon:
@@ -168,7 +253,7 @@ class _JoinAppState extends State<JoinApp> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '비밀번호 재확인.';
-                        } else if (value != passwordController.text) {
+                        } else if (value != _passwordController.text) {
                           return '비밀번호가 일치하지 않습니다.';
                         }
                         return null;
@@ -177,7 +262,7 @@ class _JoinAppState extends State<JoinApp> {
 
                     const SizedBox(height: 15),
                     TextFormField(
-                      controller: nameController,
+                      controller: _nameController,
                       decoration: InputDecoration(
                         hintText: '이름',
                         prefixIcon: const Icon(Icons.account_circle,
@@ -197,6 +282,11 @@ class _JoinAppState extends State<JoinApp> {
                     // 생년월일 달력
                     DatePickerButton(
                       controller: _dateController,
+                      onChanged: (selectedDate) {
+                        setState(() {
+                          _dateController.text = selectedDate.toString();
+                        });
+                      },
                       label: '',
                       hintText: '생년월일',
                       iconColor: Colors.grey,
@@ -208,7 +298,12 @@ class _JoinAppState extends State<JoinApp> {
                     const SizedBox(height: 15),
                     // 성별 부분
                     genderbox(
-                      controller: _selectedGender,
+                      selectedGender: _selectedGender,
+                      onChanged: (selectedGender) {
+                        setState(() {
+                          _selectedGender = selectedGender;
+                        });
+                      },
                       label: '',
                       hintText: '성별',
                       iconColor: Colors.grey,
@@ -218,58 +313,7 @@ class _JoinAppState extends State<JoinApp> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState != null &&
-                            _formKey.currentState!.validate()) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: const Text('밴러지 회원가입완료!!'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                      // await UserData(
-                                      //   idController.text,
-                                      //   passwordController.text,
-                                      //   nameController.text,
-                                      //   _dateController.text,
-                                      //   _selectedGender ?? '',
-                                      // );
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => LoginApp(),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text('확인'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: const Text('입력한 정보를 확인해주세요.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('확인'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      },
+                      onPressed: () => _signup(context),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor:
@@ -293,306 +337,6 @@ class _JoinAppState extends State<JoinApp> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// 달력 위젯 http://rwdb.kr/datepicker/
-class DatePickerButton extends StatefulWidget {
-  const DatePickerButton({
-    super.key,
-    this.label = '',
-    this.hintText = '',
-    this.icon,
-    this.iconColor = Colors.grey,
-    this.hintTextColor = Colors.grey,
-    this.borderRadius = const BorderRadius.all(Radius.circular(12.0)),
-    this.buttonWidth = double.infinity,
-    this.buttonHeight = 60.0,
-    this.iconSize = 24.0,
-    this.hintTextSize = 16.0,
-    this.backgroundColor = Colors.white,
-    required TextEditingController controller,
-  });
-
-  final String label;
-  final String hintText;
-  final IconData? icon;
-  final Color iconColor;
-  final Color hintTextColor;
-  final BorderRadius borderRadius;
-  final double buttonWidth;
-  final double buttonHeight;
-  final double iconSize;
-  final double hintTextSize;
-  final Color backgroundColor;
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _DatePickerButtonState createState() => _DatePickerButtonState();
-}
-
-//달력 설정
-class _DatePickerButtonState extends State<DatePickerButton> {
-  final TextEditingController _dateController = TextEditingController();
-
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1950),
-      lastDate: DateTime(2101),
-    );
-
-    if (pickedDate != null && pickedDate != DateTime.now()) {
-      setState(() {
-        _dateController.text = pickedDate.toLocal().toString().split(' ')[0];
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _dateController.text = widget.hintText;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _selectDate(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: widget.backgroundColor,
-        minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
-        shape: RoundedRectangleBorder(
-          borderRadius: widget.borderRadius,
-          side: const BorderSide(
-              //color: Colors.black,
-              ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Icon(
-            widget.icon,
-            color: widget.iconColor,
-            size: widget.iconSize,
-          ),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: TextField(
-              controller: _dateController,
-              enabled: false,
-              style: TextStyle(
-                fontSize: widget.hintTextSize,
-                //color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                hintText: widget.hintText,
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// 인풋 필드 선언
-class InputField extends StatelessWidget {
-  final String label;
-  final String? hintText;
-  final IconData icon;
-  final Color iconColor; // 아이콘 색상 추가
-  final Color? hintTextColor; // 힌트 텍스트 색상 추가
-  final BorderRadius borderRadius;
-
-  const InputField({
-    super.key,
-    required this.label,
-    this.hintText,
-    required this.icon,
-    required this.iconColor,
-    this.hintTextColor,
-    required this.borderRadius,
-    required TextEditingController controller,
-  });
-
-//인풋 필드 내용
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '필수 입력 항목입니다.';
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: TextStyle(color: hintTextColor),
-            border: OutlineInputBorder(
-              borderRadius: borderRadius,
-            ),
-            prefixIcon: Icon(icon, color: iconColor),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// 성별 부분 해보기
-// ignore: camel_case_types
-class genderbox extends StatefulWidget {
-  const genderbox({
-    super.key,
-    this.label = '',
-    this.hintText = '',
-    this.icon,
-    this.iconColor = Colors.grey,
-    this.hintTextColor = Colors.grey,
-    this.borderRadius = const BorderRadius.all(Radius.circular(12.0)),
-    this.buttonWidth = double.infinity,
-    this.buttonHeight = 60.0,
-    this.iconSize = 24.0,
-    this.hintTextSize = 16.0,
-    this.backgroundColor = Colors.white,
-    String? controller,
-  });
-  final String label;
-  final String hintText;
-  final IconData? icon;
-  final Color iconColor;
-  final Color hintTextColor;
-  final BorderRadius borderRadius;
-  final double buttonWidth;
-  final double buttonHeight;
-  final double iconSize;
-  final double hintTextSize;
-  final Color backgroundColor;
-  @override
-  // ignore: library_private_types_in_public_api
-  _genderboxState createState() => _genderboxState();
-}
-
-// ignore: camel_case_types
-class _genderboxState extends State<genderbox> {
-  String? _selectedGender;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: () => _selectGender(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: widget.backgroundColor,
-            minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
-            shape: RoundedRectangleBorder(
-              borderRadius: widget.borderRadius,
-              side: const BorderSide(
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                widget.icon,
-                color: widget.iconColor,
-                size: widget.iconSize,
-              ),
-              const SizedBox(width: 8.0),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_selectedGender == null)
-                      Text(
-                        widget.hintText,
-                        style: TextStyle(
-                          color: widget.hintTextColor,
-                          fontSize: widget.hintTextSize,
-                        ),
-                      ),
-                    if (_selectedGender != null)
-                      Text(
-                        _selectedGender!,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: widget.hintTextSize,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _selectGender(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('성별'),
-              ListTile(
-                title: const Text('남자'),
-                leading: Radio(
-                  value: '남자',
-                  groupValue: _selectedGender,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedGender = value;
-                    });
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                  },
-                ),
-              ),
-              ListTile(
-                title: const Text('여자'),
-                leading: Radio(
-                  value: '여자',
-                  groupValue: _selectedGender,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedGender = value;
-                    });
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

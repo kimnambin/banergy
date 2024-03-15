@@ -28,7 +28,7 @@ class _CodeScreenState extends State<CodeScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.216.174:8000/scan?barcode=$resultCode'),
+      Uri.parse('http://192.168.1.174:8000/scan?barcode=$resultCode'),
     );
     if (response.statusCode == 200) {
       // 서버가 잘 작동하는 지 테스트

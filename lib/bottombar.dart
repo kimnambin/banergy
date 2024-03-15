@@ -65,24 +65,30 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
   }
 
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      currentIndex: _selectedIndex,
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
+            icon: Icon(Icons.home),
+            label: 'Home',
+            activeIcon: Icon(Icons.home, color: Colors.green)),
         BottomNavigationBarItem(
-          icon: Icon(Icons.adjust),
-          label: "Lens",
-        ),
+            icon: Icon(Icons.adjust),
+            label: "Lens",
+            activeIcon: Icon(Icons.adjust, color: Colors.green)),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'My',
-        ),
+            icon: Icon(Icons.person),
+            label: 'My',
+            activeIcon: Icon(Icons.person, color: Colors.grey)),
       ],
       onTap: (index) async {
+        setState(() {
+          _selectedIndex = index;
+        });
         if (index == 0) {
           Navigator.pushReplacement(
             context,
@@ -166,7 +172,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
             },
           );
         } else if (index == 2) {
-          Navigator.push(
+          setState(() {
+            _selectedIndex = index;
+          });
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MypageApp()),
           );
