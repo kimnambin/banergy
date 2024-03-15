@@ -1,4 +1,17 @@
 # 식품 알레르기 환자를 위한 애플리케이션
+
+<h3>📍로그인 + 회원가입 + 아이디 찾기 + 비밀번호 찾기 </h3>
+ <table>
+        <tr>
+            <td><img src="https://github.com/kimnambin/banergy/assets/127464935/28ead777-832f-4834-b84a-60a254d86a01" width="300" height="750"></td>
+            <td><img src="https://github.com/kimnambin/banergy/assets/127464935/19555317-ad28-469a-b976-eadc323dd21c" width="300" height="750"></td>
+        </tr>
+        <tr>
+            <td><img src="https://github.com/kimnambin/banergy/assets/127464935/74906210-4ab1-4536-b8d8-2b3316acb357" width="300" height="750"></td>
+            <td><img src="https://github.com/kimnambin/banergy/assets/127464935/094e4434-0a15-4d4d-85f1-80172bc7fbeb" width="300" height="750"></td>
+        </tr>
+    </table>
+
 <h3>📍상품에 이미지 넣기</h3> <h6></h6>url를 이용<h6>
 <div style="display: flex; justify-content: space-around;">
 <img src="https://github.com/kimnambin/banergy/assets/127464935/aa8aa39c-5fd7-4686-a9a4-479212a38ffb" width="350" height="800">
