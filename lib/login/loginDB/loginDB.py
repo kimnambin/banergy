@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__)
 CORS(app)
@@ -24,14 +24,12 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()    
 
+#회원가입 부분
 @app.route('/sign', methods=['GET','POST'])
 def sign():
     if request.method == 'POST':
         data = request.json  
         print("Received data:", data)
-
-        if not data:
-            return jsonify({'message': '입력한 정보 x'}), 400
         
         username = data.get('username')
         password = data.get('password')
@@ -39,16 +37,12 @@ def sign():
         date = data.get('date')
         gender = data.get('gender')
 
-        if not username or not password:
-            return jsonify({'message': '사용자 이름과 비밀번호가 입력 x'}), 400
-
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return jsonify({'message': '중복됨'}), 409
 
-        hashed_password = generate_password_hash(password)
 
-        new_user = User(username=username, password=hashed_password, name=name, date=date, gender=gender)
+        new_user = User(username=username, password=password, name=name, date=date, gender=gender)
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -56,29 +50,51 @@ def sign():
         except Exception as e:
             db.session.rollback()
             return jsonify({'message': '회원가입 실패 ㅠ.ㅠ'}), 500
-    else:
-        return jsonify({'message': 'POST 메서드만 허용됩니다.'}), 405
 
 
+#로그인 부분
 @app.route('/login', methods=['GET','POST'])
 def login():
     data = request.json
     print("Received data:", data)
     
-    if not data:
-        return jsonify({'message': '데이터를 찾을 수 없습니다.'}), 400
-
     username = data.get('username')
     password = data.get('password')
     
-    if not username or not password:
-        return jsonify({'message': '사용자 이름과 비밀번호는 필수입니다.'}), 400
-    
-    user = User.query.filter_by(username=username).first()
-    if user and check_password_hash(user.password, password):
-        return jsonify({'message': '로그인 성공!!'}), 200
+    user = User.query.filter_by(username=username , password = password).first()
+    if user:
+            return jsonify({'message': '로그인 성공!!'}), 200  
     else:
-        return jsonify({'message': '아이디나 비밀번호를 다시 확인 ㅠㅠ'}), 401 
+            return jsonify({'message': '로그인 실패 ㅠㅠ'}), 404
+
+# 아이디 찾기 
+@app.route('/findid', methods=['GET','POST'])
+def find_username():
+    if request.method == 'POST':
+        data = request.json
+        name = data.get('name')  
+        password = data.get('password')
+        #date = data.get('date')
+        
+        user = User.query.filter_by(name=name , password=password).first()  
+   
+        if user:
+            return jsonify({'username': user.username}), 200  
+        else:
+            return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
+    
+# 비밀번호 찾기
+@app.route('/findpw', methods=['GET','POST'])
+def find_password():
+    data = request.json
+    name = data.get('name')
+    username = data.get('username') 
+    #date = data.get('date')
+    user = User.query.filter_by(username=username, name=name ).first()  
+    if user:
+        return jsonify({'password':user.password }), 200
+    else:
+        return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)

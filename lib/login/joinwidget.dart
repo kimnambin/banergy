@@ -1,3 +1,5 @@
+//회원가입 페이지에 달력과 성별 부분
+
 import 'package:flutter/material.dart';
 
 // 달력 위젯 http://rwdb.kr/datepicker/
@@ -89,7 +91,7 @@ class _DatePickerButtonState extends State<DatePickerButton> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1950),
-      lastDate: DateTime(2101),
+      lastDate: DateTime(2030),
     );
 
     if (pickedDate != null && pickedDate != DateTime.now()) {

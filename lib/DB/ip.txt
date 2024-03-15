@@ -5,6 +5,8 @@ main.dart
 appbar\search.dart
 appbar\SearchWidget
 
+카테고리 부분들
+
 product\code.dart
 
 login 부분들

@@ -20,14 +20,12 @@ class LoginApp extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  LoginApp({Key? key}) : super(key: key);
+  LoginApp({super.key});
 
   // 로그인 함수
   Future<void> _login(BuildContext context) async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
-    print('Username: $username'); // 사용자 이름을 출력하여 확인
-    print('Password: $password'); // 비밀번호를 출력하여 확인
 
     try {
       final response = await http.post(
@@ -98,7 +96,7 @@ class LoginApp extends StatelessWidget {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.216.174:3000/sign'),
+        Uri.parse('http://192.168.1.174:3000/sign'),
       );
       if (response.statusCode == 200) {
         _login;
@@ -116,7 +114,7 @@ class LoginApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 255, 255),
+          seedColor: const Color.fromARGB(255, 29, 171, 102),
         ),
         useMaterial3: true,
       ),
@@ -158,7 +156,7 @@ class LoginApp extends StatelessWidget {
                           ),
                           controller: _usernameController,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
                         TextField(
                           decoration: InputDecoration(
                             labelText: '비밀번호를 입력해주세요.',
@@ -177,6 +175,14 @@ class LoginApp extends StatelessWidget {
                     const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: () => _login(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 29, 171, 102),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
                       child: const SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -209,7 +215,7 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const IDFindApp(),
+                                builder: (context) => IDFindApp(),
                               ),
                             );
                           },

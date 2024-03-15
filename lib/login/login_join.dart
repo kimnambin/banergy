@@ -48,11 +48,6 @@ class _JoinAppState extends State<JoinApp> {
     final String name = _nameController.text;
     final String date = _dateController.text;
     final String? gender = _selectedGender;
-    print('Username: $username'); // 사용자 이름을 출력하여 확인
-    print('Password: $password'); // 비밀번호를 출력하여 확인
-    print('name: $name'); // 사용자 이름을 출력하여 확인
-    print('date: $date'); // 비밀번호를 출력하여 확인
-    print('gender: $gender'); // 사용자 이름을 출력하여 확인
 
     try {
       final response = await http.post(
@@ -163,9 +158,21 @@ class _JoinAppState extends State<JoinApp> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+          title: const Text("밴러지 회원가입"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginApp()),
+              );
+            },
+          ),
+        ),
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
@@ -179,12 +186,6 @@ class _JoinAppState extends State<JoinApp> {
                       'images/000.jpeg',
                       width: 100,
                       height: 100,
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      '회원가입',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
 
                     const SizedBox(height: 20),
