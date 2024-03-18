@@ -31,6 +31,7 @@ class IntroPageC extends StatelessWidget {
             const Text(
               'OCR, 바코드 기술로 간편하게\n찾아보는 음식 성분들!',
               style: TextStyle(fontSize: 13),
+              textAlign: TextAlign.center,
             ),
             Image.asset('images/intropage3.png', width: 100, height: 100),
             Column(

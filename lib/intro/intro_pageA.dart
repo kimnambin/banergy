@@ -29,8 +29,9 @@ class IntroPageA extends StatelessWidget {
               ),
               Image.asset('images/000.jpeg', width: 200, height: 200),
               const Text(
-                '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
-                style: TextStyle(fontSize: 18),
+                '알러지로 마음대로 먹지도\n못하는 당신을 위한 \n맞춤형 관리 앱',
+                style: TextStyle(fontSize: 13),
+                textAlign: TextAlign.center,
               ),
               Image.asset('images/intropage1.png', width: 100, height: 100),
               Column(

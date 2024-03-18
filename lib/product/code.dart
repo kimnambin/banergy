@@ -112,15 +112,23 @@ void _handleProductClick(BuildContext context, Product product) {
     builder: (context) {
       return AlertDialog(
         title: const Text('상품 정보'),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('카테고리: ${product.kategorie}'),
-            Text('이름: ${product.name}'),
-            Text('정면 이미지: ${product.frontproduct}'),
-            Text('후면 이미지: ${product.backproduct}'),
-            Text('알레르기 식품: ${product.allergens}'),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('카테고리: ${product.kategorie}'),
+              Text('이름: ${product.name}'),
+              Image.network(
+                product.frontproduct,
+                fit: BoxFit.cover,
+              ),
+              Image.network(
+                product.backproduct,
+                fit: BoxFit.cover,
+              ),
+              Text('알레르기 식품: ${product.allergens}'),
+            ],
+          ),
         ),
         actions: <Widget>[
           TextButton(

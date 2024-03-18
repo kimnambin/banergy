@@ -201,25 +201,23 @@ class FAQList extends StatelessWidget {
           children: [
             FAQItem(
               question: '자주 묻는 내용1',
-              answer:
-                  '회원가입 시 선택한 학교/캠퍼스는 가입 이후 변경할 수 없습니다. 다른 학교/캠퍼스로 변경을 원하실 경우, 현재 사용하시는 계정을 탈퇴하신 후 새로운 학교/캠퍼스로 다시 회원가입을 해주시기 바랍니다.',
+              answer: '밴러지는 알레르기를 밴한다는 의미입니다',
             ),
             FAQItem(
               question: '자주 묻는 내용2',
-              answer:
-                  '에브리타임은 대한민국 대학교 재학생 및 졸업생을 위한 서비스입니다. 대한민국 대학교의 재학생 및 졸업생이 아닐 경우, 이용이 불가능합니다.',
+              answer: '임산성 , 한지욱 , 김남빈 , 이예원 , 양병승이 개발해 참여했습니다.',
             ),
             FAQItem(
               question: '자주 묻는 내용3',
-              answer: '',
+              answer: '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
             ),
             FAQItem(
               question: '자주 묻는 내용4',
-              answer: '',
+              answer: '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
             ),
             FAQItem(
               question: '자주 묻는 내용5',
-              answer: '',
+              answer: 'OCR, 바코드 기술로 간편하게\n찾아보는 음식 성분들!',
             ),
           ],
         ),

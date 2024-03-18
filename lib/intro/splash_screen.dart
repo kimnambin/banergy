@@ -14,7 +14,6 @@ class SplashScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset('images/000.jpeg', width: 200, height: 200),
-                const SizedBox(height: 10),
                 const Text(
                   '밴러지',
                   style: TextStyle(
@@ -25,9 +24,11 @@ class SplashScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
+                  '알러지로 마음대로 먹지도\n못하는 당신을 위한 \n맞춤형 관리 앱',
                   style: TextStyle(fontSize: 13),
+                  textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 30),
                 const CircularProgressIndicator(
                   color: Colors.red,
                 ),

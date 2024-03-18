@@ -58,7 +58,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              content: Text('회원님의 비밀번호는 $_pw 입니다.'),
+              content: Text('회원님의 비밀번호는 "$_pw" 입니다.'),
               actions: [
                 TextButton(
                   onPressed: () {

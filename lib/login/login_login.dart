@@ -6,6 +6,7 @@ import 'package:flutter_banergy/login/login_join.dart';
 import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(
@@ -26,6 +27,10 @@ class LoginApp extends StatelessWidget {
   Future<void> _login(BuildContext context) async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
+
+    //로그인 유지
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
 
     try {
       final response = await http.post(
@@ -52,7 +57,8 @@ class LoginApp extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // 다이얼로그 닫기
-                    Navigator.push(
+                    //Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const MainpageApp(),
@@ -215,7 +221,7 @@ class LoginApp extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => IDFindApp(),
+                                builder: (context) => const IDFindApp(),
                               ),
                             );
                           },

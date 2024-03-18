@@ -30,6 +30,7 @@ class IntroPageB extends StatelessWidget {
             const Text(
               '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
               style: TextStyle(fontSize: 13),
+              textAlign: TextAlign.center,
             ),
             Image.asset('images/intropage2.png', width: 100, height: 100),
             Column(

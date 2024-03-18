@@ -62,7 +62,7 @@ class _IDFindAppState extends State<IDFindApp> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              content: Text('회원님의 아이디는: $_username 입니다.'),
+              content: Text('회원님의 아이디는: "$_username" 입니다.'),
               actions: [
                 TextButton(
                   onPressed: () {
