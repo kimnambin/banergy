@@ -11,8 +11,6 @@ import '../mypage/mypage_record_allergy_reactions.dart';
 import '../mypage/mypage_filtering_allergies.dart';
 import '../mypage/mypage_freeboard.dart';
 
-//import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-
 void main() {
   runApp(const MypageApp());
 }
@@ -102,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 탈퇴하기 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Delete()),
+          MaterialPageRoute(builder: (context) => Delete()),
         );
         break;
 
@@ -118,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 상품추가 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const AddProductScreen()),
+          MaterialPageRoute(builder: (context) => AddProductScreen()),
         );
         break;
 

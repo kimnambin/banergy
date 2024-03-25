@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/login/login_id_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
@@ -65,6 +66,13 @@ class LoginApp extends StatelessWidget {
                       ),
                     );
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                   child: const Text('확인'),
                 ),
               ],
@@ -85,6 +93,13 @@ class LoginApp extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop(); // 다이얼로그 닫기
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                   child: const Text('확인'),
                 ),
               ],
@@ -94,7 +109,9 @@ class LoginApp extends StatelessWidget {
       }
     } catch (e) {
       // 오류 발생 시
-      print('서버에서 오류가 발생했음');
+      if (kDebugMode) {
+        print('서버에서 오류가 발생했음');
+      }
     }
   }
 

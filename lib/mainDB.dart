@@ -1,4 +1,4 @@
-// DB Product
+// DB Product + 자유게시판
 
 class Product {
   final int id;
@@ -28,6 +28,23 @@ class Product {
       frontproduct: json['frontproduct'],
       backproduct: json['backproduct'],
       allergens: json['allergens'],
+    );
+  }
+}
+
+class freeDB {
+  final String? freetitle;
+  final String? freecontent;
+
+  freeDB({
+    required this.freetitle,
+    required this.freecontent,
+  });
+
+  factory freeDB.fromJson(Map<String, dynamic> json) {
+    return freeDB(
+      freetitle: json['freetitle'],
+      freecontent: json['freecontent'],
     );
   }
 }

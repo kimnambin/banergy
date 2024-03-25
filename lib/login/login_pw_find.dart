@@ -71,6 +71,13 @@ class _PWFindAppAppState extends State<PWFindApp> {
                       ),
                     );
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                   child: const Text('확인'),
                 ),
               ],
@@ -90,6 +97,13 @@ class _PWFindAppAppState extends State<PWFindApp> {
                   onPressed: () {
                     Navigator.of(context).pop(); // 다이얼로그 닫기
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                   child: const Text('확인'),
                 ),
               ],

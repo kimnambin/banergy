@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(
@@ -50,7 +52,6 @@ class HomeScreen extends StatelessWidget {
       ),
       body: const Column(
         children: [
-          // 여기에 아이콘 슬라이드를 넣어줍니다.
           IconSlider(),
           SizedBox(height: 16),
           Expanded(
@@ -90,6 +91,27 @@ class _ProductGridState extends State<ProductGrid> {
       });
     } else {
       throw Exception('Failed to load data');
+    }
+  }
+
+  // //로그인 상태검사
+  Future<void> checkLoginStatus(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (!isLoggedIn) {
+      // 로그인x
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginApp()),
+      );
+    } else {
+      // 로그인 o -> 메인 페이지로 이동
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainpageApp()),
+      );
     }
   }
 

@@ -63,7 +63,6 @@ class _JoinAppState extends State<JoinApp> {
           'Content-Type': 'application/json',
         },
       );
-      print('Response status: ${response.statusCode}');
 
       if (response.statusCode == 201) {
         // 회원가입 성공 시
@@ -84,6 +83,13 @@ class _JoinAppState extends State<JoinApp> {
                       ),
                     );
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                   child: const Text('확인'),
                 ),
               ],
@@ -103,6 +109,13 @@ class _JoinAppState extends State<JoinApp> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
                     child: const Text('확인'),
                   ),
                 ],
