@@ -55,22 +55,56 @@ class FreeboardList extends StatelessWidget {
             itemBuilder: (context, index) {
               final freeDB item = dataList![index];
               if (item.freetitle != null && item.freecontent != null) {
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '제목: ${item.freetitle}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                return GestureDetector(
+                  onTap: () {
+                    //클릭한 후
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('제목: ${item.freetitle}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  )),
+                              const Divider(),
+                              const SizedBox(height: 8),
+                              Text('내용: ${item.freecontent}'),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text('내용: ${item.freecontent}'),
-                      ],
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('확인'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '제목: ${item.freetitle}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text('내용: ${item.freecontent}'),
+                        ],
+                      ),
                     ),
                   ),
                 );
