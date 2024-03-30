@@ -230,14 +230,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.17"
-  flutter_tesseract_ocr:
-    dependency: "direct main"
-    description:
-      name: flutter_tesseract_ocr
-      sha256: "4a8d0e3f562ee01d94a464ff9d31d9e907b1e374aeff29bf696f979417c70bcf"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.24"
   flutter_test:
     dependency: "direct dev"
     description: flutter

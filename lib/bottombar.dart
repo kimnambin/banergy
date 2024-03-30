@@ -1,12 +1,14 @@
-import 'dart:io';
-
+import 'dart:convert';
+//import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/information.dart';
+import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //바텀 바 내용 구현
 class BottomNavBar extends StatefulWidget {
@@ -21,47 +23,31 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final ImagePicker _imagePicker = ImagePicker();
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
   String? code;
-  String parsedText = '';
   String resultCode = '';
+  String ocrResult = '';
 
-  late File? pickedImage;
-  late XFile? pickedFile;
+  final picker = ImagePicker();
   late String img64;
 
-  // _saveImageToGallery 사진 찍은 후 갤러리에 저장
-  Future<void> _saveImageToGallery(
-      XFile pickedFile, BuildContext context) async {
-    final File imageFile = File(pickedFile.path);
+  Future<void> _UploadImage(XFile pickedFile) async {
+    // 이미지 업로드 및 OCR 수행
 
-    try {
-      // OCR 수행
-      final String imagePath = await _performOCR(imageFile);
+    final url = Uri.parse('http://192.168.1.174:7000/ocr');
+    final request = http.MultipartRequest('POST', url);
+    request.files
+        .add(await http.MultipartFile.fromPath('image', pickedFile.path));
+    final response = await request.send();
 
-      // 다음 화면으로 이동
-      if (mounted) {
-        final NavigatorState navigator = Navigator.of(context);
-        navigator.pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => camerainformation(
-              imagePath: imagePath,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      print('OCR failed: $e');
-      // OCR 오류 시
-    }
-  }
-
-//카메라 찍은 거 이미지
-  Future<String> _performOCR(File imageFile) async {
-    try {
-      return imageFile.path;
-    } catch (e) {
-      //오류 떴을때 확인
-      print('OCR failed: $e');
-      rethrow;
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.bytesToString();
+      var decodedData = jsonDecode(responseData);
+      setState(() {
+        ocrResult = decodedData['text'].join('\n');
+      });
+    } else {
+      setState(() {
+        ocrResult = 'Failed to perform OCR: ${response.statusCode}';
+      });
     }
   }
 
@@ -105,21 +91,33 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
+                        // 추가: 카메라 권한 확인 및 요청
+                        var cameraStatus = await Permission.camera.status;
+                        if (!cameraStatus.isGranted) {
+                          await Permission.camera.request();
+                        }
                         final pickedFile = await _imagePicker.pickImage(
                           source: ImageSource.camera,
-                        );
+                        ) as XFile;
 
-                        if (pickedFile != null) {
-                          try {
-                            // OCR 수행
-                            print('Before Navigator.push');
-                            // ignore: use_build_context_synchronously
-                            _saveImageToGallery(pickedFile, context);
-                            print('After Navigator.push');
-                          } catch (e) {
-                            print('OCR failed: $e');
-                            print('Exception caught in catch block');
-                          }
+                        try {
+                          // OCR 수행
+                          await _UploadImage(pickedFile);
+
+                          // OCR 결과를 화면으로 전달하여 화면 이동
+                          // ignore: use_build_context_synchronously
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => Ocrresult(
+                                imagePath: pickedFile.path,
+                                ocrResult: ocrResult,
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          print('OCR failed: $e');
+                          // OCR이 실패하더라도 아무것도 하지 않음
                         }
                       },
                       child: const Text('Camera'),
@@ -129,19 +127,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     child: ElevatedButton(
                       onPressed: () async {
                         final pickedFile = await _imagePicker.pickImage(
-                            source: ImageSource.gallery);
+                            source: ImageSource.gallery) as XFile;
 
-                        if (pickedFile != null) {
+                        try {
+                          // OCR 수행
+                          await _UploadImage(pickedFile);
+
+                          // OCR 결과를 화면으로 전달하여 화면 이동
                           // ignore: use_build_context_synchronously
-                          await Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  camerainformation(
+                              builder: (BuildContext context) => Ocrresult(
                                 imagePath: pickedFile.path,
+                                ocrResult: ocrResult,
                               ),
                             ),
                           );
+                        } catch (e) {
+                          print('OCR failed: $e');
+                          // OCR이 실패하더라도 아무것도 하지 않음
                         }
                       },
                       child: const Text('Gallery'),

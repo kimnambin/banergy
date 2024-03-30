@@ -3,7 +3,6 @@ import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage_Freeboard_WriteScreen.dart.dart';
 
 void main() {

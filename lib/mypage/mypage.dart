@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
-import 'package:flutter_banergy/mypage/mypage_Changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
-import 'package:flutter_banergy/mypage/mypage_addProductScreen.dart';
-import '../mypage/mypage_allergy_information.dart';
-import '../mypage/mypage_record_allergy_reactions.dart';
-import '../mypage/mypage_filtering_allergies.dart';
-import '../mypage/mypage_freeboard.dart';
+import 'package:flutter_banergy/mypage/mypage_addproductScreen.dart';
+import 'package:flutter_banergy/mypage/mypage_allergy_information.dart';
+import 'package:flutter_banergy/mypage/mypage_changeidpw.dart';
+import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
+import 'package:flutter_banergy/mypage/mypage_record_allergy_reactions.dart';
 
-void main() {
-  runApp(const MypageApp());
-}
+import '../../mypage/mypage_freeboard.dart';
+
+// void main() {
+//   runApp(const MypageApp());
+// }
 
 class MypageApp extends StatelessWidget {
   const MypageApp({super.key});
@@ -116,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 상품추가 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddProductScreen()),
+          MaterialPageRoute(builder: (context) => const AddProductScreen()),
         );
         break;
 
