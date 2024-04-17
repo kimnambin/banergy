@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -35,7 +37,7 @@ class LoginApp extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.174:3000/login'),
+        Uri.parse('http://192.168.143.174:3000/login'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -44,10 +46,13 @@ class LoginApp extends StatelessWidget {
           'Content-Type': 'application/json',
         },
       );
-
+      // 로그인 성공 시
       if (response.statusCode == 200) {
-        // 로그인 성공 시
-        // ignore: use_build_context_synchronously
+        //로그인 유지를 위함
+        final authToken = jsonDecode(response.body)['access_token'];
+        await saveToken(authToken);
+        await fetchUserInfo(authToken);
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -81,7 +86,6 @@ class LoginApp extends StatelessWidget {
         );
       } else {
         // 로그인 실패 시
-        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -115,11 +119,37 @@ class LoginApp extends StatelessWidget {
     }
   }
 
+  // 로그인 유지를 위한 토큰
+  Future<void> saveToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('authToken', token);
+  }
+
+// 사용자 정보를 가져오는 함수
+  Future<void> fetchUserInfo(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.143.174:3000/loginuser'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final username = jsonDecode(response.body)['username'];
+        print('로그인한 사용자: $username');
+      } else {
+        throw Exception('Failed to fetch user info');
+      }
+    } catch (error) {
+      // 오류 발생 시 처리
+    }
+  }
+
   // 데이터 가져오는 함수
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.174:3000/sign'),
+        Uri.parse('http://192.168.143.174:3000/sign'),
       );
       if (response.statusCode == 200) {
         _login;

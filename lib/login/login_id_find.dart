@@ -39,7 +39,7 @@ class _IDFindAppState extends State<IDFindApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.174:3000/findid'),
+        Uri.parse('http://192.168.143.174:3000/findid'),
         body: jsonEncode({
           'name': name,
           'password': password,
@@ -124,7 +124,7 @@ class _IDFindAppState extends State<IDFindApp> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.174:3000/sign'),
+        Uri.parse('http://192.168.143.174:3000/sign'),
       );
       if (response.statusCode == 200) {
         _findid;

@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 알러지 필터링 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FilteringAllergies()),
+          MaterialPageRoute(builder: (context) => FilteringAllergies()),
         );
         break;
       case "닉네임 변경":

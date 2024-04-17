@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Ocrresult extends StatefulWidget {
   final String imagePath;
@@ -21,81 +22,89 @@ class Ocrresult extends StatefulWidget {
 class _OcrresultState extends State<Ocrresult> {
   late String _ocrResult;
   bool isOcrInProgress = true;
+  String? authToken;
 
   @override
   void initState() {
     super.initState();
     _ocrResult = widget.ocrResult;
-    _getOCRResult();
+    _checkLoginStatus();
   }
 
-  Future<void> _getOCRResult() async {
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginuser();
+    if (token != null) {
+      final isValid = await _validateToken(token);
+      if (isValid) {
+        setState(() {
+          authToken = token;
+        });
+        _getOCRResult(token);
+      } else {
+        setState(() {
+          authToken = null;
+        });
+      }
+    }
+  }
+
+  Future<String?> _loginuser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+    return token;
+  }
+
+  Future<bool> _validateToken(String token) async {
     try {
-      final url = Uri.parse('http://192.168.1.174:7000/result');
-      var response = await http.get(url);
+      final response = await http.get(
+        Uri.parse('http://192.168.143.174:3000/loginuser'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error validating token: $e');
+      return false;
+    }
+  }
+
+  Future<void> _getOCRResult(String token) async {
+    try {
+      final url = Uri.parse('http://192.168.143.174:3000/result');
+      var response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         List<String> ocrResult = (data['text'] as List).cast<String>();
 
-        List<String> highlightWords = [
-          "계란",
-          "밀",
-          "대두",
-          "우유",
-          "게",
-          "새우",
-          "돼지고기",
-          "닭고기",
-          "소고기",
-          "고등어",
-          "복숭아",
-          "토마토",
-          "호두",
-          "잣",
-          "땅콩",
-          "아몬드",
-          "조개류",
-          "기타"
-        ];
+        // 사용자의 알레르기 정보 가져오기
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final userAllergies = prefs.getStringList('allergies') ?? [];
 
-        List<TextSpan> highlightedSpans = [];
+        String highlightedResult = '';
         for (String line in ocrResult) {
-          for (String word in highlightWords) {
-            if (line.contains(word)) {
-              int startIndex = line.indexOf(word);
-              int endIndex = startIndex + word.length;
-              String beforeHighlight = line.substring(0, startIndex);
-              String highlightedWord = line.substring(startIndex, endIndex);
-              String afterHighlight = line.substring(endIndex);
-              highlightedSpans.add(TextSpan(
-                text: beforeHighlight,
-                style: const TextStyle(color: Colors.black),
-              ));
-              highlightedSpans.add(TextSpan(
-                text: highlightedWord,
-                style: const TextStyle(
-                  backgroundColor: Colors.yellow,
-                  fontWeight: FontWeight.bold,
-                ),
-              ));
-              line = afterHighlight;
+          for (String word in userAllergies) {
+            if (line.contains(word) && userAllergies.contains(word)) {
+              line = line.replaceAll(
+                word,
+                '<span style="color: yellow;">$word</span>',
+              );
             }
           }
-          highlightedSpans.add(TextSpan(
-            text: line,
-            style: const TextStyle(color: Colors.black),
-          ));
+          highlightedResult += '$line\n';
         }
 
         setState(() {
-          _ocrResult = '';
+          _ocrResult = highlightedResult;
         });
-        for (TextSpan span in highlightedSpans) {
-          setState(() {
-            _ocrResult += span.text!;
-          });
-        }
       } else {
         setState(() {
           _ocrResult = 'Failed to fetch OCR result: ${response.statusCode}';

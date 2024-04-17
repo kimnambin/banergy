@@ -1,10 +1,18 @@
+from sqlalchemy import JSON
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from paddleocr import PaddleOCR
+import os
+from flask_jwt_extended import (
+    JWTManager, create_access_token, jwt_required, get_jwt_identity
+)
 
 
 app = Flask(__name__)
 CORS(app)
+app.config['JWT_SECRET_KEY'] = 'banergy'  # 보안을 위한 임의의 시크릿 키
+jwt = JWTManager(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(app)
@@ -16,6 +24,8 @@ class User(db.Model):
     name = db.Column(db.String(20), nullable=True)
     date = db.Column(db.String(80), nullable=True)
     gender = db.Column(db.String(20), nullable=False)
+    allergies = db.Column(db.String(128), nullable=True)
+
 
 
     def __repr__(self):
@@ -76,9 +86,56 @@ def login():
     
     user = User.query.filter_by(username=username , password = password).first()
     if user:
-            return jsonify({'message': '로그인 성공!!'}), 200  
+            access_token = create_access_token(identity=user.username)
+            #print("토큰 값:", access_token)
+            allergies = user.allergies if user.allergies else "알레르기 정보X"
+            print("알레르기 정보:", allergies)
+            return jsonify({'message': '로그인 성공!!' , 'access_token': access_token}), 200
     else:
             return jsonify({'message': '로그인 실패 ㅠㅠ'}), 404
+    
+
+# 로그인한 사용자 정보
+@app.route('/loginuser', methods=['GET'])
+@jwt_required()  
+def protectloginusered():
+    current_username = get_jwt_identity()
+    print("로그인한 정보:", current_username)
+    user = User.query.filter_by(username=current_username).first()  # username 기준으로 사용자 조회
+    if user:
+        return jsonify({'username': user.username}), 200
+    else:
+        return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
+
+
+# 필터링 적용부분
+@app.route('/allergies', methods=['GET','POST'])
+@jwt_required()  
+def allergies():
+    current_username = get_jwt_identity()  # 현재 로그인한 사용자의 username 가져오기
+    print("현재 로그인한 사용자:", current_username) 
+    if request.method == 'POST':
+        data = request.json
+        allergies = data.get('allergies')
+        print("받은 알레르기 정보:", allergies)  
+
+        # 사용자를 찾아서 알레르기 정보 업데이트
+        user = User.query.filter_by(username=current_username).first()  # username 기준으로 사용자 조회
+        if user:
+            user.allergies = allergies
+            try:
+                db.session.commit()
+                return jsonify({'message': '알레르기 정보가 업데이트되었습니다.'}), 200
+            except Exception as e:
+                db.session.rollback()
+                print("알레르기 정보 업데이트 실패:", str(e))  
+                return jsonify({'message': '알레르기 정보 업데이트 실패 ㅠ.ㅠ'}), 500
+        else:
+            print("사용자를 찾을 수 없음")  
+            return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
+
+
+
 
 # 아이디 찾기 
 @app.route('/findid', methods=['GET','POST'])
@@ -160,6 +217,100 @@ def delete_user():
                 return jsonify({'message': '회원 탈퇴 실패 ㅠ.ㅠ'}), 500
         else:
             return jsonify({'message': '사용자 인증 실패'}), 401
+
+
+
+ocr = PaddleOCR(lang="korean")
+
+
+# 이미지가 있는 경로
+img_dir = "assets/ocrimg/"
+
+# OCR 수행 함수
+def perform_ocr(image_path):
+    result = ocr.ocr(image_path, cls=False)
+    ocr_texts = []
+    for line in result[0]:
+        ocr_texts.append(line[1][0]) 
+    return ocr_texts
+
+
+# OCR 결과 부분
+@app.route('/result', methods=['GET'])
+@jwt_required()
+def get_ocr_result():
+    # 최근에 업로드된 이미지 파일 경로 가져오기
+    file_times = [(file, os.path.getmtime(os.path.join(img_dir, file))) for file in os.listdir(img_dir)]
+    file_times.sort(key=lambda x: x[1], reverse=True)
+    recent_file = file_times[0][0]
+    recent_file_path = os.path.join(img_dir, recent_file)
+    
+    # OCR 수행
+    ocr_texts = perform_ocr(recent_file_path)
+
+    # 로그인한 사용자의 정보 가져오기
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
+
+    if user:
+        allergies = user.allergies.split(",") if user.allergies else []
+        print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
+
+        # 텍스트에서 알레르기 정보를 하이라이팅하여 적용
+        highlighted_texts = []
+        for text in ocr_texts:
+            highlighted_text = text
+            for word in allergies:
+                if word in highlighted_text:
+                    highlighted_text = highlighted_text.replace(word, f"<{word}>")
+            highlighted_texts.append(highlighted_text)
+            print("텍스트:", highlighted_text)  
+        return jsonify({'text': highlighted_texts}), 200
+
+    else:
+        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
+
+
+
+# 이미지를 받아서 OCR을 수행하는 엔드포인트
+@app.route('/ocr', methods=['POST'])
+@jwt_required()
+def ocr_image():
+    if 'image' not in request.files:
+        return jsonify({'message': '이미지가 없습니다.'}), 400
+    
+    image = request.files['image']
+
+    if image.filename == '':
+        return jsonify({'message': '이미지가 선택되지 않았습니다.'}), 400
+
+    # 이미지를 저장할 경로
+    filepath = os.path.join(img_dir, image.filename)
+    image.save(filepath)
+
+    # OCR 수행
+    ocr_texts = perform_ocr(filepath)
+    # 로그인한 사용자의 정보 가져오기
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
+
+    if user:
+        allergies = user.allergies.split(",") if user.allergies else []
+        print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
+    
+
+    # 텍스트에서 특정 단어를 찾아 하이라이팅 적용
+    highlighted_texts = []
+    for text in ocr_texts:
+            highlighted_text = text
+            for word in allergies:
+                if word in highlighted_text:
+                    highlighted_text = highlighted_text.replace(word, f"<{word}>")
+            highlighted_texts.append(highlighted_text)
+
+    
+
+    return jsonify({'text': highlighted_texts}), 200
 
 
 if __name__ == '__main__':

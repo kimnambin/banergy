@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //바텀 바 내용 구현
 class BottomNavBar extends StatefulWidget {
@@ -32,8 +33,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Future<void> _UploadImage(XFile pickedFile) async {
     // 이미지 업로드 및 OCR 수행
 
-    final url = Uri.parse('http://192.168.1.174:7000/ocr');
+    final url = Uri.parse('http://192.168.143.174:3000/ocr');
     final request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $authToken'; // 토큰을 요청 헤더에 포함
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));
     final response = await request.send();
@@ -52,6 +54,58 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   int _selectedIndex = 0;
+  String? authToken;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginuser();
+    if (token != null) {
+      // 저장된 토큰이 있는 경우, 유효한지 확인
+      final isValid = await _validateToken(token);
+      if (isValid) {
+        // 토큰이 유효한 경우, 로그인 상태로 설정
+        setState(() {
+          authToken = token;
+        });
+      } else {
+        // 토큰이 유효하지 않은 경우, 로그인 상태 해제
+        setState(() {
+          authToken = null;
+        });
+      }
+    }
+  }
+
+//로그인한 유저 가져오기
+  Future<String?> _loginuser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+    return token;
+  }
+
+  Future<bool> _validateToken(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.143.174:3000/loginuser'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error validating token: $e');
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,19 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const FilteringAllergies());
 }
 
 class FilteringAllergies extends StatelessWidget {
-  const FilteringAllergies({super.key});
+  const FilteringAllergies({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,7 @@ class FilteringAllergies extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key});
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -33,7 +39,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<String?> checkListValue2 = [];
-
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -54,6 +59,126 @@ class _MyHomePageState extends State<MyHomePage> {
     "조개류",
     "기타"
   ];
+
+  String? authToken;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginuser();
+    if (token != null) {
+      // 저장된 토큰이 있는 경우, 유효한지 확인
+      final isValid = await _validateToken(token);
+      if (isValid) {
+        // 토큰이 유효한 경우, 로그인 상태로 설정
+        setState(() {
+          authToken = token;
+        });
+      } else {
+        // 토큰이 유효하지 않은 경우, 로그인 상태 해제
+        setState(() {
+          authToken = null;
+        });
+      }
+    }
+  }
+
+//로그인한 유저 가져오기
+  Future<String?> _loginuser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+    return token;
+  }
+
+  Future<bool> _validateToken(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.143.174:3000/loginuser'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error validating token: $e');
+      return false;
+    }
+  }
+
+  Future<void> _userFiltering(
+      BuildContext context, List<String?> checkListValue2) async {
+    final String allergies = jsonEncode(checkListValue2);
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.143.174:3000/allergies'),
+        body: jsonEncode({'allergies': allergies}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('적용완료!!'),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: const Text('다시 확인해주세요.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text('확인'),
+                  ),
+                ],
+              );
+            });
+      }
+    } catch (e) {
+      print('Error sending request: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +235,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
-              onPressed: () {
-                // 적용 버튼을 눌렀을 때 수행할 동작
-                print("저장된 값: $checkListValue2");
+              onPressed: () => {
+                _userFiltering(context, checkListValue2),
+                print("저장된 값: $checkListValue2")
               },
               child: const Text(
                 '적용',
@@ -141,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: CheckboxListTile(
             onChanged: (bool? check) {
               setState(() {
-                if (checkListValue2.indexOf(filter) > -1) {
+                if (checkListValue2.contains(filter)) {
                   checkListValue2.remove(filter);
                   return;
                 }
@@ -149,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
               });
             },
             title: Text(filter),
-            value: checkListValue2.indexOf(filter) > -1 ? true : false,
+            value: checkListValue2.contains(filter) ? true : false,
           ),
         );
       },

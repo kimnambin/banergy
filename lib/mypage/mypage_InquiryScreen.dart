@@ -50,7 +50,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.174:6000/inquiry'),
+        Uri.parse('http://192.168.143.174:6000/inquiry'),
         body: jsonEncode({
           'inquirytitle': inquirytitle,
           'inquirycontent': inquirycontent,

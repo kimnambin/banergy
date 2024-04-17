@@ -1,20 +1,32 @@
 ip 주소 수정해야 하는 부분
 
-main.dart
+-main.dart
 
-appbar\search.dart
-appbar\SearchWidget
+-appbar\search.dart
+-appbar\SearchWidget
 
-카테고리 부분들
+-카테고리 부분들
 
-product\code.dart
+-product\code.dart
+        ocr_result.dart
 
-login 부분들
+-login 부분들
 
-mypage / 비밀번호 변경 / 상품추가 / 문의하기 / 자유게시판 
+-mypage / 비밀번호 변경 / 상품추가 / 문의하기 / 자유게시판 /필터링 /탈퇴하기
 
-main_category 폴더 부분
-현재 러면  음료 , 스낵 완료
+-main_category 폴더 부분
+-현재 러면  음료 , 스낵 완료
+
+-바텀바 부분
+
+
+
+//04월 03일 -> ocr_result부분 코드 수정
+               loginDB 파이썬 부분 , 마이페이지 필터링부분
+//04월 06일 -> login_login.dart , mypage_filtering_allergies.dart , loginDB.py 수정 (필터링 부분 디비에 저장 성공!!)
+
+//04월 13일 -> 바텀바 부분 , product/ocr_result.dart
+//04월 17일 -> product/code.dart
 
 포트부분 
 7000 -> ocr + 필터링부분 (예정)

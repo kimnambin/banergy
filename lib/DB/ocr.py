@@ -56,10 +56,11 @@ def get_ocr_result():
         highlighted_text = text
         for word in highlight_words:
             if word in highlighted_text:
-                highlighted_text = highlighted_text.replace(word, f"<span style='background-color: yellow;'>{word}</span>")
+                highlighted_text = highlighted_text.replace(word, f"<{word}>")
         highlighted_texts.append(highlighted_text)
+    
 
-    return jsonify({'text': highlighted_texts})
+    return jsonify({'text': highlighted_texts}) ,200
 
 # 이미지를 받아서 OCR을 수행하는 엔드포인트
 @app.route('/ocr', methods=['POST'])
@@ -107,8 +108,10 @@ def ocr_image():
         highlighted_text = text
         for word in highlight_words:
             if word in highlighted_text:
-                highlighted_text = highlighted_text.replace(word, f"<span style='background-color: yellow;'>{word}</span>")
+                highlighted_text = highlighted_text.replace(word, f"<{word}>")
         highlighted_texts.append(highlighted_text)
+
+    
 
     return jsonify({'text': highlighted_texts}), 200
 

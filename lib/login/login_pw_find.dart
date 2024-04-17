@@ -35,7 +35,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.174:3000/findpw'),
+        Uri.parse('http://192.168.143.174:3000/findpw'),
         body: jsonEncode({
           'name': name,
           'username': username,
@@ -121,7 +121,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.174:3000/sign'),
+        Uri.parse('http://192.168.143.174:3000/sign'),
       );
       if (response.statusCode == 200) {
         _findpw;

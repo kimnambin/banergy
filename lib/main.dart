@@ -68,6 +68,7 @@ class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProductGridState createState() => _ProductGridState();
 }
 
@@ -82,7 +83,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.1.174:8000/'),
+      Uri.parse('http://192.168.143.174:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -94,7 +95,7 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
-  // //로그인 상태검사
+  //로그인 상태검사
   Future<void> checkLoginStatus(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;

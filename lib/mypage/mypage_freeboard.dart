@@ -120,7 +120,7 @@ class FreeboardList extends StatelessWidget {
   // 데이터 가져오기
   Future<List<freeDB>> fetchFreeboardData() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.174:6000/free'));
+        await http.get(Uri.parse('http://192.168.143.174:6000/free'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       return data.map((item) => freeDB.fromJson(item)).toList();
