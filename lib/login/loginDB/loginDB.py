@@ -259,16 +259,17 @@ def get_ocr_result():
         # 텍스트에서 알레르기 정보를 하이라이팅하여 적용
         highlighted_texts = []
         for text in ocr_texts:
-            highlighted_text = text
-            for word in allergies:
-                if word in highlighted_text:
-                    highlighted_text = highlighted_text.replace(word, f"<{word}>")
-            highlighted_texts.append(highlighted_text)
-            print("텍스트:", highlighted_text)  
+            highlighted_text = text.split(' ')  # 공백을 기준으로 단어 분리
+            for i, word in enumerate(highlighted_text):
+                if word in allergies:
+                    highlighted_text[i] = f'<{word}>'  # 알레르기 단어 강조 처리
+            highlighted_texts.append(' '.join(highlighted_text))  # 다시 단어들을 공백으로 조합하여 문장으로 만듦
+            print("텍스트:", ' '.join(highlighted_text))  
         return jsonify({'text': highlighted_texts}), 200
 
     else:
         return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
+
 
 
 

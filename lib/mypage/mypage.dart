@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 알러지 정보 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const allergyinformation()),
+          MaterialPageRoute(builder: (context) => allergyinformation()),
         );
         break;
       case "알러지 반응 기록":

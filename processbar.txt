@@ -1,0 +1,18 @@
+1. 사용할 class 밑에 String? authToken;
+  final ImagePicker _imagePicker = ImagePicker();
+  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+  String? code;
+  String resultCode = '';
+  String ocrResult = '';
+  bool isOcrInProgress = false;
+  final picker = ImagePicker();
+  late String img64; 
+  추가하기
+
+  2. futurn void 이미지 업로드랑 유저로그인 부분 추가하기
+
+  3. 진행바 보여주고 싶은 곳에 진행바 부분 추가하기
+
+  4. 바텀바쪽 수정
+
+  마이페이지에 mypage_filtering_allergies 참고하기

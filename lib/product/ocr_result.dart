@@ -91,12 +91,10 @@ class _OcrresultState extends State<Ocrresult> {
 
         String highlightedResult = '';
         for (String line in ocrResult) {
-          for (String word in userAllergies) {
-            if (line.contains(word) && userAllergies.contains(word)) {
-              line = line.replaceAll(
-                word,
-                '<span style="color: yellow;">$word</span>',
-              );
+          List<String> words = line.split(' ');
+          for (String word in words) {
+            if (userAllergies.contains(word)) {
+              highlightedResult += '<span style="color: yellow;">$word</span> ';
             }
           }
           highlightedResult += '$line\n';
