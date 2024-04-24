@@ -21,6 +21,7 @@ class Ocrresult extends StatefulWidget {
 
 class _OcrresultState extends State<Ocrresult> {
   late String _ocrResult;
+  late String _hirightingResult;
   bool isOcrInProgress = true;
   String? authToken;
 
@@ -28,6 +29,7 @@ class _OcrresultState extends State<Ocrresult> {
   void initState() {
     super.initState();
     _ocrResult = widget.ocrResult;
+    _hirightingResult = widget.ocrResult;
     _checkLoginStatus();
   }
 
@@ -114,23 +116,21 @@ class _OcrresultState extends State<Ocrresult> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         final userAllergies = prefs.getStringList('allergies') ?? [];
 
-        String resultText = '';
+        //여기가 하이라이팅 부분
+        String hirightingtext = '';
         for (String line in ocrResult) {
           List<String> words = line.split(' ');
           for (String word in words) {
             if (userAllergies.contains(word)) {
-              resultText += ' 『$word』 ';
-              const TextStyle(backgroundColor: Colors.yellow);
-            } else {
-              resultText += '$word ';
-              print('일반 : $word'); // 단어 출력
+              hirightingtext += ' 『$word』 ';
             }
           }
-          resultText += '\n';
+          // 한 줄이 끝날 때마다 줄 바꿈 문자 '\n' 추가
+          //hirightingtext += '\n';
         }
 
         setState(() {
-          _ocrResult = resultText;
+          _hirightingResult = hirightingtext;
         });
       } else {
         setState(() {
@@ -208,9 +208,25 @@ class _OcrresultState extends State<Ocrresult> {
             else
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(_ocrResult.isNotEmpty
-                    ? ' $_ocrResult'
-                    : 'No text detected'),
+                child: Column(
+                  children: [
+                    if (_hirightingResult.isNotEmpty)
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.yellow,
+                        ),
+                        child: Text(
+                          _hirightingResult,
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                    if (_ocrResult.isNotEmpty) Text(_ocrResult),
+                    if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
+                      const Text('No text detected'),
+                  ],
+                ),
               ),
             ElevatedButton(
               onPressed: () {

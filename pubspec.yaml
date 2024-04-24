@@ -38,3 +38,20 @@ flutter:
     - assets/tessdata/
     - images/
   uses-material-design: true
+
+  fonts:
+   - family: PretendardBold
+     fonts:
+       - asset: assets/fonts/Pretendard-Bold.otf
+   - family: PretendardSemiBold
+     fonts:
+       - asset: assets/fonts/Pretendard-SemiBold.otf
+   - family: PretendardRegular
+     fonts:
+       - asset: assets/fonts/Pretendard-Regular.otf
+   - family: PretendardMedium
+     fonts:
+       - asset: assets/fonts/Pretendard-Medium.otf
+   - family: PretendardLight
+     fonts:
+       - asset: assets/fonts/Pretendard-Light.otf

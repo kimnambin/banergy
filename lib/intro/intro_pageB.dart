@@ -1,56 +1,105 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class IntroPageB extends StatelessWidget {
   PageController controller;
-  IntroPageB(this.controller, {super.key});
+  IntroPageB(this.controller, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    double textSize = screenWidth * 0.10;
+
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            const SizedBox(
-              height: 60,
-            ),
-            const Text(
-              '밴러지',
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
-            ),
-            const SizedBox(
-              height: 60,
-            ),
-            Image.asset('images/000.jpeg', width: 200, height: 200),
-            const Text(
-              '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
-              style: TextStyle(fontSize: 13),
-              textAlign: TextAlign.center,
-            ),
-            Image.asset('images/intropage2.png', width: 100, height: 100),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    controller.animateToPage(2,
-                        duration: const Duration(milliseconds: 700),
-                        curve: Curves.easeOut);
-                  },
-                  style: TextButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text(
-                    '다음',
-                    style: TextStyle(color: Colors.white),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 60),
+              Padding(
+                padding: const EdgeInsets.only(right: 80.0),
+                child: RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '필터링 ',
+                        style: TextStyle(
+                          fontSize: textSize,
+                          color: Color(0xFF03C95B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '서비스로\n',
+                        style: TextStyle(
+                          fontSize: textSize,
+                          color: Color(0xFF3F3B3B), // 검정색
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '개인이\n',
+                        style: TextStyle(
+                          fontSize: textSize,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '원하는 정보만\n',
+                        style: TextStyle(
+                          fontSize: textSize,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                      TextSpan(
+                        text: '빠르게 확인',
+                        style: TextStyle(
+                          fontSize: textSize,
+                          color: Color(0xFF3F3B3B),
+                          fontFamily: 'PretendardBold',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 300),
+              Image.asset('images/intropage2.png', width: 150, height: 100),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 200,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF03C95B),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        controller.animateToPage(2,
+                            duration: const Duration(milliseconds: 700),
+                            curve: Curves.easeOut);
+                      },
+                      child: const Text(
+                        '다음',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'PretendardSemiBold',
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
