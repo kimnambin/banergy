@@ -28,6 +28,9 @@ ip 주소 수정해야 하는 부분
 //04월 13일 -> 바텀바 부분 , product/ocr_result.dart (로그인한 사용자 정보 가져오기)
 //04월 17일 -> product/code.dart (디비에 저장된 정보가 없을 시 텍스트 추가)
 //04월 18일 -> mypage/mypage_filtering_allergies (이미지 서버에 올릴 때 진행바...) (프로세스바.txt 참고하기)
+//04월 24일 -> loginDB.py 로그인유저 부분 수정 , product/ocr_result (loginuser부분 수정)
+               login_login.dart(자동 로그인 기능 추가) 
+앞으로 ocr하는 부분이 있으면 loginuser 부분 다수정해야 함
 
 포트부분 
 7000 -> ocr + 필터링부분 (예정)

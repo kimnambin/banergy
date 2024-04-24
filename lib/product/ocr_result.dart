@@ -39,12 +39,37 @@ class _OcrresultState extends State<Ocrresult> {
         setState(() {
           authToken = token;
         });
-        _getOCRResult(token);
+        await _getOCRResult(token);
+        await _getUserAllergies(token); // 알레르기 정보 가져오기 추가
       } else {
         setState(() {
           authToken = null;
         });
       }
+    }
+  }
+
+  Future<void> _getUserAllergies(String token) async {
+    try {
+      final url = Uri.parse('http://192.168.143.174:3000/loginuser');
+      var response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        List<String> allergies = data['allergies'].cast<String>();
+        print('사용자 알레르기 : $allergies');
+
+        // 알레르기 정보를 저장
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setStringList('allergies', allergies);
+      } else {
+        print('Failed to fetch user allergies: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error occurred while fetching user allergies: $e');
     }
   }
 
@@ -89,19 +114,23 @@ class _OcrresultState extends State<Ocrresult> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         final userAllergies = prefs.getStringList('allergies') ?? [];
 
-        String highlightedResult = '';
+        String resultText = '';
         for (String line in ocrResult) {
           List<String> words = line.split(' ');
           for (String word in words) {
             if (userAllergies.contains(word)) {
-              highlightedResult += '<span style="color: yellow;">$word</span> ';
+              resultText += ' 『$word』 ';
+              const TextStyle(backgroundColor: Colors.yellow);
+            } else {
+              resultText += '$word ';
+              print('일반 : $word'); // 단어 출력
             }
           }
-          highlightedResult += '$line\n';
+          resultText += '\n';
         }
 
         setState(() {
-          _ocrResult = highlightedResult;
+          _ocrResult = resultText;
         });
       } else {
         setState(() {
