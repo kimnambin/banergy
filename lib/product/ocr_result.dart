@@ -53,7 +53,7 @@ class _OcrresultState extends State<Ocrresult> {
 
   Future<void> _getUserAllergies(String token) async {
     try {
-      final url = Uri.parse('http://192.168.143.174:3000/loginuser');
+      final url = Uri.parse('http://192.168.31.174:3000/loginuser');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
@@ -84,7 +84,7 @@ class _OcrresultState extends State<Ocrresult> {
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.143.174:3000/loginuser'),
+        Uri.parse('http://192.168.31.174:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -102,7 +102,7 @@ class _OcrresultState extends State<Ocrresult> {
 
   Future<void> _getOCRResult(String token) async {
     try {
-      final url = Uri.parse('http://192.168.143.174:3000/result');
+      final url = Uri.parse('http://192.168.31.174:3000/result');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
@@ -118,23 +118,27 @@ class _OcrresultState extends State<Ocrresult> {
 
         //여기가 하이라이팅 부분
         String hirightingtext = '';
+        String OcrText = ''; //이건 일반 텍스트
         for (String line in ocrResult) {
           List<String> words = line.split(' ');
           for (String word in words) {
             if (userAllergies.contains(word)) {
               hirightingtext += ' 『$word』 ';
+            } else {
+              OcrText += line;
+              print('하이라이팅 단어: $hirightingtext');
+              print('일반 단어 : $OcrText');
             }
           }
-          // 한 줄이 끝날 때마다 줄 바꿈 문자 '\n' 추가
-          //hirightingtext += '\n';
         }
 
         setState(() {
           _hirightingResult = hirightingtext;
+          _ocrResult = OcrText;
         });
       } else {
         setState(() {
-          _ocrResult = 'Failed to fetch OCR result: ${response.statusCode}';
+          _ocrResult = _ocrResult;
         });
       }
     } catch (e) {
@@ -222,7 +226,10 @@ class _OcrresultState extends State<Ocrresult> {
                           ),
                         ),
                       ),
-                    if (_ocrResult.isNotEmpty) Text(_ocrResult),
+                    if (_ocrResult.isNotEmpty)
+                      Text(
+                        _ocrResult,
+                      ),
                     if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
                       const Text('No text detected'),
                   ],

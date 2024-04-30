@@ -51,7 +51,7 @@ class _JoinAppState extends State<JoinApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.143.174:3000/sign'),
+        Uri.parse('http://192.168.31.174:3000/sign'),
         body: jsonEncode({
           'username': username,
           'password': password,

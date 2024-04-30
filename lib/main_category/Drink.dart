@@ -52,7 +52,7 @@ class _drinkGridState extends State<drinkGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.143.174:8000/?query=음료'),
+      Uri.parse('http://192.168.31.174:8000/?query=음료'),
     );
     if (response.statusCode == 200) {
       setState(() {

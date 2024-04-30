@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.143.174:3000/ocr');
+    final url = Uri.parse('http://192.168.31.174:3000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.143.174:3000/loginuser'),
+        Uri.parse('http://192.168.31.174:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -328,7 +328,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.143.174:8000/'),
+      Uri.parse('http://192.168.31.174:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

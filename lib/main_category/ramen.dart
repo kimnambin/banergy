@@ -52,7 +52,7 @@ class _FoodGridState extends State<FoodGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.143.174:8000/?query=라면'),
+      Uri.parse('http://192.168.31.174:8000/?query=라면'),
     );
     if (response.statusCode == 200) {
       setState(() {

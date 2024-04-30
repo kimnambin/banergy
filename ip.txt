@@ -33,6 +33,7 @@ ip 주소 수정해야 하는 부분
 앞으로 ocr하는 부분이 있으면 loginuser 부분 다수정해야 함
 
 //04월 25일 -> product/ocr_result (하이라이팅 효과 성공!!) , main.dart(바텀바 합치기)
+//04월 30일 -> appbar/menu.dart 임시로 로그아웃 버튼 추가
 
 포트부분 
 7000 -> ocr + 필터링부분 (예정)

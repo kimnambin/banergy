@@ -24,7 +24,7 @@ class Delete extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.143.174:3000/delete'),
+        Uri.parse('http://192.168.31.174:3000/delete'),
         body: jsonEncode({
           'reason': reason,
           'password': password,
