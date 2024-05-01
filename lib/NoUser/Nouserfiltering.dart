@@ -1,7 +1,11 @@
 // 비회원 필터링 테스트
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/NouserMain.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 // import 'package:flutter_banergy/bottombar.dart';
 // import 'package:flutter_banergy/mypage/mypage.dart';
 
@@ -55,6 +59,76 @@ class _MyHomePageState extends State<MyHomePage> {
     "조개류",
     "기타"
   ];
+
+  Future<void> _userFiltering(
+      BuildContext context, List<String?> checkListValue2) async {
+    final String allergies = jsonEncode(checkListValue2);
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.121.174:7000/ftr'),
+        body: jsonEncode({'allergies': allergies}),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 201) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('적용완료!!'),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NoUserMainpageApp(),
+                        ));
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: const Text('다시 확인해주세요.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text('확인'),
+                  ),
+                ],
+              );
+            });
+      }
+    } catch (e) {
+      print('Error sending request: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,38 +192,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
-              onPressed: () {
-                print("저장된 값: $checkListValue2");
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: const Text('필터링이 적용되었습니다.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // 다이얼로그 닫기
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const NoUserMainpageApp(),
-                              ),
-                            );
-                          },
-                          style: TextButton.styleFrom(
-                            primary: Colors.white,
-                            backgroundColor:
-                                const Color.fromARGB(255, 29, 171, 102),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Text('확인'),
-                        ),
-                      ],
-                    );
-                  },
-                );
+              onPressed: () => {
+                _userFiltering(context, checkListValue2),
+                print("저장된 값: $checkListValue2")
               },
               child: const Text(
                 '적용',

@@ -1,12 +1,11 @@
 // 비회원 메인 페이지
-// ocr 부분 수정필요!!
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/NoUser/NouserOCRresult.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
@@ -68,9 +67,9 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.121.174:3000/ocr');
+    final url = Uri.parse('http://192.168.121.174:7000/ocr');
     final request = http.MultipartRequest('POST', url);
-    request.headers['Authorization'] = 'Bearer $authToken';
+
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));
     final response = await request.send();
@@ -189,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
+                                  builder: (BuildContext context) => Ocrresult2(
                                     imagePath: pickedFile.path,
                                     ocrResult: ocrResult,
                                   ),
@@ -224,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
+                                  builder: (BuildContext context) => Ocrresult2(
                                     imagePath: pickedFile.path,
                                     ocrResult: ocrResult,
                                   ),

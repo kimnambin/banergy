@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class IntroPageB extends StatelessWidget {
   PageController controller;
   IntroPageB(this.controller, {Key? key}) : super(key: key);

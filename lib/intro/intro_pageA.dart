@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class IntroPageA extends StatelessWidget {
   PageController controller;
   IntroPageA(this.controller, {Key? key}) : super(key: key);
@@ -86,7 +86,7 @@ class IntroPageA extends StatelessWidget {
                             duration: const Duration(milliseconds: 700),
                             curve: Curves.easeOut);
                       },
-                      child: Text(
+                      child: const Text(
                         '다음',
                         style: TextStyle(
                           color: Colors.white,

@@ -208,6 +208,13 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 80,
             ),
           ),
+          const SizedBox(height: 10),
+          const Text(
+            "해당하는 알레르기를 체크해주세요",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           // 중앙에 정렬된 필터 영역
           Expanded(
             child: Container(
