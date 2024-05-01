@@ -71,7 +71,7 @@ class _ChangeidpwState extends State<Changeidpw> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.31.174:3000/changepw'),
+        Uri.parse('http://192.168.121.174:3000/changepw'),
         body: jsonEncode({
           'password': password,
           'new_password': newPassword,

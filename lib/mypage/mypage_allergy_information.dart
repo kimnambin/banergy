@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.31.174:3000/ocr');
+    final url = Uri.parse('http://192.168.121.174:3000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.31.174:3000/loginuser'),
+        Uri.parse('http://192.168.121.174:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;

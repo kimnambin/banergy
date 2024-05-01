@@ -176,7 +176,7 @@ class LoginApp extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.31.174:3000/login'),
+        Uri.parse('http://192.168.121.174:3000/login'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -268,7 +268,7 @@ class LoginApp extends StatelessWidget {
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.31.174:3000/loginuser'),
+        Uri.parse('http://192.168.121.174:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

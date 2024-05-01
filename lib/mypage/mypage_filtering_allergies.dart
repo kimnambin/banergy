@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.31.174:3000/loginuser'),
+        Uri.parse('http://192.168.121.174:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.31.174:3000/allergies'),
+        Uri.parse('http://192.168.121.174:3000/allergies'),
         body: jsonEncode({'allergies': allergies}),
         headers: {
           'Content-Type': 'application/json',

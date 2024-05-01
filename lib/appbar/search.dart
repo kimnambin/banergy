@@ -30,7 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.31.174:8000/?query=$searchText'),
+      Uri.parse('http://192.168.121.174:8000/?query=$searchText'),
     );
     if (response.statusCode == 200) {
       setState(() {

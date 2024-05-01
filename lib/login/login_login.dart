@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/NoUser/Nouserfiltering.dart';
 import 'package:flutter_banergy/login/login_id_find.dart';
 import 'package:flutter_banergy/login/login_join.dart';
 import 'package:flutter_banergy/login/login_pw_find.dart';
@@ -110,6 +111,32 @@ class LoginApp extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    //비회원 이용하기
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Nouserfiltering(),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 29, 171, 102),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text('비회원으로 이용하기'),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 15),
                     //텍스트 클릭 시 회원가입 창으로...
                     Row(
@@ -176,7 +203,7 @@ class LoginApp extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.31.174:3000/login'),
+        Uri.parse('http://192.168.121.174:3000/login'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -268,7 +295,7 @@ class LoginApp extends StatelessWidget {
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.31.174:3000/loginuser'),
+        Uri.parse('http://192.168.121.174:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

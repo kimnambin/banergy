@@ -26,7 +26,9 @@ dependencies:
   crypto: ^3.0.3
   image: ^3.0.1
   dio: ^5.4.1
-
+  photo_view: ^0.15.0
+  # photo_view: ^0.12.0
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter
