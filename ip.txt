@@ -37,6 +37,8 @@ ip 주소 수정해야 하는 부분
 //04월 25일 -> product/ocr_result (하이라이팅 효과 성공!!) , main.dart(바텀바 합치기)
 //04월 30일 -> appbar/menu.dart 임시로 로그아웃 버튼 추가
 //05월 01일 -> main.dart 상품 이미지 확대 추가
+//05월 02일 -> 비회원 부분 추가 (NoUser 폴더)
+//05월 03일 -> main.dart + NoUserMain.dart 텍스트 확대 추가
 
 포트부분 
 7000(ocr) -> 비회원 ocr + 필터링부분 

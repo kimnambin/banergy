@@ -1,31 +1,32 @@
-// 비회원 메인 페이지
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/NoUser/NouserOCRresult.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/product/code.dart';
+import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:photo_view/photo_view.dart';
 
 void main() {
   runApp(
     const MaterialApp(
-      home: NoUserMainpageApp(),
+      home: MainpageApp(),
     ),
   );
 }
 
-class NoUserMainpageApp extends StatelessWidget {
+class MainpageApp extends StatelessWidget {
   final File? image;
 
-  const NoUserMainpageApp({super.key, this.image});
+  const MainpageApp({super.key, this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +63,20 @@ class _HomeScreenState extends State<HomeScreen>
   final picker = ImagePicker();
   late String img64;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
   Future<void> _uploadImage(XFile pickedFile) async {
     setState(() {
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.121.174:7000/ocr');
+    final url = Uri.parse('http://192.168.0.10:3000/ocr');
     final request = http.MultipartRequest('POST', url);
-
+    request.headers['Authorization'] = 'Bearer $authToken';
     request.files
         .add(await http.MultipartFile.fromPath('image', pickedFile.path));
     final response = await request.send();
@@ -84,6 +91,34 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         ocrResult = 'Failed to perform OCR: ${response.statusCode}';
       });
+    }
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginUser();
+    if (token != null) {
+      final isValid = await _validateToken(token);
+      setState(() {
+        authToken = isValid ? token : null;
+      });
+    }
+  }
+
+  Future<String?> _loginUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('authToken');
+  }
+
+  Future<bool> _validateToken(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.0.10:3000/loginuser'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      ('Error validating token: $e');
+      return false;
     }
   }
 
@@ -155,8 +190,7 @@ class _HomeScreenState extends State<HomeScreen>
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const NoUserMainpageApp()),
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
             );
           } else if (index == 1) {
             showModalBottomSheet(
@@ -188,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult2(
+                                  builder: (BuildContext context) => Ocrresult(
                                     imagePath: pickedFile.path,
                                     ocrResult: ocrResult,
                                   ),
@@ -223,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult2(
+                                  builder: (BuildContext context) => Ocrresult(
                                     imagePath: pickedFile.path,
                                     ocrResult: ocrResult,
                                   ),
@@ -265,30 +299,10 @@ class _HomeScreenState extends State<HomeScreen>
             setState(() {
               _selectedIndex = index;
             });
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('비회원 이용불가'),
-                    content: const Text('비회원은 이용하실 수 없습니다.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // 다이얼로그 닫기
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor:
-                              const Color.fromARGB(255, 29, 171, 102),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Text('확인'),
-                      ),
-                    ],
-                  );
-                });
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
           }
         },
       ),
@@ -315,7 +329,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.121.174:8000/'),
+      Uri.parse('http://192.168.0.10:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -324,6 +338,27 @@ class _ProductGridState extends State<ProductGrid> {
       });
     } else {
       throw Exception('Failed to load data');
+    }
+  }
+
+  //로그인 상태검사
+  Future<void> checkLoginStatus(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (!isLoggedIn) {
+      // 로그인x
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginApp()),
+      );
+    } else {
+      // 로그인 o -> 메인 페이지로 이동
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainpageApp()),
+      );
     }
   }
 

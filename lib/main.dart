@@ -402,113 +402,120 @@ class _ProductGridState extends State<ProductGrid> {
   }
 
   void _handleProductClick(BuildContext context, Product product) {
+    double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
+    double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
+    double minTextScaleFactor = -2.0; // 텍스트 최소 크기
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: ${product.kategorie}'),
-                Text('이름: ${product.name}'),
-                GestureDetector(
-                  onTap: () {
-                    // 확대 이미지
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              PhotoView(
-                                imageProvider:
-                                    NetworkImage(product.frontproduct),
-                                minScale:
-                                    PhotoViewComputedScale.contained * 1.0,
-                                maxScale: PhotoViewComputedScale.covered * 2.0,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop(); // 다이얼로그 닫기
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
-                                  child: const Icon(Icons.close),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Image.network(
-                    product.frontproduct,
-                    fit: BoxFit.cover,
-                  ),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('상품 정보'),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildText('카테고리:', product.kategorie, textScaleFactor),
+                    _buildText('이름:', product.name, textScaleFactor),
+                    _buildImage(context, product.frontproduct),
+                    _buildImage(context, product.backproduct),
+                    _buildText('알레르기 식품:', product.allergens, textScaleFactor),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor += 0.5;
+                              if (textScaleFactor > maxTextScaleFactor) {
+                                textScaleFactor = maxTextScaleFactor;
+                              }
+                            });
+                          },
+                          child: const Icon(Icons.zoom_in, color: Colors.black),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor -= 0.5;
+                              if (textScaleFactor < minTextScaleFactor) {
+                                textScaleFactor = minTextScaleFactor;
+                              }
+                            });
+                          },
+                          child:
+                              const Icon(Icons.zoom_out, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // 확대 이미지
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              PhotoView(
-                                imageProvider:
-                                    NetworkImage(product.backproduct),
-                                minScale:
-                                    PhotoViewComputedScale.contained * 1.0,
-                                maxScale: PhotoViewComputedScale.covered * 2.0,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop(); // 다이얼로그 닫기
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
-                                  child: const Icon(Icons.close),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
-                  child: Image.network(
-                    product.backproduct,
-                    fit: BoxFit.cover,
-                  ),
+                  child: const Text('닫기'),
                 ),
-                Text('알레르기 식품: ${product.allergens}'),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('닫기'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
   }
+}
+
+Widget _buildText(String label, String value, double textScaleFactor) {
+  return Text(
+    '$label $value',
+    style: TextStyle(fontSize: 16 * textScaleFactor),
+  );
+}
+
+Widget _buildImage(BuildContext context, String imageUrl) {
+  return GestureDetector(
+    onTap: () {
+      // 확대 이미지
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                PhotoView(
+                  imageProvider: NetworkImage(imageUrl),
+                  minScale: PhotoViewComputedScale.contained * 1.0,
+                  maxScale: PhotoViewComputedScale.covered * 2.0,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    child: const Icon(Icons.close),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+    child: Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+    ),
+  );
 }
