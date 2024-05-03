@@ -100,6 +100,7 @@ class _OcrresultState extends State<Ocrresult> {
     }
   }
 
+  //  OCR 결과
   Future<void> _getOCRResult(String token) async {
     try {
       final url = Uri.parse('http://192.168.121.174:3000/result');
@@ -112,38 +113,39 @@ class _OcrresultState extends State<Ocrresult> {
         var data = jsonDecode(response.body);
         List<String> ocrResult = (data['text'] as List).cast<String>();
 
-        // 사용자의 알레르기 정보 가져오기
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final userAllergies = prefs.getStringList('allergies') ?? [];
+        // // 사용자의 알레르기 정보
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // final userAllergies = prefs.getStringList('allergies') ?? [];
 
-        //여기가 하이라이팅 부분
-        String hirightingtext = '';
-        String OcrText = ''; //이건 일반 텍스트
+// 정규 표현식을 사용하여 사용자의 알레르기 정보와 일치하는 부분 추출
+        RegExp regex = RegExp(r'『(.*?)』');
+        List<String> highlightingTexts = [];
         for (String line in ocrResult) {
-          List<String> words = line.split(' ');
-          for (String word in words) {
-            if (userAllergies.contains(word)) {
-              hirightingtext += ' 『$word』 ';
-            } else {
-              OcrText += line;
-              print('하이라이팅 단어: $hirightingtext');
-              print('일반 단어 : $OcrText');
-            }
-          }
+          highlightingTexts.addAll(regex
+                  .allMatches(line)
+                  .map((match) => match.group(1) ?? '') // null일 경우 빈 문자열 반환
+              //       //.where((highlightedWord) => userAllergies
+              //           .contains(highlightedWord)) // 사용자 알레르기 정보와 일치하는 것만 필터링
+              //       .toList(),
+              );
         }
 
+        String highlightingResult = highlightingTexts.join(', ');
+
+        String plainText = ocrResult.join(' ');
+
         setState(() {
-          _hirightingResult = hirightingtext;
-          _ocrResult = OcrText;
+          _hirightingResult = highlightingResult.trim();
+          _ocrResult = plainText.trim();
         });
       } else {
         setState(() {
-          _ocrResult = _ocrResult;
+          _hirightingResult = '';
         });
       }
     } catch (e) {
       setState(() {
-        _ocrResult = 'Error occurred: $e';
+        _hirightingResult = 'Error occurred: $e';
       });
     } finally {
       setState(() {
@@ -226,6 +228,7 @@ class _OcrresultState extends State<Ocrresult> {
                           ),
                         ),
                       ),
+                    const SizedBox(height: 20),
                     if (_ocrResult.isNotEmpty)
                       Text(
                         _ocrResult,

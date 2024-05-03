@@ -58,35 +58,42 @@ class _OcrresultState extends State<Ocrresult2> {
         var data = jsonDecode(response.body);
         List<String> ocrResult = (data['text'] as List).cast<String>();
 
-        String hirightingtext = ''; // 하이라이팅된 텍스트
-        String OcrText = ''; // 일반 텍스트
+        // // 사용자의 알레르기 정보
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // final userAllergies = prefs.getStringList('allergies') ?? [];
 
+// 정규 표현식을 사용하여 사용자의 알레르기 정보와 일치하는 부분 추출
+        RegExp regex = RegExp(r'『(.*?)』');
+        List<String> highlightingTexts = [];
         for (String line in ocrResult) {
-          List<String> words = line.split(' ');
-          for (String word in words) {
-            if (userAllergies.contains(word)) {
-              hirightingtext += ' $word '; // 알레르기 단어는 노란색 배경으로 표시
-            } else {
-              OcrText += line;
-            }
-          }
+          highlightingTexts.addAll(regex
+                  .allMatches(line)
+                  .map((match) => match.group(1) ?? '') // null일 경우 빈 문자열 반환
+              //       //.where((highlightedWord) => userAllergies
+              //           .contains(highlightedWord)) // 사용자 알레르기 정보와 일치하는 것만 필터링
+              //       .toList(),
+              );
         }
 
+        String highlightingResult = highlightingTexts.join(', ');
+
+        String plainText = ocrResult.join(' ');
+
         setState(() {
-          _hirightingResult = hirightingtext;
-          _ocrResult = OcrText;
-          isOcrInProgress = false;
-          print('하이라이팅:$hirightingtext');
+          _hirightingResult = highlightingResult.trim();
+          _ocrResult = plainText.trim();
         });
       } else {
         setState(() {
-          _ocrResult = _ocrResult;
-          isOcrInProgress = false;
+          _hirightingResult = '';
         });
       }
     } catch (e) {
       setState(() {
-        _ocrResult = 'Error occurred: $e';
+        _hirightingResult = 'Error occurred: $e';
+      });
+    } finally {
+      setState(() {
         isOcrInProgress = false;
       });
     }

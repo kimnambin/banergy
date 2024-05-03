@@ -7,6 +7,7 @@ import os
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
+from datetime import timedelta
 
 
 app = Flask(__name__)
@@ -86,7 +87,8 @@ def login():
     
     user = User.query.filter_by(username=username , password = password).first()
     if user:
-            access_token = create_access_token(identity=user.username)
+            expires = timedelta(days=3)
+            access_token = create_access_token(identity=user.username, expires_delta=expires)
             #print("토큰 값:", access_token)
             allergies = user.allergies if user.allergies else "알레르기 정보X"
             print("알레르기 정보:", allergies)
@@ -243,46 +245,6 @@ def perform_ocr(image_path):
     return ocr_texts
 
 
-# OCR 결과 부분
-@app.route('/result', methods=['GET'])
-@jwt_required()
-def get_ocr_result():
-    # 최근에 업로드된 이미지 파일 경로 가져오기
-    file_times = [(file, os.path.getmtime(os.path.join(img_dir, file))) for file in os.listdir(img_dir)]
-    file_times.sort(key=lambda x: x[1], reverse=True)
-    recent_file = file_times[0][0]
-    recent_file_path = os.path.join(img_dir, recent_file)
-    
-    # OCR 수행
-    ocr_texts = perform_ocr(recent_file_path)
-
-    # 로그인한 사용자의 정보 가져오기
-    current_username = get_jwt_identity()
-    user = User.query.filter_by(username=current_username).first()
-
-    if user:
-        # allergies = user.allergies.split(",") if user.allergies else []
-        allergies = user.allergies.replace('"', '').split(", ") if user.allergies else []
-
-        print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
-
-        # 텍스트에서 알레르기 정보를 하이라이팅하여 적용
-        highlighted_texts = []
-        for text in ocr_texts:
-            highlighted_text = text.split()  
-            for i, word in enumerate(highlighted_text):
-                if word in allergies:
-                     
-                    highlighted_text[i] = f'<{word}>' 
-            highlighted_texts.append(' '.join(highlighted_text))  
-            print('일반:' , highlighted_text) 
-        return jsonify({'text': highlighted_texts}), 200
-
-    else:
-        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
-
-
-
 
 # 이미지를 받아서 OCR을 수행하는 엔드포인트
 @app.route('/ocr', methods=['POST'])
@@ -307,73 +269,64 @@ def ocr_image():
     user = User.query.filter_by(username=current_username).first()
 
     if user:
-        allergies = user.allergies.split(",") if user.allergies else []
-        print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
-    
+        allergies = user.allergies.replace('"', '').split(", ") if user.allergies else []
 
-    # 텍스트에서 특정 단어를 찾아 하이라이팅 적용
-    highlighted_texts = []
-    for text in ocr_texts:
-            highlighted_text = text
-            for word in allergies:
-                if word in highlighted_text:
-                    highlighted_text = highlighted_text.replace(word, f"<{word}>")
+        print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
+
+        highlighted_texts = []
+        for text in ocr_texts:
+            highlighted_text = []
+            for word in text.split():
+                if word in allergies:
+                    highlighted_text.append('<' + word + '>')
+                else:
+                    highlighted_text.append(word)
             highlighted_texts.append(highlighted_text)
 
+        
+        return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
+
+    else:
+        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
+
+# OCR 결과 부분
+@app.route('/result', methods=['GET'])
+@jwt_required()
+def get_ocr_result():
+    # 최근에 업로드된 이미지 파일 경로 가져오기
+    file_times = [(file, os.path.getmtime(os.path.join(img_dir, file))) for file in os.listdir(img_dir)]
+    file_times.sort(key=lambda x: x[1], reverse=True)
+    recent_file = file_times[0][0]
+    recent_file_path = os.path.join(img_dir, recent_file)
     
+    # OCR 수행
+    ocr_texts = perform_ocr(recent_file_path)
 
-    return jsonify({'text': highlighted_texts}), 200
+    # 로그인한 사용자의 정보 가져오기
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
 
-# # OCR 결과 부분
-# @app.route('/result', methods=['GET', 'POST'])
-# @jwt_required()
-# def ocr_image():
-#     if 'image' not in request.files:
-#         return jsonify({'message': '이미지가 없습니다.'}), 400
-    
-#     image = request.files['image']
+    if user:
+        # 사용자의 알레르기 정보에서 따옴표와 대괄호 제거
+        allergies = [allergy.strip('[]"') for allergy in user.allergies.split(',')] if user.allergies else []
 
-#     if image.filename == '':
-#         return jsonify({'message': '이미지가 선택되지 않았습니다.'}), 400
+        print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
 
-#     # 이미지를 저장할 경로
-#     filepath = os.path.join(img_dir, image.filename)
-#     image.save(filepath)
+        highlighted_texts = []
+        for text in ocr_texts:
+            highlighted_text = []
+            for word in text.split():
+                if any(allergy in word for allergy in allergies):
+                    highlighted_text.append('『' + word + '』')
+                else:
+                    highlighted_text.append(word)
+            highlighted_texts.append(highlighted_text)
 
-# # def get_ocr_result():
-#     # 최근에 업로드된 이미지 파일 경로 가져오기
-#     file_times = [(file, os.path.getmtime(os.path.join(img_dir, file))) for file in os.listdir(img_dir)]
-#     file_times.sort(key=lambda x: x[1], reverse=True)
-#     recent_file = file_times[0][0]
-#     recent_file_path = os.path.join(img_dir, recent_file)
-    
-#     # OCR 수행
-#     ocr_texts = perform_ocr(recent_file_path)
+       
+        print('일반:', ocr_texts) 
+        print('하이라이팅:', highlighted_texts)
+        return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
 
-#     # 로그인한 사용자의 정보 가져오기
-#     current_username = get_jwt_identity()
-#     user = User.query.filter_by(username=current_username).first()
-
-#     if user:
-#         # allergies = user.allergies.split(",") if user.allergies else []
-#         allergies = user.allergies.replace('"', '').split(", ") if user.allergies else []
-
-#         print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
-
-#         # 텍스트에서 알레르기 정보를 하이라이팅하여 적용
-#         highlighted_texts = []
-#         for text in ocr_texts:
-#             highlighted_text = text.split()  
-#             for i, word in enumerate(highlighted_text):
-#                 if word in allergies:
-                     
-#                     highlighted_text[i] = f'<{word}>' 
-#             highlighted_texts.append(' '.join(highlighted_text))  
-#             print('일반:' , highlighted_text) 
-#         return jsonify({'text': highlighted_texts}), 200
-
-#     else:
-#         return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)

@@ -1,521 +1,567 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/SearchWidget.dart';
-import 'package:flutter_banergy/login/login_login.dart';
-import 'package:flutter_banergy/main_category/IconSlider.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/ocr_result.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io';
-import 'package:flutter_banergy/mainDB.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:photo_view/photo_view.dart';
+// import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    const MaterialApp(
-      home: MainpageApp(),
-    ),
-  );
-}
+// void main() {
+//   runApp(MyApp());
+// }
 
-class MainpageApp extends StatelessWidget {
-  final File? image;
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     var container = Container(
+//             decoration: BoxDecoration(
+//               border: Border.all(color: const Color(0xFFB6B6B6)),
+//               color: const Color(0xFFF1F2F7),
+//             ),
+//             child: Container(
+//   padding: const EdgeInsets.fromLTRB(0, 11, 0, 0),
+//   child: Column(
+//     mainAxisAlignment: MainAxisAlignment.start,
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Container(
+//         margin: const EdgeInsets.fromLTRB(30, 0, 30, 18),
+//         child: const Align(
+//           alignment: Alignment.center,
+//           child: SizedBox(
+//             width: 212.1,
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween, // 아이콘과 텍스트를 왼쪽과 오른쪽에 배치
+//               children: [
+//                 Icon(
+//                   Icons.arrow_back_ios, // 아이콘 사용
+//                   color: Colors.black,
+//                 ),
+//                 Text(
+//                   '마이페이지',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     // 'Roboto Condensed',
+//                     fontWeight: FontWeight.w600,
+//                     fontSize: 20,
+//                     letterSpacing: 0,
+//                     color: Color(0xFF000000),
+//                   ),
+//                 ),
+//                 SizedBox(width: 25), // 아이콘과 텍스트 사이의 간격
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     ],
+//   ),
+// ),
 
-  const MainpageApp({super.key, this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '식품 알레르기 관리 앱',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107),
-        ),
-        useMaterial3: true,
-      ),
-      home: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  String? authToken;
-  final ImagePicker _imagePicker = ImagePicker();
-  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-  String? code;
-  String resultCode = '';
-  String ocrResult = '';
-  bool isOcrInProgress = false;
-  final picker = ImagePicker();
-  late String img64;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkLoginStatus();
-  }
-
-  Future<void> _uploadImage(XFile pickedFile) async {
-    setState(() {
-      isOcrInProgress = true; // 이미지 업로드 시작
-    });
-
-    final url = Uri.parse('http://192.168.0.10:3000/ocr');
-    final request = http.MultipartRequest('POST', url);
-    request.headers['Authorization'] = 'Bearer $authToken';
-    request.files
-        .add(await http.MultipartFile.fromPath('image', pickedFile.path));
-    final response = await request.send();
-
-    if (response.statusCode == 200) {
-      var responseData = await response.stream.bytesToString();
-      var decodedData = jsonDecode(responseData);
-      setState(() {
-        ocrResult = decodedData['text'].join('\n');
-      });
-    } else {
-      setState(() {
-        ocrResult = 'Failed to perform OCR: ${response.statusCode}';
-      });
-    }
-  }
-
-  Future<void> _checkLoginStatus() async {
-    final token = await _loginUser();
-    if (token != null) {
-      final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-      });
-    }
-  }
-
-  Future<String?> _loginUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
-  }
-
-  Future<bool> _validateToken(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://192.168.0.10:3000/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      ('Error validating token: $e');
-      return false;
-    }
-  }
-
-  int _selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: const [
-          Flexible(
-            child: SearchWidget(), // Flexible 추가
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          const Column(
-            children: [
-              IconSlider(),
-              SizedBox(height: 16),
-              Expanded(
-                child: ProductGrid(),
-              ),
-            ],
-          ),
-          if (isOcrInProgress) // 업로드 중일 때만 진행 바를 표시
-            Container(
-              alignment: Alignment.center,
-              color: Colors.black.withOpacity(0.5),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 8),
-                  Text(
-                    '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              activeIcon: Icon(Icons.home, color: Colors.green)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.adjust),
-              label: "Lens",
-              activeIcon: Icon(Icons.adjust, color: Colors.green)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'My',
-              activeIcon: Icon(Icons.person, color: Colors.grey)),
-        ],
-        onTap: (index) async {
-          setState(() {
-            _selectedIndex = index;
-          });
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
-            );
-          } else if (index == 1) {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return SingleChildScrollView(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            var cameraStatus = await Permission.camera.status;
-                            if (!cameraStatus.isGranted) {
-                              await Permission.camera.request();
-                            }
-                            final pickedFile = await _imagePicker.pickImage(
-                              source: ImageSource.camera,
-                            ) as XFile;
-
-                            setState(() {
-                              // 이미지 선택 후에 진행 바를 나타냅니다.
-                              isOcrInProgress = true;
-                            });
-
-                            try {
-                              await _uploadImage(pickedFile);
-                              // ignore: use_build_context_synchronously
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
-                                    imagePath: pickedFile.path,
-                                    ocrResult: ocrResult,
-                                  ),
-                                ),
-                              );
-                            } catch (e) {
-                              ('OCR failed: $e');
-                            } finally {
-                              setState(() {
-                                // OCR 작업 완료 후에 진행 바를 숨깁니다.
-                                isOcrInProgress = false;
-                              });
-                            }
-                          },
-                          child: const Text('Camera'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final pickedFile = await _imagePicker.pickImage(
-                                source: ImageSource.gallery) as XFile;
-                            setState(() {
-                              isOcrInProgress = true;
-                            });
-                            // ignore: duplicate_ignore
-                            try {
-                              // OCR 수행
-                              await _uploadImage(pickedFile);
-
-                              // ignore: use_build_context_synchronously
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult(
-                                    imagePath: pickedFile.path,
-                                    ocrResult: ocrResult,
-                                  ),
-                                ),
-                              );
-                            } catch (e) {
-                              ('OCR failed: $e');
-                            }
-                          },
-                          child: const Text('Gallery'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
-                              context: context,
-                              onCode: (code) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CodeScreen(
-                                      resultCode: code ?? "스캔된 정보 없음",
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: const Text('QR/Barcode'),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          } else if (index == 2) {
-            setState(() {
-              _selectedIndex = index;
-            });
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class ProductGrid extends StatefulWidget {
-  const ProductGrid({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _ProductGridState createState() => _ProductGridState();
-}
-
-class _ProductGridState extends State<ProductGrid> {
-  late List<Product> products = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData(); // initState에서 데이터를 불러옵니다.
-  }
-
-  Future<void> fetchData() async {
-    final response = await http.get(
-      Uri.parse('http://192.168.0.10:8000/'),
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        final List<dynamic> productList = json.decode(response.body);
-        products = productList.map((item) => Product.fromJson(item)).toList();
-      });
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
-  //로그인 상태검사
-  Future<void> checkLoginStatus(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    if (!isLoggedIn) {
-      // 로그인x
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginApp()),
-      );
-    } else {
-      // 로그인 o -> 메인 페이지로 이동
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainpageApp()),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return Card(
-          child: InkWell(
-            onTap: () {
-              _handleProductClick(context, products[index]);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Image.network(
-                      products[index].frontproduct,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  products[index].name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4.0),
-                Text(products[index].allergens),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _handleProductClick(BuildContext context, Product product) {
-    double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
-    double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
-    double minTextScaleFactor = -2.0; // 텍스트 최소 크기
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('상품 정보'),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildText('카테고리:', product.kategorie, textScaleFactor),
-                    _buildText('이름:', product.name, textScaleFactor),
-                    _buildImage(context, product.frontproduct),
-                    _buildImage(context, product.backproduct),
-                    _buildText('알레르기 식품:', product.allergens, textScaleFactor),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              textScaleFactor += 0.5;
-                              if (textScaleFactor > maxTextScaleFactor) {
-                                textScaleFactor = maxTextScaleFactor;
-                              }
-                            });
-                          },
-                          child: const Icon(Icons.zoom_in, color: Colors.black),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              textScaleFactor -= 0.5;
-                              if (textScaleFactor < minTextScaleFactor) {
-                                textScaleFactor = minTextScaleFactor;
-                              }
-                            });
-                          },
-                          child:
-                              const Icon(Icons.zoom_out, color: Colors.black),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('닫기'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-Widget _buildText(String label, String value, double textScaleFactor) {
-  return Text(
-    '$label $value',
-    style: TextStyle(fontSize: 16 * textScaleFactor),
-  );
-}
-
-Widget _buildImage(BuildContext context, String imageUrl) {
-  return GestureDetector(
-    onTap: () {
-      // 확대 이미지
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Stack(
-              alignment: Alignment.topRight,
-              children: [
-                PhotoView(
-                  imageProvider: NetworkImage(imageUrl),
-                  minScale: PhotoViewComputedScale.contained * 1.0,
-                  maxScale: PhotoViewComputedScale.covered * 2.0,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
-                    child: const Icon(Icons.close),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-    child: Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-    ),
-  );
-}
+//                   child: Container(
+//                     margin: const EdgeInsets.fromLTRB(17, 0, 17, 17),
+                   
+//                       decoration: BoxDecoration(
+//                         color: const Color(0xFFFEFFFE),
+//                         borderRadius: BorderRadius.circular(15),
+//                       ),
+//                       child: Container(
+//                         padding: const EdgeInsets.fromLTRB(16, 13, 14, 14),
+//                         child: const Row(
+//                           mainAxisAlignment: MainAxisAlignment.start,
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             SizedBox(
+//                               width: 25,
+//                               height: 25,
+//                               child: Icon(
+//                                 Icons.account_circle, // 아이콘 사용
+//                                 color: Colors.grey,
+//                               ),
+//                             ),
+//                             SizedBox(width: 25),
+//                             Text(
+//                               '이예원',
+//                               textAlign: TextAlign.center,
+//                               style: TextStyle(
+//                                 // "Roboto Condensed",
+//                                 fontWeight: FontWeight.w600,
+//                                 fontSize: 20,
+//                                 height: 1,
+//                                 letterSpacing: -0.5,
+//                                 color: Color(0xFF000000),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   child: Container(
+//                     margin: const EdgeInsets.fromLTRB(17, 0, 17, 19),
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         color: const Color(0xFFFEFFFE),
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       child: Container(
+//                         padding: const EdgeInsets.fromLTRB(29, 23, 25.9, 21),
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.start,
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+//                               child: const Align(
+//                                 alignment: Alignment.center,
+//                                 child: Text(
+//                                   '몸 상태와 반응등 증상을 꼭 얘기해주세요.',
+//                                   style: TextStyle(
+//                                     // 'Roboto Condensed',
+//                                     fontWeight: FontWeight.w500,
+//                                     fontSize: 14,
+//                                     height: 1.3,
+//                                     letterSpacing: -0.5,
+//                                     color: Colors.grey,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                             Align(
+//                               alignment: Alignment.topLeft,
+//                               child: SizedBox(
+//                                 width: 258.7,
+//                                 child: Row(
+//                                   mainAxisAlignment:
+//                                       MainAxisAlignment.spaceBetween,
+//                                   crossAxisAlignment: CrossAxisAlignment.start,
+//                                   children: [
+//                                     Row(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.start,
+//                                       crossAxisAlignment:
+//                                           CrossAxisAlignment.start,
+//                                       children: [
+//                                         Container(
+//                                           margin: const EdgeInsets.fromLTRB(
+//                                               0, 0, 12, 0),
+//                                           child: Container(
+//                                             decoration: BoxDecoration(
+//                                               color: const Color(0xFF03C95B),
+//                                               borderRadius:
+//                                                   BorderRadius.circular(17),
+//                                             ),
+//                                             child: Container(
+//                                               padding:
+//                                                   const EdgeInsets.fromLTRB(
+//                                                       5, 3, 9.2, 11),
+//                                               child: const Text(
+//                                                 '+',
+//                                                 style: TextStyle(
+//                                                   // 'Roboto Condensed',
+//                                                   fontWeight: FontWeight.w200,
+//                                                   fontSize: 40,
+//                                                   height: 0.5,
+//                                                   letterSpacing: -0.5,
+//                                                   color: Color(0xFFFFFFFF),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         Container(
+//                                           margin:
+//                                               const EdgeInsets.fromLTRB(0, 7, 0, 7),
+//                                           child: Text(
+//                                             '병원 진료',
+//                                             style: TextStyle(
+//                                               // 'Roboto Condensed',
+//                                               fontWeight: FontWeight.w500,
+//                                               fontSize: 13,
+//                                               height: 1.5,
+//                                               letterSpacing: -0.5,
+//                                               color: Color(0xFF000000),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                     Row(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.start,
+//                                       crossAxisAlignment:
+//                                           CrossAxisAlignment.start,
+//                                       children: [
+//                                         Container(
+//                                           margin:
+//                                               EdgeInsets.fromLTRB(0, 0, 12, 0),
+//                                           child: Container(
+//                                             decoration: BoxDecoration(
+//                                               color: Color(0xFFEDEDED),
+//                                               borderRadius:
+//                                                   BorderRadius.circular(17),
+//                                             ),
+//                                             child: Container(
+//                                               padding: EdgeInsets.fromLTRB(
+//                                                   5, 3, 9.2, 11),
+//                                               child: Text(
+//                                                 '+',
+//                                                 style: TextStyle(
+//                                                   // 'Roboto Condensed',
+//                                                   fontWeight: FontWeight.w200,
+//                                                   fontSize: 40,
+//                                                   height: 0.5,
+//                                                   letterSpacing: -0.5,
+//                                                   color: Color(0xFFAAA3A3),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         Container(
+//                                           margin:
+//                                               EdgeInsets.fromLTRB(0, 7, 0, 7),
+//                                           child: Text(
+//                                             '알레르기 반응',
+//                                             style: TextStyle(
+//                                               // 'Roboto Condensed',
+//                                               fontWeight: FontWeight.w500,
+//                                               fontSize: 13,
+//                                               height: 1.5,
+//                                               letterSpacing: -0.5,
+//                                               color: Color(0xFF000000),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     margin: EdgeInsets.fromLTRB(17, 0, 17, 19),
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         color: Color(0xFFFEFFFE),
+//                         borderRadius: BorderRadius.circular(15),
+//                       ),
+//                       child: Container(
+//                         padding: EdgeInsets.fromLTRB(29, 16.6, 21, 10.8),
+//                         child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               margin: EdgeInsets.fromLTRB(0, 1.4, 10, 3.2),
+//                               child: SizedBox(
+//                                 width: 239,
+//                                 child: Text(
+//                                   '알러지 필터링',
+//                                   style: TextStyle(
+//                                     // 'Roboto Condensed',
+//                                     fontWeight: FontWeight.w500,
+//                                     fontSize: 16,
+//                                     height: 1.3,
+//                                     letterSpacing: -0.5,
+//                                     color: Color(0xFF000000),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                             SizedBox(
+//                               width: 25,
+//                               height: 24.6,
+//                               // child: SvgPicture.network(
+//                               //   'assets/vectors/iconarrow_back_ios_26_x2.svg',
+//                               // ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     margin: EdgeInsets.fromLTRB(35, 0, 35, 19),
+//                     child: Align(
+//                       alignment: Alignment.topLeft,
+//                       child: Text(
+//                         '설정',
+//                         style: TextStyle(
+//                           // 'Roboto Condensed',
+//                           fontWeight: FontWeight.w500,
+//                           fontSize: 20,
+//                           height: 1,
+//                           letterSpacing: -0.5,
+//                           color: Color(0xFF000000),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     margin: EdgeInsets.fromLTRB(17, 0, 17, 24),
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         color: Color(0xFFFEFFFE),
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       child: Container(
+//                         padding: EdgeInsets.fromLTRB(27, 12, 21, 17.8),
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.start,
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               margin: EdgeInsets.fromLTRB(2, 0, 0, 14.8),
+//                               child: Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   Container(
+//                                     margin: EdgeInsets.fromLTRB(0, 4, 10, 0.2),
+//                                     child: SizedBox(
+//                                       width: 239,
+//                                       child: Text(
+//                                         '닉네임 변경',
+//                                         style: TextStyle(
+//                                           // 'Roboto Condensed',
+//                                           fontWeight: FontWeight.w500,
+//                                           fontSize: 16,
+//                                           height: 1.3,
+//                                           letterSpacing: -0.5,
+//                                           color: Color(0xFF000000),
+//                                         ),
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   SizedBox(
+//                                     width: 25,
+//                                     height: 24.2,
+//                                     // child: SvgPicture.network(
+//                                     //   'assets/vectors/iconarrow_back_ios_15_x2.svg',
+//                                     // ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                             Row(
+//                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Container(
+//                                   margin: EdgeInsets.fromLTRB(0, 4, 0, 0.2),
+//                                   child: Column(
+//                                     mainAxisAlignment: MainAxisAlignment.start,
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.start,
+//                                     children: [
+//                                       Container(
+//                                         margin:
+//                                             EdgeInsets.fromLTRB(0, 0, 0, 17),
+//                                         child: Text(
+//                                           '비밀번호 변경',
+//                                           style: TextStyle(
+//                                             // 'Roboto Condensed',
+//                                             fontWeight: FontWeight.w500,
+//                                             fontSize: 16,
+//                                             height: 1.3,
+//                                             letterSpacing: -0.5,
+//                                             color: Color(0xFF000000),
+//                                           ),
+//                                         ),
+//                                       ),
+//                                       Container(
+//                                         margin: EdgeInsets.fromLTRB(3, 0, 3, 0),
+//                                         child: Align(
+//                                           alignment: Alignment.topLeft,
+//                                           child: Text(
+//                                             '탈퇴하기',
+//                                             style: TextStyle(
+//                                               // 'Roboto Condensed',
+//                                               fontWeight: FontWeight.w500,
+//                                               fontSize: 16,
+//                                               height: 1.3,
+//                                               letterSpacing: -0.5,
+//                                               color: Color(0xFF000000),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                                 SizedBox(
+//                                   width: 25,
+//                                   height: 61.2,
+//                                   // child: SvgPicture.network(
+//                                   //   'assets/vectors/iconarrow_back_ios_6_x2.svg',
+//                                   // ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     margin: EdgeInsets.fromLTRB(35, 0, 35, 19),
+//                     child: Align(
+//                       alignment: Alignment.topLeft,
+//                       child: Text(
+//                         '추가지원',
+//                         style: TextStyle(
+//                           // 'Roboto Condensed',
+//                           fontWeight: FontWeight.w500,
+//                           fontSize: 20,
+//                           height: 1,
+//                           letterSpacing: -0.5,
+//                           color: Color(0xFF000000),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     margin: EdgeInsets.fromLTRB(17, 0, 17, 47),
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         color: Color(0xFFFEFFFE),
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       child: Container(
+//                         padding: EdgeInsets.fromLTRB(27, 12, 21, 18.8),
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.start,
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               margin: EdgeInsets.fromLTRB(2, 0, 0, 14.8),
+//                               child: Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   Container(
+//                                     margin: EdgeInsets.fromLTRB(0, 4, 10, 0.2),
+//                                     child: SizedBox(
+//                                       width: 239,
+//                                       child: Text(
+//                                         '문의하기',
+//                                         style: TextStyle(
+//                                           // 'Roboto Condensed',
+//                                           fontWeight: FontWeight.w500,
+//                                           fontSize: 16,
+//                                           height: 1.3,
+//                                           letterSpacing: -0.5,
+//                                           color: Color(0xFF000000),
+//                                         ),
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   SizedBox(
+//                                     width: 25,
+//                                     height: 24.2,
+//                                     // child: SvgPicture.network(
+//                                     //   'assets/vectors/iconarrow_back_ios_25_x2.svg',
+//                                     // ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                             Row(
+//                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Container(
+//                                   margin: EdgeInsets.fromLTRB(0, 4, 10, 0.2),
+//                                   child: SizedBox(
+//                                     width: 241,
+//                                     child: Text(
+//                                       '상품추가',
+//                                       style: TextStyle(
+//                                         // 'Roboto Condensed',
+//                                         fontWeight: FontWeight.w500,
+//                                         fontSize: 16,
+//                                         height: 1.3,
+//                                         letterSpacing: -0.5,
+//                                         color: Color(0xFF000000),
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 SizedBox(
+//                                   width: 25,
+//                                   height: 24.2,
+//                                   // child: SvgPicture.network(
+//                                   //   'assets/vectors/iconarrow_back_ios_23_x2.svg',
+//                                   // ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         color: Color(0xFFF5F5F5),
+//                       ),
+//                       child: SizedBox(
+//                         width: double.infinity,
+//                         child: Container(
+//                           padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Container(
+//                                 margin: EdgeInsets.fromLTRB(0, 1, 0, 1),
+//                                 child: ClipRRect(
+//                                   borderRadius: BorderRadius.circular(1),
+//                                   child: SizedBox(
+//                                     width: 12,
+//                                     height: 14,
+//                                     // child: SvgPicture.network(
+//                                     //   'assets/vectors/vector_320_x2.svg',
+//                                     // ),
+//                                   ),
+//                                 ),
+//                               ),
+//                               SizedBox(
+//                                 width: 16,
+//                                 height: 16,
+//                                 // child: SvgPicture.network(
+//                                 //   'assets/vectors/union_x2.svg',
+//                                 // ),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+    
+//               );
+//     return MaterialApp(
+//         home: Scaffold(
+//       // appBar: AppBar(
+//       //   title: const Text("마이페이지"),
+//       //   backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+//       //   leading: IconButton(
+//       //     icon: const Icon(Icons.arrow_back),
+//       //     onPressed: () {
+//       //       Navigator.pop(context);
+//       //     },
+//       //   ),
+//       // ),
+//       body: SingleChildScrollView(
+//         child: Center(
+//           child: container,
+//             ),
+//           ),
+//         ),
+//       );
+//   }
+// }

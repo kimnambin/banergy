@@ -148,5 +148,6 @@ def add_product():
         return jsonify({'message': '제품이 성공적으로 추가되었습니다.'}), 201
 
 if __name__ == '__main__':
+
     app.run(host='0.0.0.0', port=8000, debug=True)
 
