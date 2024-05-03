@@ -1,4 +1,13 @@
 # 식품 알레르기 환자를 위한 애플리케이션
+
+<h3>📍하이라이팅 부분 </h3>
+ <table>
+        <tr>
+            <td><img src="https://github.com/kimnambin/banergy/assets/127464935/4b7dc1ff-4a99-43d2-9747-ec20f16517b6" width="300" height="750">회원</td>
+            <td><img src="https://github.com/kimnambin/banergy/assets/127464935/afe6ce5a-8e6e-4eb8-91be-b4cf8b989394" width="300" height="750">비회원</td>
+        </tr>
+    </table><hr>
+
 <h3>📍마이페이지 서버 연동 완료!!(비번찾기/탈퇴하기/상품추가/자유게시판/문의하기) </h3>
 <img src= "https://github.com/kimnambin/banergy/assets/127464935/15ccbe1c-16cb-49fa-b96b-5bf23c5f61c0"><hr>
 
