@@ -1,5 +1,26 @@
 # 식품 알레르기 환자를 위한 애플리케이션
 
+
+<!-- ### 💬 팀 소개
+>**조화와 지속 가능한 성장을 추구하는 팀 `윤슬`입니다!**<br><br>**팀 개개인 모두 주어진 위치에 상관없이 모든 일에 `오너십`을 가지고 `적극적으로 참여`하는 것을 최우선으로 생각하였습니다. 좋은 동료가 되기 위해 치열하게 고민하고, 학습하고, 성장하고 있습니다.**
+
+<br>
+-->
+### 👨🏼‍💻 팀원소개
+한지욱|임산성|김남빈|이예원|양병승|
+:-:|:-:|:-:|:-:|:-:
+<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|
+리더 , FE | BE , PM|FE ,BE | PM , DE | FE , BE
+
+
+<br>
+
+<!--
+### 👨🏼‍💻 역할 분담
+<img width="1504" alt="Screenshot 2023-08-20 at 11 21 39 PM" src="https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-08/assets/81630351/dd0e497a-e2a4-432b-b501-5769453c08ef">
+-->
+<br>
+
 <h3>📍하이라이팅 부분 </h3>
  <table>
         <tr>
@@ -9,7 +30,7 @@
     </table><hr>
 
 
-<h3>📍마이페이지 서버 연동 완료!!(비번찾기/탈퇴하기/상품추가/자유게시판/문의하기) </h3>
+<!-- <h3>📍마이페이지 서버 연동 완료!!(비번찾기/탈퇴하기/상품추가/자유게시판/문의하기) </h3>
 <img src= "https://github.com/kimnambin/banergy/assets/127464935/15ccbe1c-16cb-49fa-b96b-5bf23c5f61c0"><hr>
 
  
@@ -52,4 +73,4 @@ https://github.com/kimnambin/banergy/assets/127464935/871b166f-f836-4976-8c12-f1
 <div style="display: flex; justify-content: space-around;">
 <img src="https://github.com/kimnambin/banergy/assets/127464935/602fb0c0-223f-4694-b3c5-b93731d794de" width="300" height="800">
  <img src="https://github.com/kimnambin/banergy/assets/127464935/d5a6d33b-dddc-4a5f-8977-3ed61ca106f6" width="300" height="800">
-</div>
+</div> -->
