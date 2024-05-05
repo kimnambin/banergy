@@ -109,7 +109,8 @@ def protectloginusered():
         allergies = [allergy.strip('"') for allergy in allergies_with_quotes]  
         return jsonify({
             'username': user.username,
-            'allergies': allergies
+            'allergies': allergies,
+            'name' : user.name 
         }), 200
     else:
         return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
