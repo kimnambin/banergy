@@ -136,7 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
               actions: [
                 TextButton(
                   onPressed: () async {
-                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MypageApp(),
+                      ),
+                    );
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,

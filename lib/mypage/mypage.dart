@@ -14,10 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(const MypageApp());
-}
-
 class MypageApp extends StatelessWidget {
   const MypageApp({super.key});
 
@@ -40,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? authToken;
+  String? loginName;
   set code(String? code) {}
 
   @override
@@ -53,33 +50,50 @@ class _MyHomePageState extends State<MyHomePage>
     final token = await _loginUser();
     if (token != null) {
       final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-      });
+      if (isValid) {
+        final userName = await _fetchUserName(token);
+        setState(() {
+          print('로그인한 유저네임 : $loginName');
+          authToken = token;
+          loginName = userName;
+        });
+      } else {
+        setState(() {
+          authToken = null;
+        });
+      }
+    }
+  }
+
+  Future<String?> _fetchUserName(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final username = responseData['name'];
+        if (username != null) {
+          return username;
+        } else {
+          debugPrint('Username is null in response');
+          return null;
+        }
+      } else {
+        debugPrint('Failed to fetch user name: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching user name: $e');
+      return null;
     }
   }
 
   Future<String?> _loginUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-    if (token != null) {
-      try {
-        final response = await http.get(
-          Uri.parse('http://192.168.121.174:3000/loginuser'),
-          headers: {'Authorization': 'Bearer $token'},
-        );
-        if (response.statusCode == 200) {
-          final responseData = json.decode(response.body);
-          return responseData['username'];
-        } else {
-          return null;
-        }
-      } catch (e) {
-        debugPrint('Error fetching user info: $e');
-        return null;
-      }
-    }
-    return null;
+    return token;
   }
 
   Future<bool> _validateToken(String token) async {
@@ -90,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage>
       );
       return response.statusCode == 200;
     } catch (e) {
-      ('Error validating token: $e');
+      debugPrint('Error validating token: $e');
       return false;
     }
   }
@@ -202,8 +216,9 @@ class _MyHomePageState extends State<MyHomePage>
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: _buildSectionTitle(
-                //$current_username,
-                "이예원",
+                '$loginName',
+
+                //"이예원",
                 Icons.account_circle,
               ),
             ),
