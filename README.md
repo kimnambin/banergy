@@ -4,8 +4,19 @@
 <!-- ### 💬 팀 소개
 >**조화와 지속 가능한 성장을 추구하는 팀 `윤슬`입니다!**<br><br>**팀 개개인 모두 주어진 위치에 상관없이 모든 일에 `오너십`을 가지고 `적극적으로 참여`하는 것을 최우선으로 생각하였습니다. 좋은 동료가 되기 위해 치열하게 고민하고, 학습하고, 성장하고 있습니다.**
 
+<br>-->
+
+## 💻 기술
+<div>
+<img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white">
+     <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white">
+     <img src='https://img.shields.io/badge/Python-07405E?style=for-the-badge&logo=python&logoColor=white'>
+     <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white">
+     <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white">
+     <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
+ </div>
 <br>
--->
+
 ### 👨🏼‍💻 팀원소개
 한지욱|임산성|김남빈|이예원|양병승|
 :-:|:-:|:-:|:-:|:-:
