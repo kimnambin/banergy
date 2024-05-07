@@ -1,3 +1,5 @@
+from dateutil.parser import parse
+import datetime
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -21,6 +23,7 @@ class Mypage(db.Model):
     #자유게시판
     freetitle = db.Column(db.String(40), nullable=True)
     freecontent = db.Column(db.String(255), nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.now, nullable=False)
 
 if __name__ == '__main__':
     with app.app_context():
@@ -92,11 +95,19 @@ def free():
         
         freetitle = data.get('freetitle')
         freecontent = data.get('freecontent')
+        timestamp = data.get('timestamp')
+        print('현재시간:' ,timestamp)
         
         if freetitle is None or freecontent is None:
             return jsonify({'message': '제목 또는 내용이 누락되었습니다.'}), 400
         
-        new_mypage = Mypage(freetitle=freetitle, freecontent=freecontent)
+        # timestamp가 없을 경우 현재 시간으로 설정
+        if timestamp is None:
+            timestamp = datetime.datetime.now()
+        else:
+            timestamp = parse(str(timestamp))
+
+        new_mypage = Mypage(freetitle=freetitle, freecontent=freecontent , timestamp=timestamp)
         try:
             db.session.add(new_mypage)
             db.session.commit()
@@ -115,11 +126,11 @@ def free():
             mypage_data = {
                 'id': mypage.id,
                 'freetitle': mypage.freetitle,
-                'freecontent': mypage.freecontent
+                'freecontent': mypage.freecontent,
+                'timestamp': mypage.timestamp.isoformat()
             }
             Mypage_list.append(mypage_data)
-        
-        return jsonify(Mypage_list)  # JSON 형식
-
+            print('현재시간:' ,mypage.timestamp)
+        return jsonify(Mypage_list)  
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6000, debug=True)

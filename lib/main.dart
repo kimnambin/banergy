@@ -30,15 +30,9 @@ class MainpageApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: '식품 알레르기 관리 앱',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107),
-        ),
-        useMaterial3: true,
-      ),
-      home: const HomeScreen(),
+      home: HomeScreen(),
     );
   }
 }

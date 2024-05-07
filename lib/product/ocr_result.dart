@@ -184,7 +184,7 @@ class _OcrresultState extends State<Ocrresult> {
             ),
             const Divider(
               color: Colors.grey,
-              thickness: 2.0,
+              thickness: 0.5,
               height: 5.0,
             ),
             const Center(

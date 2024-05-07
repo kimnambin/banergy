@@ -184,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage>
         centerTitle: true,
         backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.push(
               context,

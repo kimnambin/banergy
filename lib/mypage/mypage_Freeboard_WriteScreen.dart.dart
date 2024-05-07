@@ -72,8 +72,7 @@ class Freeboard_WriteScreen extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    backgroundColor: const Color(0xFFF1F2F7),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
