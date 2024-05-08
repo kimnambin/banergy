@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 
 class Ocrresult2 extends StatefulWidget {
@@ -103,7 +104,21 @@ class _OcrresultState extends State<Ocrresult2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('상품 정보'),
+        title: const Text(
+          "OCR 결과",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -119,8 +134,8 @@ class _OcrresultState extends State<Ocrresult2> {
               ),
             ),
             const Divider(
-              color: Colors.grey,
-              thickness: 2.0,
+              color: Color(0xFFDDD7D7),
+              thickness: 1.0,
               height: 5.0,
             ),
             const Center(

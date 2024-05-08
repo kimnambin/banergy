@@ -1,9 +1,7 @@
-// appbar 검색하는 부분
-
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/menu.dart';
+//import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:flutter_banergy/appbar/search.dart';
-import 'package:flutter_banergy/main.dart';
+//import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -36,67 +34,70 @@ class _SearchWidgetState extends State<SearchWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-        title: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MainpageApp()),
-                );
-              },
-              child: const Text(
-                '밴러지',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.3,
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: '검색',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        // 검색 아이콘을 눌러서 검색 실행
-                        _performSearch();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchScreen(
-                                searchText: _searchController.text),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.search),
+        backgroundColor: Colors.white,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(
+              vertical: 8, horizontal: 0), // 좌우 여백 추가
+          child: Row(
+            children: [
+              Expanded(
+                // MediaQuery 대신 Expanded 사용
+                child: Container(
+                  height: 35, // 고정 높이 설정
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEEEEEE),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: '궁금했던 상품 정보를 검색해보세요',
+                      border: InputBorder.none, // 선 없애기
+                      contentPadding:
+                          const EdgeInsets.only(left: 10, bottom: 10),
+
+                      suffixIcon: IconButton(
+                        onPressed: _onSearchPressed,
+                        icon: const Icon(
+                          Icons.search,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MenuScreen()),
-              );
-            },
-            icon: const Icon(Icons.menu),
+              /*IconButton(
+                onPressed: _onMenuPressed,
+                icon: const Icon(Icons.menu),
+              ),*/
+            ],
           ),
-        ],
+        ),
       ),
       body: _isSearching ? _buildSearchResults() : _buildProductList(),
     );
   }
+
+  void _onSearchPressed() {
+    // 검색 실행
+    _performSearch();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchScreen(
+          searchText: _searchController.text,
+        ),
+      ),
+    );
+  }
+
+  /* void _onMenuPressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MenuScreen()),
+    );
+  }*/
 
 //여기가 검색창 밑에 뜨게 해주는 부분
   Widget _buildProductList() {
@@ -138,7 +139,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
 
     final response =
-        await http.get(Uri.parse('http://192.168.121.174:8000/?query=$query'));
+        await http.get(Uri.parse('http://172.16.98.4:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {

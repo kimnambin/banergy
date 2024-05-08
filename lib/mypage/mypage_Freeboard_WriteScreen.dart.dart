@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
 
@@ -96,8 +97,17 @@ class Freeboard_WriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("글 쓰기"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -111,25 +121,24 @@ class Freeboard_WriteScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                InputField(label: '제목 *', controller: freetitleController),
+                InputField(hintText: "제목", controller: freetitleController),
                 const SizedBox(height: 20),
                 InputField(
-                  label: '내용 *',
                   isTextArea: true,
-                  hintText: "자유롭게 글을 작성해주세요.",
+                  hintText: "내용을 입력하세요.",
                   controller: freecontentController,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 80),
                 ElevatedButton(
                   onPressed: () {
                     free(context); // 수정: free 함수 호출
                   },
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    minimumSize: const Size(double.infinity, 54),
+                    backgroundColor: const Color(0xFF03C95B),
                   ),
-                  child: const Text('글 올리기',
-                      style: TextStyle(color: Colors.white)),
+                  child:
+                      const Text('완료', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -142,13 +151,11 @@ class Freeboard_WriteScreen extends StatelessWidget {
 }
 
 class InputField extends StatelessWidget {
-  final String label;
   final bool isTextArea;
   final String hintText;
   final TextEditingController controller;
 
   const InputField({
-    required this.label,
     this.isTextArea = false,
     this.hintText = "",
     required this.controller,
@@ -160,18 +167,12 @@ class InputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
         if (isTextArea)
           TextFormField(
             maxLines: 10,
             decoration: InputDecoration(
               hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
+              border: InputBorder.none,
             ),
             controller: controller,
           )
@@ -179,8 +180,9 @@ class InputField extends StatelessWidget {
           TextFormField(
             decoration: InputDecoration(
               hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
               ),
             ),
             controller: controller,

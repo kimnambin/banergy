@@ -21,15 +21,9 @@ class allergyinformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107),
-        ),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
@@ -118,14 +112,18 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("나의 알레르기"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        title: const Text(
+          "나의 알레르기",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           },
         ),

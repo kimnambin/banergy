@@ -1,11 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
-
+//인트로 끝나고 보이는 페이지
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_banergy/login/login_first.dart';
-
+import 'package:flutter_banergy/NoUser/Nouserfiltering.dart';
+import 'package:flutter_banergy/login/login_id_find.dart';
+import 'package:flutter_banergy/login/login_join.dart';
+import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,72 +14,144 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(
     MaterialApp(
-      home: LoginApp(),
+      home: FristApp(),
     ),
   );
 }
 
-class LoginApp extends StatelessWidget {
+class FristApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  LoginApp({Key? key});
+  FristApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FristApp()),
-            );
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  InputField(
-                    label: '아이디',
-                    controller: _usernameController,
-                  ),
-                  const SizedBox(height: 20),
-                  InputField(
-                    label: '비밀번호',
-                    controller: _passwordController,
-                  ),
-                  const SizedBox(height: 15),
-                  const SizedBox(height: 80),
-                  ElevatedButton(
-                    onPressed: () => _login(context),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF03C95B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+    // 앱 시작 시 자동 로그인 시도
+    //autoLogin(context);
+
+    return MaterialApp(
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    const Text(
+                      '가장 편한 방법으로\n시작해 보세요!',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    child: const SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Center(
-                        child: Text('로그인'),
+                    const SizedBox(height: 130),
+
+                    ElevatedButton(
+                      onPressed: () => _login(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text('로그인'),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+
+                    //회원가입 이용하기
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const JoinApp(),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text('회원 가입하기'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+
+                    //텍스트 클릭 시 해당 창으로...
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const IDFindApp(),
+                              ),
+                            );
+                          },
+                          child: const Text('아이디 찾기',
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PWFindApp(),
+                              ),
+                            );
+                          },
+                          child: const Text('비밀번호 찾기',
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Nouserfiltering(),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: const Color(0xFFFFFFFF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: const BorderSide(color: Color(0xFFBDBDBD)),
+                        ),
+                      ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text('비회원으로 이용하기'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -253,39 +326,5 @@ class LoginApp extends StatelessWidget {
   // 토큰 유효성 검사 함수
   Future<bool> _validateToken(String token) async {
     return true;
-  }
-}
-
-class InputField extends StatelessWidget {
-  final bool isTextArea;
-  final String label;
-  final TextEditingController controller;
-
-  const InputField({
-    this.isTextArea = false,
-    required this.label,
-    required this.controller,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-        ),
-        TextFormField(
-          decoration: const InputDecoration(
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-            ),
-          ),
-          controller: controller,
-        ),
-      ],
-    );
   }
 }

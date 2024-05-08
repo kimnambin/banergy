@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -123,8 +124,21 @@ class _InquiryScreenState extends State<InquiryScreen> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("문의하기"),
-          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+          title: const Text(
+            "문의하기",
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xFFF1F2F7),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()),
+              );
+            },
+          ),
         ),
         bottomNavigationBar: const BottomNavBar(),
         body: SingleChildScrollView(

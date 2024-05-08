@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/login/login_login.dart';
+import 'package:flutter_banergy/login/login_first.dart';
 import '../mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,7 +18,8 @@ class Delete extends StatelessWidget {
   Delete({super.key});
 
   // 탈퇴하기
-  Future<void> _delete(BuildContext context) async {
+  Future<void> _delete(
+      BuildContext context, MaterialPageRoute materialPageRoute) async {
     final String reason = _resonController.text;
     final String password = _passwordController.text;
 
@@ -50,7 +51,7 @@ class Delete extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginApp(),
+                        builder: (context) => FristApp(),
                       ),
                     );
                   },
@@ -101,21 +102,20 @@ class Delete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107)),
-      useMaterial3: true,
-    );
     return Scaffold(
       appBar: AppBar(
-        title: const Text("회원 탈퇴하기"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        title: const Text(
+          "회원 탈퇴하기",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           },
         ),
@@ -170,7 +170,10 @@ class Delete extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () => _delete(context),
+                  onPressed: () => _delete(
+                    context,
+                    MaterialPageRoute(builder: (context) => FristApp()),
+                  ),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),

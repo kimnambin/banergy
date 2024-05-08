@@ -17,27 +17,20 @@ class FilteringAllergies extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107),
-        ),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+    return const MaterialApp(
+      home: FilteringPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key});
+class FilteringPage extends StatefulWidget {
+  const FilteringPage({Key? key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _FilteringPageState createState() => _FilteringPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _FilteringPageState extends State<FilteringPage> {
   List<String?> checkListValue2 = [];
   List<String> checkList2 = [
     "계란",
@@ -189,14 +182,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("알러지 필터링"),
-        backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+        title: const Text(
+          "알러지 필터링",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           },
         ),

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/NouserOCRresult.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
-import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -29,15 +28,8 @@ class NoUserMainpageApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '식품 알레르기 관리 앱',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 50, 160, 107),
-        ),
-        useMaterial3: true,
-      ),
-      home: const HomeScreen(),
+    return const MaterialApp(
+      home: HomeScreen(),
     );
   }
 }
@@ -95,22 +87,17 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         actions: const [
           Flexible(
-            child: SearchWidget(), // Flexible 추가
+            child: SearchWidget(), // 검색 위젯
           ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          const Column(
-            children: [
-              IconSlider(),
-              SizedBox(height: 16),
-              Expanded(
-                child: ProductGrid(),
-              ),
-            ],
+          const SizedBox(height: 16), // 공간 추가
+          const Expanded(
+            child: ProductGrid(), // 상품 그리드
           ),
-          if (isOcrInProgress) // 업로드 중일 때만 진행 바를 표시
+          if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
             Container(
               alignment: Alignment.center,
               color: Colors.black.withOpacity(0.5),
@@ -133,24 +120,47 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green, // 선택된 아이템의 색상
+        unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
+        selectedLabelStyle:
+            const TextStyle(color: Colors.green), // 선택된 아이템의 라벨 색상
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              activeIcon: Icon(Icons.home, color: Colors.green)),
+            icon: ImageIcon(
+              AssetImage('assets/images/home.png'),
+            ),
+            label: '홈',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.adjust),
-              label: "Lens",
-              activeIcon: Icon(Icons.adjust, color: Colors.green)),
+            icon: ImageIcon(
+              AssetImage('assets/images/bubble-chat.png'),
+            ),
+            label: '커뮤니티',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'My',
-              activeIcon: Icon(Icons.person, color: Colors.grey)),
+            icon: ImageIcon(
+              AssetImage('assets/images/lens.png'),
+            ),
+            label: '렌즈',
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage('assets/images/heart.png'),
+            ),
+            label: '찜',
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage('assets/images/person.png'),
+            ),
+            label: '마이 페이지',
+          ),
         ],
         onTap: (index) async {
           setState(() {
-            _selectedIndex = index;
+            _selectedIndex = index; // 선택된 인덱스 업데이트
           });
           if (index == 0) {
             Navigator.pushReplacement(
@@ -159,6 +169,34 @@ class _HomeScreenState extends State<HomeScreen>
                   builder: (context) => const NoUserMainpageApp()),
             );
           } else if (index == 1) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('비회원 이용불가'),
+                    content: const Text('비회원은 이용하실 수 없습니다.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              const Color.fromARGB(255, 29, 171, 102),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text('확인'),
+                      ),
+                    ],
+                  );
+                });
+          } else if (index == 2) {
             showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
@@ -195,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                               );
                             } catch (e) {
-                              ('OCR failed: $e');
+                              debugPrint('OCR failed: $e');
                             } finally {
                               setState(() {
                                 // OCR 작업 완료 후에 진행 바를 숨깁니다.
@@ -230,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                               );
                             } catch (e) {
-                              ('OCR failed: $e');
+                              debugPrint('OCR failed: $e');
                             }
                           },
                           child: const Text('Gallery'),
@@ -261,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             );
-          } else if (index == 2) {
+          } else if (index == 4) {
             setState(() {
               _selectedIndex = index;
             });

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/login/login_login.dart';
-import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
+import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:photo_view/photo_view.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(
@@ -23,6 +24,7 @@ void main() {
   );
 }
 
+// 앱의 메인 페이지를 빌드하는 StatelessWidget입니다.
 class MainpageApp extends StatelessWidget {
   final File? image;
 
@@ -31,12 +33,12 @@ class MainpageApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: '식품 알레르기 관리 앱',
       home: HomeScreen(),
     );
   }
 }
 
+// 홈 화면을 관리하는 StatefulWidget입니다.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -47,22 +49,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  String? authToken;
-  final ImagePicker _imagePicker = ImagePicker();
-  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
-  String? code;
-  String resultCode = '';
-  String ocrResult = '';
-  bool isOcrInProgress = false;
-  final picker = ImagePicker();
-  late String img64;
+  String? authToken; // 사용자의 인증 토큰
+  final ImagePicker _imagePicker = ImagePicker(); // 이미지 피커 인스턴스
+  final _qrBarCodeScannerDialogPlugin =
+      QrBarCodeScannerDialog(); // QR/바코드 스캐너 플러그인 인스턴스
+  String? code; // 바코드
+  String resultCode = ''; // 스캔된 바코드 결과
+  String ocrResult = ''; // OCR 결과
+  bool isOcrInProgress = false; // OCR 작업 진행 여부
+  final picker = ImagePicker(); // 이미지 피커 인스턴스
+  late String img64; // 이미지를 Base64로 인코딩한 결과
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _checkLoginStatus(); // 로그인 상태 확인
   }
 
+  // 이미지 업로드 및 OCR 작업을 수행합니다.
   Future<void> _uploadImage(XFile pickedFile) async {
     setState(() {
       isOcrInProgress = true; // 이미지 업로드 시작
@@ -79,15 +83,17 @@ class _HomeScreenState extends State<HomeScreen>
       var responseData = await response.stream.bytesToString();
       var decodedData = jsonDecode(responseData);
       setState(() {
-        ocrResult = decodedData['text'].join('\n');
+        ocrResult = decodedData['text'].join('\n'); // OCR 결과 업데이트
       });
     } else {
       setState(() {
-        ocrResult = 'Failed to perform OCR: ${response.statusCode}';
+        ocrResult =
+            'Failed to perform OCR: ${response.statusCode}'; // OCR 실패 메시지 업데이트
       });
     }
   }
 
+  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
   Future<void> _checkLoginStatus() async {
     final token = await _loginUser();
     if (token != null) {
@@ -98,11 +104,13 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
+  // 사용자가 이미 로그인했는지 확인합니다.
   Future<String?> _loginUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('authToken');
   }
 
+  // 토큰의 유효성을 확인합니다.
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
@@ -111,12 +119,12 @@ class _HomeScreenState extends State<HomeScreen>
       );
       return response.statusCode == 200;
     } catch (e) {
-      ('Error validating token: $e');
+      debugPrint('Error validating token: $e');
       return false;
     }
   }
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // 현재 선택된 바텀 네비게이션 바 아이템의 인덱스
 
   @override
   Widget build(BuildContext context) {
@@ -124,22 +132,17 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         actions: const [
           Flexible(
-            child: SearchWidget(), // Flexible 추가
+            child: SearchWidget(), // 검색 위젯
           ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          const Column(
-            children: [
-              IconSlider(),
-              SizedBox(height: 16),
-              Expanded(
-                child: ProductGrid(),
-              ),
-            ],
+          const SizedBox(height: 16), // 공간 추가
+          const Expanded(
+            child: ProductGrid(), // 상품 그리드
           ),
-          if (isOcrInProgress) // 업로드 중일 때만 진행 바를 표시
+          if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
             Container(
               alignment: Alignment.center,
               color: Colors.black.withOpacity(0.5),
@@ -162,24 +165,47 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green, // 선택된 아이템의 색상
+        unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
+        selectedLabelStyle:
+            const TextStyle(color: Colors.green), // 선택된 아이템의 라벨 색상
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              activeIcon: Icon(Icons.home, color: Colors.green)),
+            icon: ImageIcon(
+              AssetImage('assets/images/home.png'),
+            ),
+            label: '홈',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.adjust),
-              label: "Lens",
-              activeIcon: Icon(Icons.adjust, color: Colors.green)),
+            icon: ImageIcon(
+              AssetImage('assets/images/bubble-chat.png'),
+            ),
+            label: '커뮤니티',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'My',
-              activeIcon: Icon(Icons.person, color: Colors.grey)),
+            icon: ImageIcon(
+              AssetImage('assets/images/lens.png'),
+            ),
+            label: '렌즈',
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage('assets/images/heart.png'),
+            ),
+            label: '찜',
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage('assets/images/person.png'),
+            ),
+            label: '마이 페이지',
+          ),
         ],
         onTap: (index) async {
           setState(() {
-            _selectedIndex = index;
+            _selectedIndex = index; // 선택된 인덱스 업데이트
           });
           if (index == 0) {
             Navigator.pushReplacement(
@@ -187,6 +213,11 @@ class _HomeScreenState extends State<HomeScreen>
               MaterialPageRoute(builder: (context) => const MainpageApp()),
             );
           } else if (index == 1) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const Freeboard()));
+            // 커뮤니티 페이지로 이동
+            // 커뮤니티 페이지로 이동하는 코드를 여기에 추가
+          } else if (index == 2) {
             showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
@@ -223,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                               );
                             } catch (e) {
-                              ('OCR failed: $e');
+                              debugPrint('OCR failed: $e');
                             } finally {
                               setState(() {
                                 // OCR 작업 완료 후에 진행 바를 숨깁니다.
@@ -258,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                               );
                             } catch (e) {
-                              ('OCR failed: $e');
+                              debugPrint('OCR failed: $e');
                             }
                           },
                           child: const Text('Gallery'),
@@ -289,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             );
-          } else if (index == 2) {
+          } else if (index == 4) {
             setState(() {
               _selectedIndex = index;
             });
@@ -304,6 +335,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
+// 상품 그리드를 표시하는 StatefulWidget입니다.
 class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
@@ -318,9 +350,10 @@ class _ProductGridState extends State<ProductGrid> {
   @override
   void initState() {
     super.initState();
-    fetchData(); // initState에서 데이터를 불러옵니다.
+    fetchData(); // 데이터 가져오기
   }
 
+  // 상품 데이터를 가져오는 비동기 함수
   Future<void> fetchData() async {
     final response = await http.get(
       Uri.parse('http://192.168.121.174:8000/'),
@@ -335,7 +368,7 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
-  //로그인 상태검사
+  // 사용자의 로그인 상태를 확인하고 메인 페이지로 리디렉션하는 함수
   Future<void> checkLoginStatus(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
@@ -363,6 +396,7 @@ class _ProductGridState extends State<ProductGrid> {
         crossAxisCount: 2,
       ),
       itemCount: products.length,
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         return Card(
           child: InkWell(
@@ -395,121 +429,115 @@ class _ProductGridState extends State<ProductGrid> {
     );
   }
 
+  // 상품 클릭 시 팝업 다이얼로그를 열고 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
-    double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
-    double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
-    double minTextScaleFactor = -2.0; // 텍스트 최소 크기
-
     showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('상품 정보'),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildText('카테고리:', product.kategorie, textScaleFactor),
-                    _buildText('이름:', product.name, textScaleFactor),
-                    _buildImage(context, product.frontproduct),
-                    _buildImage(context, product.backproduct),
-                    _buildText('알레르기 식품:', product.allergens, textScaleFactor),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              textScaleFactor += 0.5;
-                              if (textScaleFactor > maxTextScaleFactor) {
-                                textScaleFactor = maxTextScaleFactor;
-                              }
-                            });
-                          },
-                          child: const Icon(Icons.zoom_in, color: Colors.black),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              textScaleFactor -= 0.5;
-                              if (textScaleFactor < minTextScaleFactor) {
-                                textScaleFactor = minTextScaleFactor;
-                              }
-                            });
-                          },
-                          child:
-                              const Icon(Icons.zoom_out, color: Colors.black),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
+        return AlertDialog(
+          title: const Text('상품 정보'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('카테고리: ${product.kategorie}'),
+                Text('이름: ${product.name}'),
+                GestureDetector(
+                  onTap: () {
+                    // 확대 이미지
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              PhotoView(
+                                imageProvider:
+                                    NetworkImage(product.frontproduct),
+                                minScale:
+                                    PhotoViewComputedScale.contained * 1.0,
+                                maxScale: PhotoViewComputedScale.covered * 2.0,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.5),
+                                  ),
+                                  child: const Icon(Icons.close),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
                   },
-                  child: const Text('닫기'),
+                  child: Image.network(
+                    product.frontproduct,
+                    fit: BoxFit.cover,
+                  ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    // 확대 이미지
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              PhotoView(
+                                imageProvider:
+                                    NetworkImage(product.backproduct),
+                                minScale:
+                                    PhotoViewComputedScale.contained * 1.0,
+                                maxScale: PhotoViewComputedScale.covered * 2.0,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.5),
+                                  ),
+                                  child: const Icon(Icons.close),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Image.network(
+                    product.backproduct,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Text('알레르기 식품: ${product.allergens}'),
               ],
-            );
-          },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('닫기'),
+            ),
+          ],
         );
       },
     );
   }
-}
-
-Widget _buildText(String label, String value, double textScaleFactor) {
-  return Text(
-    '$label $value',
-    style: TextStyle(fontSize: 16 * textScaleFactor),
-  );
-}
-
-Widget _buildImage(BuildContext context, String imageUrl) {
-  return GestureDetector(
-    onTap: () {
-      // 확대 이미지
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Stack(
-              alignment: Alignment.topRight,
-              children: [
-                PhotoView(
-                  imageProvider: NetworkImage(imageUrl),
-                  minScale: PhotoViewComputedScale.contained * 1.0,
-                  maxScale: PhotoViewComputedScale.covered * 2.0,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
-                    child: const Icon(Icons.close),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-    child: Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-    ),
-  );
 }

@@ -10,12 +10,13 @@ class Ocrresult extends StatefulWidget {
   final String ocrResult;
 
   const Ocrresult({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.ocrResult,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _OcrresultState createState() => _OcrresultState();
 }
 
@@ -158,13 +159,18 @@ class _OcrresultState extends State<Ocrresult> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('상품 정보'),
+        title: const Text(
+          "OCR 결과",
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MypageApp()),
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
             );
           },
         ),
@@ -183,18 +189,9 @@ class _OcrresultState extends State<Ocrresult> {
               ),
             ),
             const Divider(
-              color: Colors.grey,
-              thickness: 0.5,
+              color: Color(0xFFDDD7D7),
+              thickness: 1.0,
               height: 5.0,
-            ),
-            const Center(
-              child: Text(
-                'OCR 결과',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
             const SizedBox(height: 16),
             if (isOcrInProgress)

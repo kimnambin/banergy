@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class Freeboard extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Freeboard_WriteScreen()),
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
             );
           },
         ),
