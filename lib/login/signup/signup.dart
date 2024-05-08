@@ -1,21 +1,15 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/joinwidget.dart';
-import 'login_login.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
+import 'package:flutter_banergy/login/login_login.dart';
+import 'package:flutter_banergy/login/signup/joinwidget.dart';
 import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    MaterialApp(
-      home: const JoinApp(),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 29, 171, 102),
-        ),
-        useMaterial3: true,
-      ),
+    const MaterialApp(
+      home: JoinApp(),
     ),
   );
 }
@@ -174,14 +168,12 @@ class _JoinAppState extends State<JoinApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-          title: const Text("밴러지 회원가입"),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LoginApp()),
+                MaterialPageRoute(builder: (context) => FirstApp()),
               );
             },
           ),
@@ -194,7 +186,7 @@ class _JoinAppState extends State<JoinApp> {
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     Image.asset(
                       'images/000.jpeg',
                       width: 100,

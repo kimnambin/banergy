@@ -7,13 +7,8 @@ import 'package:http/http.dart' as http;
 
 void main() async {
   runApp(
-    MaterialApp(
-      home: const IDFindApp(),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 29, 171, 102)),
-        useMaterial3: true,
-      ),
+    const MaterialApp(
+      home: IDFindApp(),
     ),
   );
 }
@@ -143,8 +138,6 @@ class _IDFindAppState extends State<IDFindApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-          title: const Text("아이디 찾기"),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_first.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 
 // ignore: must_be_immutable
 class IntroPageC extends StatelessWidget {
@@ -94,7 +94,7 @@ class IntroPageC extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FristApp()));
+                                builder: (context) => FirstApp()));
                       },
                       child: const Text(
                         '다음',

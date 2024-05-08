@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/login/login_first.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 import '../mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 
@@ -51,7 +51,7 @@ class Delete extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FristApp(),
+                        builder: (context) => FirstApp(),
                       ),
                     );
                   },
@@ -172,7 +172,7 @@ class Delete extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => _delete(
                     context,
-                    MaterialPageRoute(builder: (context) => FristApp()),
+                    MaterialPageRoute(builder: (context) => FirstApp()),
                   ),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,

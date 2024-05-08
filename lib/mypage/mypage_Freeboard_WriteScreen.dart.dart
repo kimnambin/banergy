@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
@@ -145,7 +144,7 @@ class Freeboard_WriteScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      // bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

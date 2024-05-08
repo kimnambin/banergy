@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_banergy/login/login_first.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +35,7 @@ class LoginApp extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => FristApp()),
+              MaterialPageRoute(builder: (context) => FirstApp()),
             );
           },
         ),
@@ -245,7 +245,7 @@ class LoginApp extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => FristApp(),
+        builder: (context) => FirstApp(),
       ),
     );
   }

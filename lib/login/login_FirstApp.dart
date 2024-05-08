@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/Nouserfiltering.dart';
 import 'package:flutter_banergy/login/login_id_find.dart';
-import 'package:flutter_banergy/login/login_join.dart';
+import 'package:flutter_banergy/login/signup/signup.dart';
 import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
@@ -14,17 +14,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(
     MaterialApp(
-      home: FristApp(),
+      home: FirstApp(),
     ),
   );
 }
 
-class FristApp extends StatelessWidget {
+class FirstApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  FristApp({Key? key});
+  FirstApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class FristApp extends StatelessWidget {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const JoinApp(),
+                          builder: (context) => JoinApp(),
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -318,7 +318,7 @@ class FristApp extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => FristApp(),
+        builder: (context) => FirstApp(),
       ),
     );
   }

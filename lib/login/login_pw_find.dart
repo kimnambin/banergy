@@ -140,8 +140,6 @@ class _PWFindAppAppState extends State<PWFindApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-          title: const Text("비밀번호 찾기"),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {

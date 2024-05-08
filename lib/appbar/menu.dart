@@ -19,7 +19,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/login/login_first.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -34,7 +34,7 @@ class MenuScreen extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => FristApp(),
+        builder: (context) => FirstApp(),
       ),
     );
   }

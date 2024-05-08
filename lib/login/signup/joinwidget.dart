@@ -232,3 +232,46 @@ class _genderboxState extends State<genderbox> {
     );
   }
 }
+
+class InputField2 extends StatelessWidget {
+  final bool isTextArea;
+  final String hintText;
+  final TextEditingController controller;
+
+  const InputField2({
+    this.isTextArea = false,
+    this.hintText = "",
+    required this.controller,
+    super.key,
+    required String? Function(dynamic value) validator,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (isTextArea)
+          TextFormField(
+            maxLines: 10,
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none,
+            ),
+            controller: controller,
+          )
+        else
+          TextFormField(
+            decoration: InputDecoration(
+              hintText: hintText,
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+              ),
+            ),
+            controller: controller,
+          ),
+      ],
+    );
+  }
+}

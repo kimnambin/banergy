@@ -194,6 +194,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       ),
       backgroundColor: const Color(0xFFF1F2F7),
+
       body: SingleChildScrollView(
         child: _buildList(),
       ),
