@@ -21,6 +21,7 @@ class JoinApp extends StatefulWidget {
   State<JoinApp> createState() => _JoinAppState();
 }
 
+//사용자가 입력한 부분들이 임시 저장되는 곳
 class _JoinAppState extends State<JoinApp> {
   //페이지 부분
   late final PageController _pageController;
@@ -35,7 +36,7 @@ class _JoinAppState extends State<JoinApp> {
   late final TextEditingController _dateController;
   String? _selectedGender;
 
-  late List<Widget> _pages; // Declare _pages here
+  late List<Widget> _pages;
 
   // 회원가입 함수
   Future<void> _signup(BuildContext context) async {
@@ -169,10 +170,10 @@ class _JoinAppState extends State<JoinApp> {
 
     // Initialize _pages after initializing controllers
     _pages = [
-      const StepOne(),
-      const StepTwo(),
-      //StepThree(),
-      //StepFour(),
+      StepOne(),
+      StepTwo(),
+      StepThree(),
+      StepFour(),
       StepFive(),
       StepSix(),
     ];
@@ -302,7 +303,9 @@ class _JoinAppState extends State<JoinApp> {
 
 //이름을 적는 곳
 class StepOne extends StatelessWidget {
-  const StepOne({super.key});
+  final TextEditingController _nameController = TextEditingController();
+
+  StepOne({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -322,6 +325,7 @@ class StepOne extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             TextFormField(
+              controller: _nameController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '이름을 입력하세요.';
@@ -338,7 +342,8 @@ class StepOne extends StatelessWidget {
 
 //아이디 입력
 class StepTwo extends StatelessWidget {
-  const StepTwo({super.key});
+  final TextEditingController _usernameController = TextEditingController();
+  StepTwo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -358,7 +363,8 @@ class StepTwo extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             TextFormField(
-              obscureText: true,
+              controller: _usernameController,
+              //obscureText: true,
               validator: (value) {
                 String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$';
                 RegExp regex = RegExp(pattern);
@@ -379,39 +385,43 @@ class StepTwo extends StatelessWidget {
 
 //1차 비밀번호
 class StepThree extends StatelessWidget {
-  final TextEditingController passwordController;
-  final TextEditingController confirmPasswordController;
-
-  const StepThree({
-    required this.passwordController,
-    required this.confirmPasswordController,
+  final TextEditingController _passwordController = TextEditingController();
+  StepThree({
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: TextFormField(
-          decoration: const InputDecoration(
-            labelText: '비밀번호를 입력해주세요',
-            labelStyle: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '비밀번호를 입력해주세요',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          validator: (value) {
-            String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-            RegExp regex = RegExp(pattern);
-
-            if (value == null || value.isEmpty) {
-              return '비밀번호를 입력하세요.';
-            } else if (!regex.hasMatch(value) || value.length < 5) {
-              return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
-            }
-
-            return null;
-          },
+            const SizedBox(height: 60),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              validator: (value) {
+                String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
+                RegExp regex = RegExp(pattern);
+                if (value == null || value.isEmpty) {
+                  return '비밀번호를 입력하세요.';
+                } else if (!regex.hasMatch(value) || value.length < 5) {
+                  return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
+                }
+                return null;
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -420,36 +430,43 @@ class StepThree extends StatelessWidget {
 
 //2차 비밀번호
 class StepFour extends StatelessWidget {
-  final TextEditingController passwordController;
-  final TextEditingController confirmPasswordController;
-
-  const StepFour({
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  StepFour({
     super.key,
-    required this.passwordController,
-    required this.confirmPasswordController,
   });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: TextFormField(
-          decoration: const InputDecoration(
-            labelText: '비밀번호 재확인',
-            labelStyle: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '비밀번호 재확인',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '비밀번호 재확인.';
-            } else if (value != passwordController.text) {
-              return '비밀번호가 일치하지 않습니다.';
-            }
-            return null;
-          },
+            const SizedBox(height: 40),
+            TextFormField(
+              controller: _confirmPasswordController,
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '비밀번호 재확인.';
+                } else if (value != _passwordController.text) {
+                  return '비밀번호가 일치하지 않습니다.';
+                }
+                return null;
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -590,21 +607,21 @@ class _StepSixState extends State<StepSix> {
               Container(
                 decoration: const BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: Colors.grey), // 위쪽 테두리 추가
-                    bottom: BorderSide(color: Colors.grey), // 아래쪽 테두리 추가
+                    top: BorderSide(color: Colors.grey),
+                    bottom: BorderSide(color: Colors.grey),
                   ),
                 ),
                 child: SizedBox(
                   width: 600,
-                  height: 54, // 버튼의 높이를 조절
+                  height: 54,
                   child: Row(
                     children: [
-                      const SizedBox(width: 8), // 왼쪽 간격 추가
+                      const SizedBox(width: 8),
                       const Icon(
                         Icons.calendar_today,
-                        color: Colors.black, // 아이콘의 색을 검정색으로 설정
-                      ), // 아이콘을 왼쪽에 배치
-                      const SizedBox(width: 10), // 아이콘과 텍스트 사이 간격 추가
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 10),
                       SizedBox(
                         width: 390,
                         child: TextButton(
@@ -625,16 +642,4 @@ class _StepSixState extends State<StepSix> {
       ),
     );
   }
-}
-
-bool isIdValid(String value) {
-  String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$';
-  RegExp regex = RegExp(pattern);
-  return regex.hasMatch(value) && value.length >= 5;
-}
-
-bool isPasswordValid(String value) {
-  String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-  RegExp regex = RegExp(pattern);
-  return regex.hasMatch(value) && value.length >= 5;
 }

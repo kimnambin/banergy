@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // 달력 위젯 http://rwdb.kr/datepicker/
 class DatePickerButton extends StatefulWidget {
   const DatePickerButton({
-    Key? key,
+    super.key,
     this.label = '',
     this.hintText = '',
     this.icon,
@@ -19,7 +19,7 @@ class DatePickerButton extends StatefulWidget {
     this.backgroundColor = Colors.white,
     required this.controller,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   final String label;
   final String hintText;
