@@ -76,7 +76,7 @@ class FirstApp extends StatelessWidget {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => JoinApp(),
+                          builder: (context) => const JoinApp(),
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
