@@ -62,7 +62,7 @@ class _FilteringPageState extends State<FilteringPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:7000/ftr'),
+        Uri.parse('http://192.168.112.174:7000/ftr'),
         body: jsonEncode({'allergies': allergies}),
         headers: {
           'Content-Type': 'application/json',

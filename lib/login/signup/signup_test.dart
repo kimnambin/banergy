@@ -607,7 +607,6 @@ class _StepSixState extends State<StepSix> {
               Container(
                 decoration: const BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: Colors.grey),
                     bottom: BorderSide(color: Colors.grey),
                   ),
                 ),

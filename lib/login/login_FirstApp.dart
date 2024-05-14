@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/Nouserfiltering.dart';
 import 'package:flutter_banergy/login/login_id_find.dart';
+import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/login/signup/signup.dart';
 import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
@@ -53,7 +54,12 @@ class FirstApp extends StatelessWidget {
                     const SizedBox(height: 130),
 
                     ElevatedButton(
-                      onPressed: () => _login(context),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginApp(),
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: const Color(0xFF03C95B),

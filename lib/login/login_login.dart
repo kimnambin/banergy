@@ -23,7 +23,7 @@ class LoginApp extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  LoginApp({Key? key});
+  LoginApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +98,7 @@ class LoginApp extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/login'),
+        Uri.parse('http://192.168.112.174:3000/login'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -190,7 +190,7 @@ class LoginApp extends StatelessWidget {
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('http://192.168.112.174:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

@@ -9,9 +9,8 @@ class DatePickerButton extends StatefulWidget {
     this.label = '',
     this.hintText = '',
     this.icon,
-    this.iconColor = Colors.grey,
+    this.iconColor = const Color(0xFF666666),
     this.hintTextColor = Colors.grey,
-    this.borderRadius = const BorderRadius.all(Radius.circular(12.0)),
     this.buttonWidth = double.infinity,
     this.buttonHeight = 60.0,
     this.iconSize = 24.0,
@@ -19,6 +18,8 @@ class DatePickerButton extends StatefulWidget {
     this.backgroundColor = Colors.white,
     required this.controller,
     required this.onChanged,
+    required TextStyle hintStyle,
+    required Border border,
   });
 
   final String label;
@@ -26,7 +27,6 @@ class DatePickerButton extends StatefulWidget {
   final IconData? icon;
   final Color iconColor;
   final Color hintTextColor;
-  final BorderRadius borderRadius;
   final double buttonWidth;
   final double buttonHeight;
   final double iconSize;
@@ -42,46 +42,55 @@ class DatePickerButton extends StatefulWidget {
 class _DatePickerButtonState extends State<DatePickerButton> {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _selectDate(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: widget.backgroundColor,
-        minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
-        shape: RoundedRectangleBorder(
-          borderRadius: widget.borderRadius,
-          side: const BorderSide(
-            color: Colors.grey,
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Color(0xFF7A7A7A),
+            width: 1.0,
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Icon(
-            widget.icon,
-            color: widget.iconColor,
-            size: widget.iconSize,
+      child: ElevatedButton(
+        onPressed: () => _selectDate(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: widget.backgroundColor,
+          elevation: 0,
+          minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
+          shape: const RoundedRectangleBorder(
+            side: BorderSide.none,
+            borderRadius: BorderRadius.zero,
           ),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: TextField(
-              controller: widget.controller,
-              enabled: false,
-              style: TextStyle(
-                fontSize: widget.hintTextSize,
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                hintText: widget.hintText,
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              widget.icon,
+              color: widget.iconColor,
+              size: widget.iconSize,
+            ),
+            const SizedBox(width: 8.0),
+            Expanded(
+              child: TextField(
+                controller: widget.controller,
+                enabled: false,
+                style: TextStyle(
+                  fontSize: widget.hintTextSize,
+                ),
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                  border: InputBorder.none,
+                  hintText: widget.hintText,
+                  hintStyle: TextStyle(
+                    color: widget.hintTextColor,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -107,11 +116,11 @@ class _DatePickerButtonState extends State<DatePickerButton> {
 // ignore: camel_case_types
 class genderbox extends StatefulWidget {
   const genderbox({
-    Key? key,
+    super.key,
     this.label = '',
     this.hintText = '',
     this.icon,
-    this.iconColor = Colors.grey,
+    this.iconColor = const Color(0xFF666666),
     this.hintTextColor = Colors.grey,
     this.borderRadius = const BorderRadius.all(Radius.circular(12.0)),
     this.buttonWidth = double.infinity,
@@ -121,7 +130,9 @@ class genderbox extends StatefulWidget {
     this.backgroundColor = Colors.white,
     required this.selectedGender,
     required this.onChanged,
-  }) : super(key: key);
+    required TextStyle hintStyle,
+    required Border border,
+  });
 
   final String label;
   final String hintText;
@@ -146,44 +157,53 @@ class _genderboxState extends State<genderbox> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: () => _selectGender(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: widget.backgroundColor,
-            minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
-            shape: RoundedRectangleBorder(
-              borderRadius: widget.borderRadius,
-              side: const BorderSide(
+        Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
                 color: Colors.grey,
+                width: 1.0,
               ),
             ),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                widget.icon,
-                color: widget.iconColor,
-                size: widget.iconSize,
+          child: ElevatedButton(
+            onPressed: () => _selectGender(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: widget.backgroundColor,
+              elevation: 0,
+              minimumSize: Size(widget.buttonWidth, widget.buttonHeight),
+              shape: const RoundedRectangleBorder(
+                side: BorderSide.none,
+                borderRadius: BorderRadius.zero,
               ),
-              const SizedBox(width: 8.0),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.selectedGender ?? widget.hintText,
-                      style: TextStyle(
-                        color: widget.selectedGender != null
-                            ? Colors.black
-                            : widget.hintTextColor,
-                        fontSize: widget.hintTextSize,
-                      ),
-                    ),
-                  ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  widget.icon,
+                  color: widget.iconColor,
+                  size: widget.iconSize,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.selectedGender ?? widget.hintText,
+                        style: TextStyle(
+                          color: widget.selectedGender != null
+                              ? Colors.black
+                              : widget.hintTextColor,
+                          fontSize: widget.hintTextSize,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -229,49 +249,6 @@ class _genderboxState extends State<genderbox> {
           ),
         );
       },
-    );
-  }
-}
-
-class InputField2 extends StatelessWidget {
-  final bool isTextArea;
-  final String hintText;
-  final TextEditingController controller;
-
-  const InputField2({
-    this.isTextArea = false,
-    this.hintText = "",
-    required this.controller,
-    super.key,
-    required String? Function(dynamic value) validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (isTextArea)
-          TextFormField(
-            maxLines: 10,
-            decoration: InputDecoration(
-              hintText: hintText,
-              border: InputBorder.none,
-            ),
-            controller: controller,
-          )
-        else
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              enabledBorder: const UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-              ),
-            ),
-            controller: controller,
-          ),
-      ],
     );
   }
 }

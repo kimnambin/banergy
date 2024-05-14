@@ -12,6 +12,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_banergy/main_category/bigsnacks.dart';
+import 'package:flutter_banergy/main_category/gimbap.dart';
+import 'package:flutter_banergy/main_category/snacks.dart';
+import 'package:flutter_banergy/main_category/Drink.dart';
+import 'package:flutter_banergy/main_category/instantfood.dart';
+import 'package:flutter_banergy/main_category/ramen.dart';
+import 'package:flutter_banergy/main_category/lunchbox.dart';
+import 'package:flutter_banergy/main_category/Sandwich.dart';
 
 void main() {
   runApp(
@@ -59,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.121.174:7000/ocr');
+    final url = Uri.parse('http://192.168.112.174:7000/ocr');
     final request = http.MultipartRequest('POST', url);
 
     request.files
@@ -80,6 +89,11 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   int _selectedIndex = 0;
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
+  List<String> imageList = [
+    'assets/images/ad.png',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +107,67 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       body: Column(
         children: [
-          const SizedBox(height: 16), // 공간 추가
+          SizedBox(
+            height: 220,
+            child: Stack(
+              children: [
+                sliderWidget(),
+                sliderIndicator(),
+              ],
+            ),
+          ),
+          // 공간추가, 카테고리 리스트
+          SizedBox(
+            height: 120, // 라벨을 포함하기에 충분한 높이 설정
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 8, // 카테고리 개수
+              itemBuilder: (BuildContext context, int index) {
+                // 카테고리 정보 (이름과 이미지 파일 이름)
+                List<Map<String, String>> categories = [
+                  {"name": "라면", "image": "001.png"},
+                  {"name": "패스트푸드", "image": "002.png"},
+                  {"name": "김밥", "image": "003.png"},
+                  {"name": "도시락", "image": "004.png"},
+                  {"name": "샌드위치", "image": "005.png"},
+                  {"name": "음료", "image": "006.png"},
+                  {"name": "간식", "image": "007.png"},
+                  {"name": "과자", "image": "008.png"},
+                ];
+
+                // 현재 카테고리
+                var category = categories[index];
+
+                return GestureDetector(
+                  onTap: () {
+                    _navigateToScreen(context, category["name"]!);
+                  },
+                  child: SizedBox(
+                    width: 100,
+                    child: Container(
+                      margin: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            child: Image.asset(
+                              'assets/images/${category["image"]}',
+                              width: 60, // 이미지의 너비
+                              height: 60, // 이미지의 높이
+                            ),
+                          ),
+                          Text('${category["name"]}', // 카테고리 이름 라벨
+                              style: const TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
           const Expanded(
             child: ProductGrid(), // 상품 그리드
           ),
@@ -332,6 +406,100 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
+
+  void _navigateToScreen(BuildContext context, String categoryName) {
+    Widget? screen;
+    switch (categoryName) {
+      case '라면':
+        screen = const ramenScreen();
+        break;
+      case '패스트푸드':
+        screen = const instantfoodScreen();
+        break;
+      case '김밥':
+        screen = const gimbapScreen();
+        break;
+      case '도시락':
+        screen = const lunchboxScreen();
+        break;
+      case '샌드위치':
+        screen = const SandwichScreen();
+        break;
+      case '음료':
+        screen = const DrinkScreen();
+        break;
+      case '간식':
+        screen = const snacksScreen();
+        break;
+      case '과자':
+        screen = const bigsnacksScreen();
+        break;
+    }
+    if (screen != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => screen!),
+      );
+    }
+  }
+
+// 캐러셀 관련 코드
+  Widget sliderWidget() {
+    return CarouselSlider(
+      carouselController: _controller,
+      items: imageList.map(
+        (imgLink) {
+          return Builder(
+            builder: (context) {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  imgLink,
+                  fit: BoxFit.fill,
+                ),
+              );
+            },
+          );
+        },
+      ).toList(),
+      options: CarouselOptions(
+        height: 220,
+        viewportFraction: 1.0,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 4),
+        onPageChanged: (index, reason) {
+          setState(() {
+            _current = index;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget sliderIndicator() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: imageList.asMap().entries.map((entry) {
+          return GestureDetector(
+            onTap: () => _controller.animateToPage(entry.key),
+            child: Container(
+              width: 12,
+              height: 12,
+              margin:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color:
+                    Colors.white.withOpacity(_current == entry.key ? 0.9 : 0.4),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
 }
 
 class ProductGrid extends StatefulWidget {
@@ -353,7 +521,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.121.174:8000/'),
+      Uri.parse('http://192.168.112.174:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -372,6 +540,7 @@ class _ProductGridState extends State<ProductGrid> {
         crossAxisCount: 2,
       ),
       itemCount: products.length,
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         return Card(
           child: InkWell(
@@ -392,7 +561,9 @@ class _ProductGridState extends State<ProductGrid> {
                 const SizedBox(height: 8.0),
                 Text(
                   products[index].name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'PretendardRegular'), // 텍스트 크기와 별도로 다시 수정
                 ),
                 const SizedBox(height: 4.0),
                 Text(products[index].allergens),
