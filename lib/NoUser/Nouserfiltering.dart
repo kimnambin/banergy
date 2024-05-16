@@ -186,7 +186,7 @@ class _FilteringPageState extends State<FilteringPage> {
             color: Colors.white,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: const Color.fromARGB(255, 29, 171, 102),
+                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
