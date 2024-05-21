@@ -609,7 +609,7 @@ class _ProductGridState extends State<ProductGrid> {
     );
   }
 
-  // 상품 클릭 시 팝업 다이얼로그를 열고 상품 정보를 표시하는 함수
+  // 상품 클릭 시 pdScreen에서 보여줌
   void _handleProductClick(BuildContext context, Product product) {
     Navigator.push(
       context,

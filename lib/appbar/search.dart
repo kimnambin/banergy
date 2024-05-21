@@ -6,6 +6,7 @@ import 'package:flutter_banergy/appbar/SearchWidget.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_banergy/product/product_detail.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchText;
@@ -13,6 +14,7 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key, required this.searchText});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SearchScreenState createState() => _SearchScreenState(searchText);
 }
 
@@ -30,7 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.121.174:8000/?query=$searchText'),
+      Uri.parse('http://192.168.112.174:8000/?query=$searchText'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -58,28 +60,23 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class serachGrid extends StatefulWidget {
+class serachGrid extends StatelessWidget {
   final List<Product> products;
 
   const serachGrid({super.key, required this.products});
 
-  @override
-  State<serachGrid> createState() => _serachGridState();
-}
-
-class _serachGridState extends State<serachGrid> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
-      itemCount: widget.products.length,
+      itemCount: products.length,
       itemBuilder: (context, index) {
         return Card(
           child: InkWell(
             onTap: () {
-              _handleProductClick(context, widget.products[index]);
+              _handleProductClick(context, products[index]);
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,18 +84,18 @@ class _serachGridState extends State<serachGrid> {
                 Expanded(
                   child: Center(
                     child: Image.network(
-                      widget.products[index].frontproduct,
+                      products[index].frontproduct,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  widget.products[index].name,
+                  products[index].name,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4.0),
-                Text(widget.products[index].allergens),
+                Text(products[index].allergens),
               ],
             ),
           ),
@@ -107,40 +104,13 @@ class _serachGridState extends State<serachGrid> {
     );
   }
 
+  // 상품 클릭 시 pdScreen에서 보여줌
   void _handleProductClick(BuildContext context, Product product) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: ${product.kategorie}'),
-                Text('이름: ${product.name}'),
-                Image.network(
-                  product.frontproduct,
-                  fit: BoxFit.cover,
-                ),
-                Image.network(
-                  product.backproduct,
-                  fit: BoxFit.cover,
-                ),
-                Text('알레르기 식품: ${product.allergens}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('닫기'),
-            ),
-          ],
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
     );
   }
 }
