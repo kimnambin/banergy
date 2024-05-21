@@ -11,7 +11,7 @@ import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
 
 class IconSlider extends StatelessWidget {
-  const IconSlider({Key? key});
+  const IconSlider({super.key});
 
   @override
   Widget build(BuildContext context) {

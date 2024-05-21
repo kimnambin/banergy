@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:flutter_banergy/appbar/search.dart';
+import 'package:flutter_banergy/main.dart';
 //import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchWidget extends StatefulWidget {
@@ -75,6 +77,15 @@ class _SearchWidgetState extends State<SearchWidget> {
               ),*/
             ],
           ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
+            );
+          },
         ),
       ),
       body: _isSearching ? _buildSearchResults() : _buildProductList(),

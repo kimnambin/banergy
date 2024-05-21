@@ -4,6 +4,7 @@ from flask_cors import CORS
 from random import shuffle #랜덤을 위함
 import csv
 
+
 # Flask 앱 초기화
 app = Flask(__name__)
 CORS(app)
@@ -24,6 +25,7 @@ class Product(db.Model):
 
     def __repr__(self):
         return f'<Product {self.name}>'
+    
 
 # 데이터베이스 생성 및 CSV 데이터 추가
 if __name__ == '__main__':

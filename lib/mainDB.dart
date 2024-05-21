@@ -1,5 +1,6 @@
-// DB Product + 자유게시판
+// DB Product + 컴뮤니티 + 유저 정보까지
 
+//상품 정보들
 class Product {
   final int id;
   final String barcode;
@@ -16,7 +17,7 @@ class Product {
     required this.kategorie,
     required this.frontproduct,
     required this.backproduct,
-    required this.allergens,
+    this.allergens = '',
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -30,8 +31,21 @@ class Product {
       allergens: json['allergens'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'barcode': barcode,
+      'name': name,
+      'kategorie': kategorie,
+      'frontproduct': frontproduct,
+      'backproduct': backproduct,
+      'allergens': allergens,
+      //'isHearted': isHearted,
+    };
+  }
 }
 
+//커뮤니티용
 class freeDB {
   final String? freetitle;
   final String? freecontent;

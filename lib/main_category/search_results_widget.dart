@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchWidget extends StatefulWidget {

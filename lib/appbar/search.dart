@@ -1,21 +1,23 @@
 //앱바에서 검색한 후 보여지는 부분
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
+
 import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_banergy/product/product_detail.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchText;
 
-  const SearchScreen({super.key, required this.searchText});
+  const SearchScreen({Key? key, required this.searchText}) : super(key: key);
 
   @override
-  _SearchScreenState createState() => _SearchScreenState(searchText);
+  _SearchScreenState createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
@@ -23,11 +25,10 @@ class _SearchScreenState extends State<SearchScreen> {
   late List<Product> products = [];
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
-  _SearchScreenState(this.searchText); // 생성자 수정
-
   @override
   void initState() {
     super.initState();
+    searchText = widget.searchText;
     fetchData();
   }
 
@@ -49,6 +50,15 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
+            );
+          },
+        ),
         actions: const [
           Flexible(
             child: SearchWidget(),
@@ -56,7 +66,6 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
       body: SerachGrid(products: products),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

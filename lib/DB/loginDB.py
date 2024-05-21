@@ -8,6 +8,12 @@ from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
 from datetime import timedelta
+from banergy_data import Product
+
+
+
+
+
 
 
 app = Flask(__name__)
@@ -114,9 +120,6 @@ def protectloginusered():
         }), 200
     else:
         return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
-
-
-
 
 
 # 필터링 적용부분
@@ -228,6 +231,8 @@ def delete_user():
                 return jsonify({'message': '회원 탈퇴 실패 ㅠ.ㅠ'}), 500
         else:
             return jsonify({'message': '사용자 인증 실패'}), 401
+
+
 
 
 
