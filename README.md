@@ -1,12 +1,13 @@
 # 식품 알레르기 환자를 위한 애플리케이션
 
+### 📱우리의 앱은
+**`알레르기`로 마음대로 먹지도 못하는 당신을 위한 맞춤형 관리 앱** <br>
+**`필터링` 서비스로 개인이 원하는 정보만 빠르게 확인** <br>
+**`ocr,바코드` 기술로 간편하게 찾아보는 음식 성분들!**
 
-<!-- ### 💬 팀 소개
->**조화와 지속 가능한 성장을 추구하는 팀 `윤슬`입니다!**<br><br>**팀 개개인 모두 주어진 위치에 상관없이 모든 일에 `오너십`을 가지고 `적극적으로 참여`하는 것을 최우선으로 생각하였습니다. 좋은 동료가 되기 위해 치열하게 고민하고, 학습하고, 성장하고 있습니다.**
+<br>
 
-<br>-->
-
-## 💻 기술
+### 💻사용 기술
 <div>
 <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white">
      <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white">
@@ -20,8 +21,7 @@
 ### 👨🏼‍💻 팀원소개
 한지욱|임산성|김남빈|이예원|양병승|
 :-:|:-:|:-:|:-:|:-:
-<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|<img src='#' height=130 width=130></img>|
-리더 , FE | BE , PM|FE ,BE | PM , DE | FE , BE
+리더 , FE | BE , PM| FE , BE | PM , DE | FE , BE
 
 
 <br>
@@ -32,6 +32,7 @@
 -->
 <br>
 
+<!--
 <h3>📍하이라이팅 부분 </h3>
  <table>
         <tr>
@@ -39,7 +40,7 @@
             <td><img src="https://github.com/kimnambin/banergy/assets/127464935/670e39d9-b359-4193-aeea-276898f56385" width="300" height="750">해결후</td>
         </tr>
     </table><hr>
-
+-->
 
 <!-- <h3>📍마이페이지 서버 연동 완료!!(비번찾기/탈퇴하기/상품추가/자유게시판/문의하기) </h3>
 <img src= "https://github.com/kimnambin/banergy/assets/127464935/15ccbe1c-16cb-49fa-b96b-5bf23c5f61c0"><hr>
