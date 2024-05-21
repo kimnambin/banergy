@@ -90,7 +90,7 @@ class _IconItemState extends State<IconItem> {
       case '라면':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ramenScreen()),
+          MaterialPageRoute(builder: (context) => const RamenScreen()),
         );
         break;
       case '음료':
@@ -102,19 +102,19 @@ class _IconItemState extends State<IconItem> {
       case '김밥류':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const gimbapScreen()),
+          MaterialPageRoute(builder: (context) => const GimbapScreen()),
         );
         break;
       case '도시락':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const lunchboxScreen()),
+          MaterialPageRoute(builder: (context) => const LunchboxScreen()),
         );
         break;
       case '과자류':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const bigsnacksScreen()),
+          MaterialPageRoute(builder: (context) => const BigsnacksScreen()),
         );
         break;
       case '간식류':
@@ -126,7 +126,7 @@ class _IconItemState extends State<IconItem> {
       case '즉석식품':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const instantfoodScreen()),
+          MaterialPageRoute(builder: (context) => const InstantfoodScreen()),
         );
         break;
       case '샌드위치':

@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
+import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
@@ -66,77 +67,52 @@ class _DessertGridState extends State<DessertGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return Card(
-          child: InkWell(
-            onTap: () {
-              _handleProductClick(context, products[index]);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Image.network(
-                      products[index].frontproduct,
-                      fit: BoxFit.cover,
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return Card(
+            child: InkWell(
+              onTap: () {
+                _handleProductClick(context, products[index]);
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Image.network(
+                        products[index].frontproduct,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  products[index].name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4.0),
-                Text(products[index].allergens),
-              ],
+                  const SizedBox(height: 8.0),
+                  Text(
+                    products[index].name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(products[index].allergens),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+        childCount: products.length,
+      ),
     );
   }
 
+  // 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: ${product.kategorie}'),
-                Text('이름: ${product.name}'),
-                Image.network(
-                  product.frontproduct,
-                  fit: BoxFit.cover,
-                ),
-                Image.network(
-                  product.backproduct,
-                  fit: BoxFit.cover,
-                ),
-                Text('알레르기 식품: ${product.allergens}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('닫기'),
-            ),
-          ],
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
     );
   }
 }

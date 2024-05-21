@@ -1,14 +1,14 @@
 // 과자류
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 
-class bigsnacksScreen extends StatelessWidget {
-  const bigsnacksScreen({super.key});
+class BigsnacksScreen extends StatelessWidget {
+  const BigsnacksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

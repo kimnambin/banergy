@@ -3,7 +3,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/NouserOCRresult.dart';
-import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/main_category/Drink.dart';
+import 'package:flutter_banergy/main_category/Sandwich.dart';
+import 'package:flutter_banergy/main_category/bigsnacks.dart';
+import 'package:flutter_banergy/main_category/gimbap.dart';
+import 'package:flutter_banergy/main_category/instantfood.dart';
+import 'package:flutter_banergy/main_category/lunchbox.dart';
+import 'package:flutter_banergy/main_category/ramen.dart';
+import 'package:flutter_banergy/main_category/snacks.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
@@ -14,14 +22,6 @@ import 'package:permission_handler/permission_handler.dart';
 //import 'package:photo_view/photo_view.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_banergy/main_category/bigsnacks.dart';
-import 'package:flutter_banergy/main_category/gimbap.dart';
-import 'package:flutter_banergy/main_category/snacks.dart';
-import 'package:flutter_banergy/main_category/Drink.dart';
-import 'package:flutter_banergy/main_category/instantfood.dart';
-import 'package:flutter_banergy/main_category/ramen.dart';
-import 'package:flutter_banergy/main_category/lunchbox.dart';
-import 'package:flutter_banergy/main_category/Sandwich.dart';
 
 void main() {
   runApp(
@@ -412,16 +412,16 @@ class _HomeScreenState extends State<HomeScreen>
     Widget? screen;
     switch (categoryName) {
       case '라면':
-        screen = const ramenScreen();
+        screen = const RamenScreen();
         break;
       case '패스트푸드':
-        screen = const instantfoodScreen();
+        screen = const InstantfoodScreen();
         break;
       case '김밥':
-        screen = const gimbapScreen();
+        screen = const GimbapScreen();
         break;
       case '도시락':
-        screen = const lunchboxScreen();
+        screen = const LunchboxScreen();
         break;
       case '샌드위치':
         screen = const SandwichScreen();
@@ -433,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen>
         screen = const snacksScreen();
         break;
       case '과자':
-        screen = const bigsnacksScreen();
+        screen = const BigsnacksScreen();
         break;
     }
     if (screen != null) {

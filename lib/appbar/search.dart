@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/appbar/SearchWidget.dart';
+import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,7 +14,6 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key, required this.searchText});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SearchScreenState createState() => _SearchScreenState(searchText);
 }
 
@@ -54,29 +53,34 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
-      body: serachGrid(products: products),
+      body: SerachGrid(products: products),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
 
-class serachGrid extends StatelessWidget {
+class SerachGrid extends StatefulWidget {
   final List<Product> products;
 
-  const serachGrid({super.key, required this.products});
+  const SerachGrid({super.key, required this.products});
 
+  @override
+  State<SerachGrid> createState() => _SerachGridState();
+}
+
+class _SerachGridState extends State<SerachGrid> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
-      itemCount: products.length,
+      itemCount: widget.products.length,
       itemBuilder: (context, index) {
         return Card(
           child: InkWell(
             onTap: () {
-              _handleProductClick(context, products[index]);
+              _handleProductClick(context, widget.products[index]);
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,18 +88,18 @@ class serachGrid extends StatelessWidget {
                 Expanded(
                   child: Center(
                     child: Image.network(
-                      products[index].frontproduct,
+                      widget.products[index].frontproduct,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  products[index].name,
+                  widget.products[index].name,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4.0),
-                Text(products[index].allergens),
+                Text(widget.products[index].allergens),
               ],
             ),
           ),
