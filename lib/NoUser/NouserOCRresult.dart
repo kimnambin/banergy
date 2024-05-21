@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
+import 'package:flutter_banergy/NoUser/NouserMain.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Ocrresult2 extends StatefulWidget {
   final String imagePath;
@@ -23,6 +24,7 @@ class _OcrresultState extends State<Ocrresult2> {
   late String _hirightingResult;
   bool isOcrInProgress = true;
   List<String> userAllergies = []; // 사용자 알레르기 정보를 저장할 리스트
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _OcrresultState extends State<Ocrresult2> {
 
   Future<void> _getAllergies() async {
     try {
-      final url = Uri.parse('http://192.168.121.174:7000/ftr');
+      final url = Uri.parse('$baseUrl:7000/ftr');
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -52,7 +54,7 @@ class _OcrresultState extends State<Ocrresult2> {
 
   Future<void> _getOCRResult() async {
     try {
-      final url = Uri.parse('http://192.168.121.174:7000/result');
+      final url = Uri.parse('$baseUrl:7000/result');
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -115,7 +117,8 @@ class _OcrresultState extends State<Ocrresult2> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
+              MaterialPageRoute(
+                  builder: (context) => const NoUserMainpageApp()),
             );
           },
         ),

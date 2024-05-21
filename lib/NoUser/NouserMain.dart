@@ -22,8 +22,11 @@ import 'package:permission_handler/permission_handler.dart';
 //import 'package:photo_view/photo_view.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
       home: NoUserMainpageApp(),
@@ -54,6 +57,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String? authToken;
   final ImagePicker _imagePicker = ImagePicker();
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
@@ -69,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.112.174:7000/ocr');
+    final url = Uri.parse('$baseUrl:7000/ocr');
     final request = http.MultipartRequest('POST', url);
 
     request.files
@@ -374,6 +378,34 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             );
+          } else if (index == 3) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('비회원 이용불가'),
+                    content: const Text('비회원은 이용하실 수 없습니다.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              const Color.fromARGB(255, 29, 171, 102),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text('확인'),
+                      ),
+                    ],
+                  );
+                });
           } else if (index == 4) {
             setState(() {
               _selectedIndex = index;
@@ -513,6 +545,7 @@ class ProductGrid extends StatefulWidget {
 
 class _ProductGridState extends State<ProductGrid> {
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -522,7 +555,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/'),
+      Uri.parse('$baseUrl:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

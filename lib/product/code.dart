@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CodeScreen extends StatefulWidget {
   final String resultCode;
@@ -18,6 +20,7 @@ class CodeScreen extends StatefulWidget {
 class _CodeScreenState extends State<CodeScreen> {
   late String resultCode;
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   _CodeScreenState(this.resultCode); // 생성자 수정
 
@@ -29,7 +32,7 @@ class _CodeScreenState extends State<CodeScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.121.174:8000/scan?barcode=$resultCode'),
+      Uri.parse('$baseUrl:8000/scan?barcode=$resultCode'),
     );
     if (response.statusCode == 200) {
       // 서버가 잘 작동하는 지 테스트

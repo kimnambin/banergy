@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Ocrresult extends StatefulWidget {
   final String imagePath;
@@ -25,6 +26,7 @@ class _OcrresultState extends State<Ocrresult> {
   late String _hirightingResult;
   bool isOcrInProgress = true;
   String? authToken;
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -54,7 +56,7 @@ class _OcrresultState extends State<Ocrresult> {
 
   Future<void> _getUserAllergies(String token) async {
     try {
-      final url = Uri.parse('http://192.168.121.174:3000/loginuser');
+      final url = Uri.parse('$baseUrl:3000/loginuser');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
@@ -85,7 +87,7 @@ class _OcrresultState extends State<Ocrresult> {
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -104,7 +106,7 @@ class _OcrresultState extends State<Ocrresult> {
   //  OCR 결과
   Future<void> _getOCRResult(String token) async {
     try {
-      final url = Uri.parse('http://192.168.121.174:3000/result');
+      final url = Uri.parse('$baseUrl:3000/result');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},

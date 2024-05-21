@@ -2,7 +2,7 @@ name: flutter_banergy
 description: "A new Flutter project."
 version: 1.0.0+1
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -30,11 +30,12 @@ dependencies:
   intl: ^0.19.0
   carousel_slider: ^4.2.1
   # photo_view: ^0.12.0
- 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
+  flutter_dotenv: ^5.0.2
 
 flutter:
   assets:
@@ -42,21 +43,22 @@ flutter:
     - assets/tessdata/
     - images/
     - assets/images/
+    - .env
   uses-material-design: true
 
   fonts:
-   - family: PretendardBold
-     fonts:
-       - asset: assets/fonts/Pretendard-Bold.otf
-   - family: PretendardSemiBold
-     fonts:
-       - asset: assets/fonts/Pretendard-SemiBold.otf
-   - family: PretendardRegular
-     fonts:
-       - asset: assets/fonts/Pretendard-Regular.otf
-   - family: PretendardMedium
-     fonts:
-       - asset: assets/fonts/Pretendard-Medium.otf
-   - family: PretendardLight
-     fonts:
-       - asset: assets/fonts/Pretendard-Light.otf
+    - family: PretendardBold
+      fonts:
+        - asset: assets/fonts/Pretendard-Bold.otf
+    - family: PretendardSemiBold
+      fonts:
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+    - family: PretendardRegular
+      fonts:
+        - asset: assets/fonts/Pretendard-Regular.otf
+    - family: PretendardMedium
+      fonts:
+        - asset: assets/fonts/Pretendard-Medium.otf
+    - family: PretendardLight
+      fonts:
+        - asset: assets/fonts/Pretendard-Light.otf

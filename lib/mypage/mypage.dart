@@ -13,6 +13,8 @@ import 'package:flutter_banergy/mypage/mypage_record_allergy_reactions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MypageApp extends StatelessWidget {
   const MypageApp({super.key});
@@ -38,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage>
   String? authToken;
   String? loginName;
   set code(String? code) {}
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -68,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<String?> _fetchUserName(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 200) {
@@ -99,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -122,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage>
         // 알러지 필터링 페이지로 이동
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FilteringAllergies()),
+          MaterialPageRoute(builder: (context) => FilteringAllergies()),
         );
         break;
       case "닉네임 변경":

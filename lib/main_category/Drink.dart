@@ -10,6 +10,8 @@ import 'package:flutter_banergy/main_category/snacks.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DrinkScreen extends StatelessWidget {
   const DrinkScreen({super.key});
@@ -172,6 +174,7 @@ class DrinkGrid extends StatefulWidget {
 
 class _DrinkGridState extends State<DrinkGrid> {
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -181,7 +184,7 @@ class _DrinkGridState extends State<DrinkGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/?query=음료'),
+      Uri.parse('$baseUrl:8000/?query=음료'),
     );
     if (response.statusCode == 200) {
       setState(() {

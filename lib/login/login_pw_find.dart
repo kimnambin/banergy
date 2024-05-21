@@ -1,11 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:http/http.dart' as http;
 //import 'joinwidget.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized(); // 서버 연동을 위함
   runApp(
     const MaterialApp(
@@ -26,6 +30,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   String _pw = '';
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
 // pw찾기 함수
   Future<void> _findpw(BuildContext context) async {
@@ -35,7 +40,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/findpw'),
+        Uri.parse('$baseUrl:3000/findpw'),
         body: jsonEncode({
           'name': name,
           'username': username,
@@ -121,7 +126,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/sign'),
+        Uri.parse('$baseUrl:3000/sign'),
       );
       if (response.statusCode == 200) {
         _findpw;
@@ -141,11 +146,11 @@ class _PWFindAppAppState extends State<PWFindApp> {
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LoginApp()),
+                MaterialPageRoute(builder: (context) => FirstApp()),
               );
             },
           ),

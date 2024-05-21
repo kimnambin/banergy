@@ -3,8 +3,11 @@ import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MaterialApp(
     home: Changeidpw(),
   ));
@@ -26,6 +29,7 @@ class _ChangeidpwState extends State<Changeidpw> {
   final newpasswordController = TextEditingController();
   final TextEditingController newconfirmPasswordController =
       TextEditingController();
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void dispose() {
@@ -71,7 +75,7 @@ class _ChangeidpwState extends State<Changeidpw> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/changepw'),
+        Uri.parse('$baseUrl:3000/changepw'),
         body: jsonEncode({
           'password': password,
           'new_password': newPassword,

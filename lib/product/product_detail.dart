@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/appbar/search.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
+//import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
       home: pdScreen(
@@ -30,6 +34,7 @@ class pdScreen extends StatefulWidget {
 // ignore: camel_case_types
 class _pdScreenState extends State<pdScreen> {
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -40,7 +45,7 @@ class _pdScreenState extends State<pdScreen> {
   // 상품 데이터를 가져오는 비동기 함수
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/'),
+      Uri.parse('$baseUrl:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -85,7 +90,10 @@ class _pdScreenState extends State<pdScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
+              MaterialPageRoute(
+                  builder: (context) => const SearchScreen(
+                        searchText: '',
+                      )),
             );
           },
         ),

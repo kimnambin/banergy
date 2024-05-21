@@ -11,8 +11,11 @@ import 'package:flutter_banergy/login/login_pw_find.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MaterialApp(
       home: FirstApp(),
@@ -20,17 +23,18 @@ void main() {
   );
 }
 
+// ignore: must_be_immutable
 class FirstApp extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  FirstApp({Key? key});
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  FirstApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     // 앱 시작 시 자동 로그인 시도
-    //autoLogin(context);
+    autoLogin(context);
 
     return MaterialApp(
       home: Scaffold(
@@ -177,7 +181,7 @@ class FirstApp extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/login'),
+        Uri.parse('$baseUrl:3000/login'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -269,7 +273,7 @@ class FirstApp extends StatelessWidget {
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

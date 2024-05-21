@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// ignore: camel_case_types
+// ignore: camel_case_types, must_be_immutable
 class Freeboard_WriteScreen extends StatelessWidget {
   Freeboard_WriteScreen({super.key});
   final TextEditingController freetitleController = TextEditingController();
   final TextEditingController freecontentController = TextEditingController();
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   // 글 작성 함수
   Future<void> free(BuildContext context) async {
@@ -21,7 +23,7 @@ class Freeboard_WriteScreen extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:6000/free'),
+        Uri.parse('$baseUrl:6000/free'),
         body: jsonEncode({
           'freetitle': freetitle,
           'freecontent': freecontent,

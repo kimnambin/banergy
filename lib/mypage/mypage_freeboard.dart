@@ -5,13 +5,15 @@ import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage_Freeboard_WriteScreen.dart.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   runApp(const Freeboard());
 }
 
 class Freeboard extends StatelessWidget {
-  const Freeboard({Key? key});
+  const Freeboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class Freeboard extends StatelessWidget {
         ),
       ),
       //backgroundColor: const Color(0xFFF1F2F7),
-      body: const FreeboardList(),
+      body: FreeboardList(),
       bottomNavigationBar: const BottomNavBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -54,8 +56,10 @@ class Freeboard extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class FreeboardList extends StatelessWidget {
-  const FreeboardList({Key? key});
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  FreeboardList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -171,8 +175,7 @@ class FreeboardList extends StatelessWidget {
   // 데이터 가져오기
   Future<List<freeDB>> fetchFreeboardData() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://192.168.121.174:6000/free'));
+      final response = await http.get(Uri.parse('$baseUrl:6000/free'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         // 시간을 변환하여 데이터 생성

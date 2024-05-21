@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -43,6 +44,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
   final TextEditingController inquirytitleController = TextEditingController();
   final TextEditingController inquirycontentController =
       TextEditingController();
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   // 문의하기 함수
   Future<void> inquirysend(BuildContext context) async {
@@ -51,7 +53,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:6000/inquiry'),
+        Uri.parse('$baseUrl:6000/inquiry'),
         body: jsonEncode({
           'inquirytitle': inquirytitle,
           'inquirycontent': inquirycontent,

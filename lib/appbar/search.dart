@@ -7,6 +7,7 @@ import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_banergy/product/product_detail.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchText;
@@ -20,6 +21,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   late String searchText;
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   _SearchScreenState(this.searchText); // 생성자 수정
 
@@ -31,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/?query=$searchText'),
+      Uri.parse('$baseUrl:8000/?query=$searchText'),
     );
     if (response.statusCode == 200) {
       setState(() {

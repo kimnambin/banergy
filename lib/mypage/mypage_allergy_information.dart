@@ -11,8 +11,11 @@ import 'package:http/http.dart' as http;
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const allergyinformation());
 }
 
@@ -46,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage>
   bool isOcrInProgress = false;
   final picker = ImagePicker();
   late String img64;
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -58,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.121.174:3000/ocr');
+    final url = Uri.parse('$baseUrl:3000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -96,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;

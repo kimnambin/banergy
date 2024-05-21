@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'joinwidget.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
       home: IDFindApp(),
@@ -25,6 +28,7 @@ class _IDFindAppState extends State<IDFindApp> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   String _username = '';
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
 // id찾기 함수
   Future<void> _findid(BuildContext context) async {
@@ -34,7 +38,7 @@ class _IDFindAppState extends State<IDFindApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/findid'),
+        Uri.parse('$baseUrl:3000/findid'),
         body: jsonEncode({
           'name': name,
           'password': password,
@@ -119,7 +123,7 @@ class _IDFindAppState extends State<IDFindApp> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/sign'),
+        Uri.parse('$baseUrl:3000/sign'),
       );
       if (response.statusCode == 200) {
         _findid;
@@ -139,11 +143,11 @@ class _IDFindAppState extends State<IDFindApp> {
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LoginApp()),
+                MaterialPageRoute(builder: (context) => FirstApp()),
               );
             },
           ),

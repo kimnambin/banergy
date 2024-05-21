@@ -5,15 +5,18 @@ import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const FilteringAllergies());
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(FilteringAllergies());
 }
 
+// ignore: must_be_immutable
 class FilteringAllergies extends StatelessWidget {
-  const FilteringAllergies({Key? key});
+  FilteringAllergies({Key? key});
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,7 @@ class FilteringPage extends StatefulWidget {
 
 class _FilteringPageState extends State<FilteringPage> {
   List<String?> checkListValue2 = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -90,7 +94,7 @@ class _FilteringPageState extends State<FilteringPage> {
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.121.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -112,7 +116,7 @@ class _FilteringPageState extends State<FilteringPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/allergies'),
+        Uri.parse('$baseUrl:3000/allergies'),
         body: jsonEncode({'allergies': allergies}),
         headers: {
           'Content-Type': 'application/json',

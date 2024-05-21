@@ -6,8 +6,11 @@ import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MaterialApp(
     home: AddProductScreen(),
   ));
@@ -17,6 +20,7 @@ class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddProductScreenState createState() => _AddProductScreenState();
 }
 
@@ -25,6 +29,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _addtitleController = TextEditingController();
   final TextEditingController _addcontentController = TextEditingController();
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   Future<void> _getImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
@@ -43,7 +48,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.121.174:6000/add'),
+        Uri.parse('$baseUrl:6000/add'),
       );
 
       // 이미지 파일 추가

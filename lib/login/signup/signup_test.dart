@@ -4,8 +4,11 @@ import 'package:flutter_banergy/login/login_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 //import 'package:flutter_banergy/login/signup/joinwidget.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     const MaterialApp(
@@ -35,7 +38,7 @@ class _JoinAppState extends State<JoinApp> {
   late final GlobalKey<FormState> _formKey;
   late final TextEditingController _dateController;
   String? _selectedGender;
-
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late List<Widget> _pages;
 
   // 회원가입 함수
@@ -51,7 +54,7 @@ class _JoinAppState extends State<JoinApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.121.174:3000/sign'),
+        Uri.parse('$baseUrl:3000/sign'),
         body: jsonEncode({
           'username': username,
           'password': password,

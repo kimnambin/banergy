@@ -25,8 +25,11 @@ import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:photo_view/photo_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
       home: MainpageApp(),
@@ -69,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen>
   bool isOcrInProgress = false; // OCR 작업 진행 여부
   final picker = ImagePicker(); // 이미지 피커 인스턴스
   late String img64; // 이미지를 Base64로 인코딩한 결과
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -82,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('http://192.168.112.174:3000/ocr');
+    final url = Uri.parse('$baseUrl:3000/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -124,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.112.174:3000/loginuser'),
+        Uri.parse('$baseUrl:3000/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -404,6 +408,22 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             );
+            // } else if (index == 3) {
+            //   setState(() {
+            //     _selectedIndex = index;
+            //   });
+            //   Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute(builder: (context) => const Freeboard()),
+            //   );
+          } else if (index == 4) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
           } else if (index == 4) {
             setState(() {
               _selectedIndex = index;
@@ -524,6 +544,7 @@ class ProductGrid extends StatefulWidget {
 
 class _ProductGridState extends State<ProductGrid> {
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -534,7 +555,7 @@ class _ProductGridState extends State<ProductGrid> {
   // 상품 데이터를 가져오는 비동기 함수
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/'),
+      Uri.parse('$baseUrl:8000/'),
     );
     if (response.statusCode == 200) {
       setState(() {

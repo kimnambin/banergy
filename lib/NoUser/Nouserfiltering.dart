@@ -8,15 +8,18 @@ import 'package:flutter_banergy/login/login_FirstApp.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:flutter_banergy/bottombar.dart';
 // import 'package:flutter_banergy/mypage/mypage.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const Nouserfiltering());
 }
 
 class Nouserfiltering extends StatelessWidget {
-  const Nouserfiltering({Key? key});
+  const Nouserfiltering({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +30,16 @@ class Nouserfiltering extends StatelessWidget {
 }
 
 class FilteringPage extends StatefulWidget {
-  const FilteringPage({Key? key});
+  const FilteringPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _FilteringPageState createState() => _FilteringPageState();
 }
 
 class _FilteringPageState extends State<FilteringPage> {
   List<String?> checkListValue2 = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -62,7 +67,7 @@ class _FilteringPageState extends State<FilteringPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.112.174:7000/ftr'),
+        Uri.parse('$baseUrl:7000/ftr'),
         body: jsonEncode({'allergies': allergies}),
         headers: {
           'Content-Type': 'application/json',

@@ -6,6 +6,7 @@ import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main_category/IconSlider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BigsnacksScreen extends StatelessWidget {
   const BigsnacksScreen({super.key});
@@ -44,6 +45,7 @@ class DessertGrid extends StatefulWidget {
 
 class _DessertGridState extends State<DessertGrid> {
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -53,7 +55,7 @@ class _DessertGridState extends State<DessertGrid> {
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/?query=과자'),
+      Uri.parse('$baseUrl:8000/?query=과자'),
     );
     if (response.statusCode == 200) {
       setState(() {

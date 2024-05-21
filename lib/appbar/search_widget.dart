@@ -4,6 +4,7 @@ import 'package:flutter_banergy/appbar/search.dart';
 //import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SearchWidget extends StatefulWidget {
   const SearchWidget({super.key});
@@ -16,6 +17,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
   bool _isSearching = false;
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {

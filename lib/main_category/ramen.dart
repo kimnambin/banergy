@@ -11,6 +11,7 @@ import 'package:flutter_banergy/main_category/Drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RamenScreen extends StatefulWidget {
   const RamenScreen({super.key});
@@ -22,6 +23,7 @@ class RamenScreen extends StatefulWidget {
 class _RamenScreenState extends State<RamenScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -208,8 +210,7 @@ class _RamenScreenState extends State<RamenScreen> {
 
     setState(() {});
 
-    final response =
-        await http.get(Uri.parse('http://192.168.112.174:8000/?query=$query'));
+    final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
@@ -233,6 +234,7 @@ class SliverFoodGrid extends StatefulWidget {
 
 class _SliverFoodGridState extends State<SliverFoodGrid> {
   late List<Product> products = [];
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -243,7 +245,7 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.112.174:8000/?query=라면'),
+        Uri.parse('$baseUrl:8000/?query=라면'),
       );
       if (response.statusCode == 200) {
         setState(() {
@@ -317,10 +319,11 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
 }
 
 // 검색 결과 화면
+// ignore: must_be_immutable
 class SearchScreen extends StatelessWidget {
   final String searchText;
-
-  const SearchScreen({super.key, required this.searchText});
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  SearchScreen({super.key, required this.searchText});
 
   @override
   Widget build(BuildContext context) {
@@ -364,7 +367,7 @@ class SearchScreen extends StatelessWidget {
 
   Future<List<Product>> _fetchSearchResults(String query) async {
     final response = await http.get(
-      Uri.parse('http://192.168.112.174:8000/?query=$query'),
+      Uri.parse('$baseUrl:8000/?query=$query'),
     );
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
