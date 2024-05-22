@@ -7,6 +7,7 @@ import 'package:flutter_banergy/mainDB.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_banergy/product/product_detail.dart';
 
 class CodeScreen extends StatefulWidget {
   final String resultCode;
@@ -142,41 +143,13 @@ class _scanGridState extends State<scanGrid> {
       );
     }
   }
-}
 
-void _handleProductClick(BuildContext context, Product product) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('상품 정보'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('카테고리: ${product.kategorie}'),
-              Text('이름: ${product.name}'),
-              Image.network(
-                product.frontproduct,
-                fit: BoxFit.cover,
-              ),
-              Image.network(
-                product.backproduct,
-                fit: BoxFit.cover,
-              ),
-              Text('알레르기 식품: ${product.allergens}'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('닫기'),
-          ),
-        ],
-      );
-    },
-  );
+  void _handleProductClick(BuildContext context, Product product) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
+    );
+  }
 }

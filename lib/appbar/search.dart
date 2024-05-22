@@ -14,9 +14,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class SearchScreen extends StatefulWidget {
   final String searchText;
 
-  const SearchScreen({Key? key, required this.searchText}) : super(key: key);
+  const SearchScreen({super.key, required this.searchText});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SearchScreenState createState() => _SearchScreenState();
 }
 

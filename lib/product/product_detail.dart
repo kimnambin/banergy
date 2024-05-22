@@ -47,7 +47,7 @@ class _pdScreenState extends State<pdScreen> {
     _checkLoginStatus();
   }
 
-  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
+  // 사용자의 로그인 상태를 확인하고 인증 토큰
   Future<void> _checkLoginStatus() async {
     final token = await _loginuser();
     if (token != null) {
@@ -65,6 +65,7 @@ class _pdScreenState extends State<pdScreen> {
     }
   }
 
+  //로그인한 사용자의 알레르기 가져오기
   Future<void> _getUserAllergies(String token) async {
     try {
       final url = Uri.parse('$baseUrl:3000/loginuser');
@@ -101,6 +102,7 @@ class _pdScreenState extends State<pdScreen> {
     }
   }
 
+  //상품과 알레르기가 일치하는 지 확인
   void checkAllergies(String productAllergens, List<String> userAllergies) {
     List<String> productAllergensList = productAllergens.split(' ');
 
@@ -119,6 +121,7 @@ class _pdScreenState extends State<pdScreen> {
     }
   }
 
+  //로그인 유지하기
   Future<String?> _loginuser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
