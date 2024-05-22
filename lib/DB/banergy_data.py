@@ -11,10 +11,12 @@ CORS(app)
 
 # SQLite 데이터베이스 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///products.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # 데이터 모델 정의
 class Product(db.Model):
+    __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     barcode = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(80), nullable=False)
@@ -25,7 +27,6 @@ class Product(db.Model):
 
     def __repr__(self):
         return f'<Product {self.name}>'
-    
 
 # 데이터베이스 생성 및 CSV 데이터 추가
 if __name__ == '__main__':

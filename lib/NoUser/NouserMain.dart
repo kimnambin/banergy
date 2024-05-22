@@ -13,10 +13,9 @@ import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
 import 'package:flutter_banergy/product/code.dart';
-import 'package:flutter_banergy/product/product_detail.dart';
+import 'package:flutter_banergy/product/productGrid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
-import 'package:flutter_banergy/mainDB.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 //import 'package:photo_view/photo_view.dart';
@@ -535,86 +534,86 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-class ProductGrid extends StatefulWidget {
-  const ProductGrid({super.key});
+// class ProductGrid extends StatefulWidget {
+//   const ProductGrid({super.key});
 
-  @override
-  // ignore: library_private_types_in_public_api
-  _ProductGridState createState() => _ProductGridState();
-}
+//   @override
+//   // ignore: library_private_types_in_public_api
+//   _ProductGridState createState() => _ProductGridState();
+// }
 
-class _ProductGridState extends State<ProductGrid> {
-  late List<Product> products = [];
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+// class _ProductGridState extends State<ProductGrid> {
+//   late List<Product> products = [];
+//   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
-  @override
-  void initState() {
-    super.initState();
-    fetchData(); // initState에서 데이터를 불러옵니다.
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     fetchData(); // initState에서 데이터를 불러옵니다.
+//   }
 
-  Future<void> fetchData() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl:8000/'),
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        final List<dynamic> productList = json.decode(response.body);
-        products = productList.map((item) => Product.fromJson(item)).toList();
-      });
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
+//   Future<void> fetchData() async {
+//     final response = await http.get(
+//       Uri.parse('$baseUrl:8000/'),
+//     );
+//     if (response.statusCode == 200) {
+//       setState(() {
+//         final List<dynamic> productList = json.decode(response.body);
+//         products = productList.map((item) => Product.fromJson(item)).toList();
+//       });
+//     } else {
+//       throw Exception('Failed to load data');
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemCount: products.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Card(
-          child: InkWell(
-            onTap: () {
-              _handleProductClick(context, products[index]);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Image.network(
-                      products[index].frontproduct,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  products[index].name,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'PretendardRegular'), // 텍스트 크기와 별도로 다시 수정
-                ),
-                const SizedBox(height: 4.0),
-                Text(products[index].allergens),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return GridView.builder(
+//       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//         crossAxisCount: 2,
+//       ),
+//       itemCount: products.length,
+//       shrinkWrap: true,
+//       itemBuilder: (context, index) {
+//         return Card(
+//           child: InkWell(
+//             onTap: () {
+//               _handleProductClick(context, products[index]);
+//             },
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Expanded(
+//                   child: Center(
+//                     child: Image.network(
+//                       products[index].frontproduct,
+//                       fit: BoxFit.cover,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 8.0),
+//                 Text(
+//                   products[index].name,
+//                   style: const TextStyle(
+//                       fontWeight: FontWeight.bold,
+//                       fontFamily: 'PretendardRegular'), // 텍스트 크기와 별도로 다시 수정
+//                 ),
+//                 const SizedBox(height: 4.0),
+//                 Text(products[index].allergens),
+//               ],
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
 
-  void _handleProductClick(BuildContext context, Product product) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => pdScreen(product: product),
-      ),
-    );
-  }
-}
+//   void _handleProductClick(BuildContext context, Product product) {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => pdScreen(product: product),
+//       ),
+//     );
+//   }
+// }

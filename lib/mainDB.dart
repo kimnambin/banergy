@@ -9,6 +9,7 @@ class Product {
   final String frontproduct;
   final String backproduct;
   final String allergens;
+  bool isHearted;
 
   Product({
     required this.id,
@@ -18,6 +19,7 @@ class Product {
     required this.frontproduct,
     required this.backproduct,
     this.allergens = '',
+    this.isHearted = false,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Product {
       frontproduct: json['frontproduct'],
       backproduct: json['backproduct'],
       allergens: json['allergens'],
+      isHearted: json['isHearted'] ?? false,
     );
   }
   Map<String, dynamic> toJson() {
@@ -40,8 +43,13 @@ class Product {
       'frontproduct': frontproduct,
       'backproduct': backproduct,
       'allergens': allergens,
-      //'isHearted': isHearted,
+      'isHearted': isHearted,
     };
+  }
+
+  // 좋아요를 토글하는 메서드
+  void toggleHeart() {
+    isHearted = !isHearted;
   }
 }
 
