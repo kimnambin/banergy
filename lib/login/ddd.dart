@@ -135,7 +135,7 @@ class LoginApp extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AinpageApp(),
+                        builder: (context) => const ChoiceScreen(),
                       ),
                     );
                   },

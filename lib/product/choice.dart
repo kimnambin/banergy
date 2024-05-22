@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/main_category/ramen.dart';
 //import 'package:flutter_banergy/appbar/search.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
@@ -14,14 +15,14 @@ import 'package:flutter_banergy/main_category/Sandwich.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class RamenScreen extends StatefulWidget {
-  const RamenScreen({super.key});
+class ChoiceScreen extends StatefulWidget {
+  const ChoiceScreen({super.key});
 
   @override
-  State<RamenScreen> createState() => _RamenScreenState();
+  State<ChoiceScreen> createState() => _ChoiceScreenState();
 }
 
-class _RamenScreenState extends State<RamenScreen> {
+class _ChoiceScreenState extends State<ChoiceScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
@@ -318,5 +319,64 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
         builder: (context) => pdScreen(product: product),
       ),
     );
+  }
+}
+
+// ignore: must_be_immutable
+class SearchScreen extends StatelessWidget {
+  final String searchText;
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  SearchScreen({super.key, required this.searchText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Search Results for "$searchText"'),
+      ),
+      body: FutureBuilder<List<Product>>(
+        future: _fetchSearchResults(searchText),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No results found.'));
+          } else {
+            final products = snapshot.data!;
+            return ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(products[index].name),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            pdScreen(product: products[index]),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Future<List<Product>> _fetchSearchResults(String query) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl:8000/?query=$query'),
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map<Product>((item) => Product.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load search results');
+    }
   }
 }
