@@ -76,9 +76,6 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         body: Column(
           children: [
-            const SizedBox(
-              height: 220,
-            ),
             // 공간추가, 카테고리 리스트
             SizedBox(
               height: 120, // 라벨을 포함하기에 충분한 높이 설정

@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search.dart';
-import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 //import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:photo_view/photo_view.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -39,6 +39,9 @@ class _pdScreenState extends State<pdScreen> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String? authToken;
   bool hasMatchingAllergy = false; //알레르기 일치 여부
+  double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
+  double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
+  double minTextScaleFactor = -2.0; // 텍스트 최소 크기
 
   @override
   void initState() {
@@ -181,28 +184,6 @@ class _pdScreenState extends State<pdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.product == null) {
-      return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: const Color(0xFFF1F2F7),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MainpageApp()),
-              );
-            },
-          ),
-        ),
-        //오류 시
-        body: const Center(
-          child: Text('정보를 불러올 수 없습니다.'),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -226,7 +207,7 @@ class _pdScreenState extends State<pdScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               child: Center(
                 child: SizedBox(
                   width: 300,
@@ -241,19 +222,22 @@ class _pdScreenState extends State<pdScreen> {
               height: 5.0,
             ),
             const SizedBox(height: 16),
-            _NOText({
-              widget.product!.kategorie,
-              widget.product!.name,
-            }),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: _NOText({
+                widget.product!.kategorie,
+                widget.product!.name,
+              }),
+            ),
             const SizedBox(height: 30),
             _buildText({
               '알레르기 식품:': widget.product!.allergens,
-            }),
+            }, textScaleFactor),
             const SizedBox(height: 70),
             // 경고 메시지 표시
             hasMatchingAllergy
                 ? const Padding(
-                    padding: EdgeInsets.all(4.0),
+                    padding: EdgeInsets.only(left: 16.0),
                     child: Text(
                       '사용자와 맞지 않은 상품입니다.',
                       style: TextStyle(
@@ -262,36 +246,94 @@ class _pdScreenState extends State<pdScreen> {
                       ),
                     ),
                   )
-                : const SizedBox(),
+                : const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center, // 버튼들을 중앙에 배치
+              children: [
+                SizedBox(
+                  width: 120,
+                  height: 35,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        textScaleFactor += 0.5;
+                        if (textScaleFactor > maxTextScaleFactor) {
+                          textScaleFactor = maxTextScaleFactor;
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: const BorderSide(
+                          color: Color(0xFF7C7C7C),
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                    child: const Icon(Icons.zoom_in, color: Color(0xFF7C7C7C)),
+                  ),
+                ),
+                const SizedBox(width: 40),
+                SizedBox(
+                  width: 120,
+                  height: 35,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        textScaleFactor -= 0.5;
+                        if (textScaleFactor < minTextScaleFactor) {
+                          textScaleFactor = minTextScaleFactor;
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: const BorderSide(
+                          color: Color(0xFF7C7C7C),
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                    child: const Icon(Icons.zoom_out, color: Color(0xFF7C7C7C)),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildText(Map<String, String> textMap) {
+  Widget _buildText(Map<String, String> textMap, double textScaleFactor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.only(left: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: textMap.entries.map((entry) {
           return Text(
             '${entry.key} ${entry.value}',
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14 * textScaleFactor),
           );
         }).toList(),
       ),
     );
   }
 
-//앞에 텍스트 없이 내용만 가져오는 부분
-// ignore: non_constant_identifier_names
+  // 앞에 텍스트 없이 내용만 가져오는 부분
+  // ignore: non_constant_identifier_names
   Widget _NOText(Set<String> texts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: texts.map((text) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0.0),
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Text(
             text,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -302,11 +344,34 @@ class _pdScreenState extends State<pdScreen> {
   }
 
   Widget _buildImage(BuildContext context, String imageUrl) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Center(
-        child: Image.network(imageUrl, fit: BoxFit.cover),
-      ),
+    return GestureDetector(
+      onTap: () {
+        // 확대 이미지
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  PhotoView(
+                    imageProvider: NetworkImage(imageUrl),
+                    minScale: PhotoViewComputedScale.contained * 1.0,
+                    maxScale: PhotoViewComputedScale.covered * 2.0,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: Image.network(imageUrl),
     );
   }
 }

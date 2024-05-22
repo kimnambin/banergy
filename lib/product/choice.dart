@@ -111,8 +111,9 @@ class _HomeScreenState extends State<HomeScreen>
 }
 
 class ProductGrid extends StatefulWidget {
-  const ProductGrid({Key? key}) : super(key: key);
+  const ProductGrid({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _ProductGridState createState() => _ProductGridState();
 }
 
@@ -139,41 +140,6 @@ class _ProductGridState extends State<ProductGrid> {
       });
     } else {
       throw Exception('Failed to load data');
-    }
-  }
-
-  // 좋아요를 추가하는 함수 수정
-  void _updateLikeStatus(int index) async {
-    const String apiUrl = 'http://192.168.112.174:3000/like';
-    final Map<String, dynamic> body = {
-      'product_id': products[index].id.toString(),
-    };
-    print('Request Body: $body');
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        body: json.encode(body),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken', // 사용자의 인증 토큰을 헤더에 포함
-        },
-      );
-
-      if (response.statusCode == 201) {
-        print('좋아요 추가 성공');
-        // 좋아요를 추가한 경우, likedProducts 리스트에 해당 인덱스를 추가
-        setState(() {
-          likedProducts.add(index);
-        });
-      } else if (response.statusCode == 409) {
-        print('이미 좋아요를 눌렀습니다.');
-      } else {
-        print('서버 오류: ${response.statusCode}');
-        print('메시지: ${response.body}');
-      }
-    } catch (error) {
-      print('네트워크 오류: $error');
     }
   }
 
@@ -230,7 +196,7 @@ class _ProductGridState extends State<ProductGrid> {
                         : const Icon(Icons.favorite_border),
                     onPressed: () {
                       _toggleLikedStatus(index);
-                      _updateLikeStatus(index);
+                      //_updateLikeStatus(index);
                     },
                   ),
                 ),
