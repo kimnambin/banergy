@@ -42,6 +42,7 @@ class _pdScreenState extends State<pdScreen> {
   double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
   double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
   double minTextScaleFactor = -2.0; // 텍스트 최소 크기
+  List<int> likedProducts = [];
 
   @override
   void initState() {
@@ -182,6 +183,8 @@ class _pdScreenState extends State<pdScreen> {
     }
   }
 
+  bool isLiked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,12 +227,39 @@ class _pdScreenState extends State<pdScreen> {
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
-              child: _NOText({
-                widget.product!.kategorie,
-                widget.product!.name,
-              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _NOText({
+                    widget.product!.kategorie,
+                    widget.product!.name,
+                  }),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 40.0, right: 26.0),
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isLiked = !isLiked;
+                          if (isLiked) {
+                            likedProducts.add(widget.product!.id);
+                          } else {
+                            likedProducts.remove(widget.product!.id);
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.red : Colors.grey,
+                      ),
+                      iconSize: 28,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 30),
+            //const SizedBox(width: 16), // 버튼 간 간격 생성
+
             _buildText({
               '알레르기 식품:': widget.product!.allergens,
             }, textScaleFactor),
@@ -309,6 +339,16 @@ class _pdScreenState extends State<pdScreen> {
         ),
       ),
     );
+  }
+
+  void _toggleLikedStatus(int index) {
+    setState(() {
+      if (likedProducts.contains(index)) {
+        likedProducts.remove(index);
+      } else {
+        likedProducts.add(index);
+      }
+    });
   }
 
   Widget _buildText(Map<String, String> textMap, double textScaleFactor) {
