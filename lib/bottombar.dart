@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
+import 'package:flutter_banergy/product/choice.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:image_picker/image_picker.dart';
@@ -105,7 +106,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       ],
       onTap: (index) async {
         setState(() {
-          _selectedIndex = index;
+          _selectedIndex = index; // 선택된 인덱스 업데이트
         });
         if (index == 0) {
           Navigator.pushReplacement(
@@ -229,15 +230,17 @@ class _BottomNavBarState extends State<BottomNavBar>
               );
             },
           );
-          // } else if (index == 3) {
-          //   setState(() {
-          //     _selectedIndex = index;
-          //   });
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const Freeboard()),
-          //   );
-          // }
+        } else if (index == 3) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const LikedProductsWidget(
+                      likedProducts: [],
+                    )),
+          );
         } else if (index == 4) {
           setState(() {
             _selectedIndex = index;

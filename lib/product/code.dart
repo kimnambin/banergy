@@ -15,6 +15,7 @@ class CodeScreen extends StatefulWidget {
   const CodeScreen({super.key, required this.resultCode});
 
   @override
+  // ignore: library_private_types_in_public_api, no_logic_in_create_state
   _CodeScreenState createState() => _CodeScreenState(resultCode);
 }
 
