@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
+import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -83,9 +85,27 @@ class _ProductGridState extends State<ProductGrid> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite),
-            onPressed: () => _showLikedProducts(context),
+          Row(
+            children: [
+              IconButton(
+                icon: Image.asset(
+                  'assets/images/filter.png',
+                  width: 24.0,
+                  height: 24.0,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FilteringPage(),
+                  ),
+                ),
+              ),
+              //일단 이걸 클릭하면 좋아요 누른 상품들 보러가도록 함
+              IconButton(
+                icon: const Icon(Icons.check_box),
+                onPressed: () => _showLikedProducts(context),
+              ),
+            ],
           ),
         ],
       ),
@@ -191,7 +211,7 @@ class LikedProductsWidget extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => pdScreen(product: product),
+                    builder: (context) => pd_choice(product: product),
                   ),
                 );
               },
