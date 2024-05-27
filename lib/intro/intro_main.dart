@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/intro/splash_screen.dart';
 import 'package:flutter_banergy/intro/auth_screen.dart';
 import 'package:flutter_banergy/rounter/locations.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final _routerDelegate = BeamerDelegate(
     guards: [
@@ -16,7 +18,8 @@ final _routerDelegate = BeamerDelegate(
     locationBuilder:
         BeamerLocationBuilder(beamLocations: [HomeLocation()]).call);
 //인트로의 첫 화면
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const introApp());
 }
 

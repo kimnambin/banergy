@@ -4,7 +4,7 @@ import 'package:flutter_banergy/login/login_FirstApp.dart';
 // ignore: must_be_immutable
 class IntroPageC extends StatelessWidget {
   PageController controller;
-  IntroPageC(this.controller, {Key? key}) : super(key: key);
+  IntroPageC(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class IntroPageC extends StatelessWidget {
                         text: 'OCR ',
                         style: TextStyle(
                           fontSize: textSize,
-                          color: Color(0xFF03C95B),
+                          color: const Color(0xFF03C95B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
@@ -37,7 +37,7 @@ class IntroPageC extends StatelessWidget {
                         text: ',',
                         style: TextStyle(
                           fontSize: textSize,
-                          color: Color(0xFF3F3B3B), // 검정색
+                          color: const Color(0xFF3F3B3B), // 검정색
                           fontFamily: 'PretendardBold',
                         ),
                       ),
@@ -45,7 +45,7 @@ class IntroPageC extends StatelessWidget {
                         text: ' 바코드 ',
                         style: TextStyle(
                           fontSize: textSize,
-                          color: Color(0xFF03C95B),
+                          color: const Color(0xFF03C95B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
@@ -53,7 +53,7 @@ class IntroPageC extends StatelessWidget {
                         text: '기술로 \n',
                         style: TextStyle(
                           fontSize: textSize,
-                          color: Color(0xFF3F3B3B),
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
@@ -61,7 +61,7 @@ class IntroPageC extends StatelessWidget {
                         text: '간편하게\n',
                         style: TextStyle(
                           fontSize: textSize,
-                          color: Color(0xFF3F3B3B),
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
@@ -69,7 +69,7 @@ class IntroPageC extends StatelessWidget {
                         text: '찾아보는 음식 성분들!',
                         style: TextStyle(
                           fontSize: textSize,
-                          color: Color(0xFF3F3B3B),
+                          color: const Color(0xFF3F3B3B),
                           fontFamily: 'PretendardBold',
                         ),
                       ),
