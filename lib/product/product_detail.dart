@@ -197,9 +197,10 @@ class _pdScreenState extends State<pdScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const SearchScreen(
-                        searchText: '',
-                      )),
+                builder: (context) => const SearchScreen(
+                  searchText: '',
+                ),
+              ),
             );
           },
         ),
@@ -236,35 +237,81 @@ class _pdScreenState extends State<pdScreen> {
                   }),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 40.0, right: 26.0),
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isLiked = !isLiked;
-                          if (isLiked) {
-                            likedProducts.add(widget.product!.id);
-                          } else {
-                            likedProducts.remove(widget.product!.id);
-                          }
-                        });
-                      },
-                      icon: Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: isLiked ? Colors.red : Colors.grey,
+                    child: Row(
+                      children: [
+                        /*
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isLiked = !isLiked;
+                            if (isLiked) {
+                              likedProducts.add(widget.product!.id);
+                            } else {
+                              likedProducts.remove(widget.product!.id);
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: isLiked ? Colors.red : Colors.grey,
+                        ),
+                        iconSize: 28,
                       ),
-                      iconSize: 28,
+                      */
+                        IconButton(
+                          icon: Icon(
+                            Icons.zoom_in,
+                            color: textScaleFactor > minTextScaleFactor
+                                ? const Color(0xFF7C7C7C)
+                                : Colors.green,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor += 0.5;
+                              if (textScaleFactor > maxTextScaleFactor) {
+                                textScaleFactor = maxTextScaleFactor;
+                              }
+                            });
+                          },
+                          iconSize: 28,
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        IconButton(
+                          icon: const Icon(Icons.zoom_out,
+                              color: Color(0xFF7C7C7C)),
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor -= 0.5;
+                              if (textScaleFactor < minTextScaleFactor) {
+                                textScaleFactor = minTextScaleFactor;
+                              }
+                            });
+                          },
+                          color: Colors.white,
+                          iconSize: 28,
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-            //const SizedBox(width: 16), // 버튼 간 간격 생성
-
+            const SizedBox(height: 20),
             _buildText({
               '알레르기 식품:': widget.product!.allergens,
             }, textScaleFactor),
-            const SizedBox(height: 70),
-            // 경고 메시지 표시
+            const SizedBox(height: 20),
             hasMatchingAllergy
                 ? const Padding(
                     padding: EdgeInsets.only(left: 16.0),
@@ -277,63 +324,6 @@ class _pdScreenState extends State<pdScreen> {
                     ),
                   )
                 : const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center, // 버튼들을 중앙에 배치
-              children: [
-                SizedBox(
-                  width: 120,
-                  height: 35,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        textScaleFactor += 0.5;
-                        if (textScaleFactor > maxTextScaleFactor) {
-                          textScaleFactor = maxTextScaleFactor;
-                        }
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        side: const BorderSide(
-                          color: Color(0xFF7C7C7C),
-                          width: 2.0,
-                        ),
-                      ),
-                    ),
-                    child: const Icon(Icons.zoom_in, color: Color(0xFF7C7C7C)),
-                  ),
-                ),
-                const SizedBox(width: 40),
-                SizedBox(
-                  width: 120,
-                  height: 35,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        textScaleFactor -= 0.5;
-                        if (textScaleFactor < minTextScaleFactor) {
-                          textScaleFactor = minTextScaleFactor;
-                        }
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        side: const BorderSide(
-                          color: Color(0xFF7C7C7C),
-                          width: 2.0,
-                        ),
-                      ),
-                    ),
-                    child: const Icon(Icons.zoom_out, color: Color(0xFF7C7C7C)),
-                  ),
-                ),
-              ],
-            ),
-
             const SizedBox(height: 16),
           ],
         ),

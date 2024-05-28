@@ -11,7 +11,7 @@ import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
 
 class IconSlider extends StatelessWidget {
-  const IconSlider({super.key});
+  const IconSlider({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,7 @@ class _IconItemState extends State<IconItem> {
       case '간식류':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const snacksScreen()),
+          MaterialPageRoute(builder: (context) => const SnacksScreen()),
         );
         break;
       case '즉석식품':

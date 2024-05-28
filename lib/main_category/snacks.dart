@@ -1,31 +1,31 @@
-//간식류
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main_category/ramen.dart';
-//import 'package:flutter_banergy/appbar/search.dart';
+import 'package:flutter_banergy/product/productGrid.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
 import 'package:flutter_banergy/main_category/gimbap.dart';
-//import 'package:flutter_banergy/main_category/snacks.dart';
-import 'package:flutter_banergy/main_category/Drink.dart';
+import 'package:flutter_banergy/main_category/ramen.dart';
+import 'package:flutter_banergy/main_category/drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/lunchbox.dart';
-import 'package:flutter_banergy/main_category/Sandwich.dart';
+import 'package:flutter_banergy/main_category/sandwich.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class snacksScreen extends StatefulWidget {
-  const snacksScreen({super.key});
+class SnacksScreen extends StatefulWidget {
+  const SnacksScreen({super.key});
 
   @override
-  State<snacksScreen> createState() => _snacksScreenState();
+  State<SnacksScreen> createState() => _SnacksScreenState();
 }
 
-class _snacksScreenState extends State<snacksScreen> {
+class _SnacksScreenState extends State<SnacksScreen> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  List<Product> likedProducts = [];
 
   @override
   void initState() {
@@ -53,6 +53,25 @@ class _snacksScreenState extends State<snacksScreen> {
     );
   }
 
+  void _toggleLikedStatus(Product product) {
+    setState(() {
+      if (likedProducts.contains(product)) {
+        likedProducts.remove(product);
+      } else {
+        likedProducts.add(product);
+      }
+    });
+  }
+
+  void _showLikedProducts(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +82,12 @@ class _snacksScreenState extends State<snacksScreen> {
             snap: true,
             expandedHeight: 200.0,
             backgroundColor: Colors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
             title: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               child: Container(
@@ -186,7 +211,7 @@ class _snacksScreenState extends State<snacksScreen> {
         screen = const DrinkScreen();
         break;
       case '간식':
-        screen = const snacksScreen();
+        screen = const SnacksScreen();
         break;
       case '과자':
         screen = const BigsnacksScreen();
@@ -231,12 +256,13 @@ class SliverFoodGrid extends StatefulWidget {
   const SliverFoodGrid({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SliverFoodGridState createState() => _SliverFoodGridState();
 }
 
 class _SliverFoodGridState extends State<SliverFoodGrid> {
-  late List<Product> products = [];
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  late List<Product> products = [];
 
   @override
   void initState() {
@@ -323,8 +349,8 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
 // 검색 결과 화면
 // ignore: must_be_immutable
 class SearchScreen extends StatelessWidget {
-  final String searchText;
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final String searchText;
 
   SearchScreen({super.key, required this.searchText});
 
@@ -332,7 +358,7 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Results for "$searchText"'),
+        title: Text('검색결과 "$searchText"'),
       ),
       body: FutureBuilder<List<Product>>(
         future: _fetchSearchResults(searchText),
@@ -345,20 +371,50 @@ class SearchScreen extends StatelessWidget {
             return const Center(child: Text('No results found.'));
           } else {
             final products = snapshot.data!;
-            return ListView.builder(
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 한 줄에 2개의 열을 표시
+                crossAxisSpacing: 10.0, // 열 사이의 간격
+                mainAxisSpacing: 10.0, // 행 사이의 간격
+                childAspectRatio: 0.75, // 아이템의 가로 세로 비율
+              ),
               itemCount: products.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(products[index].name),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            pdScreen(product: products[index]),
-                      ),
-                    );
-                  },
+                return Card(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              pdScreen(product: products[index]),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: Image.network(
+                              products[index].frontproduct,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text(
+                          products[index].name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'PretendardRegular',
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        Text(products[index].allergens),
+                      ],
+                    ),
+                  ),
                 );
               },
             );

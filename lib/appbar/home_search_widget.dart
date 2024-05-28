@@ -7,14 +7,14 @@ import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+class HomeSearchWidget extends StatefulWidget {
+  const HomeSearchWidget({super.key});
 
   @override
-  State<SearchWidget> createState() => _SearchWidgetState();
+  State<HomeSearchWidget> createState() => _HomeSearchWidgetState();
 }
 
-class _SearchWidgetState extends State<SearchWidget> {
+class _HomeSearchWidgetState extends State<HomeSearchWidget> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
   bool _isSearching = false;
@@ -38,12 +38,12 @@ class _SearchWidgetState extends State<SearchWidget> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         title: Padding(
           padding: const EdgeInsets.symmetric(
               vertical: 8, horizontal: 0), // 좌우 여백 추가

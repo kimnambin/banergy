@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/appbar/home_search_widget.dart';
 import 'package:flutter_banergy/main_category/Drink.dart';
 import 'package:flutter_banergy/main_category/Sandwich.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         actions: const [
           Flexible(
-            child: SearchWidget(), // 검색 위젯
+            child: HomeSearchWidget(), // 검색 위젯
           ),
         ],
       ),
@@ -243,7 +243,6 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.green, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
@@ -459,7 +458,7 @@ class _HomeScreenState extends State<HomeScreen>
         screen = const DrinkScreen();
         break;
       case '간식':
-        screen = const snacksScreen();
+        screen = const SnacksScreen();
         break;
       case '과자':
         screen = const BigsnacksScreen();

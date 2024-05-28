@@ -461,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen>
         screen = const DrinkScreen();
         break;
       case '간식':
-        screen = const snacksScreen();
+        screen = const SnacksScreen();
         break;
       case '과자':
         screen = const BigsnacksScreen();

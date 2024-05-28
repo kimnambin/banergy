@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'joinwidget.dart';
 
@@ -24,25 +25,25 @@ class IDFindApp extends StatefulWidget {
 }
 
 class _IDFindAppState extends State<IDFindApp> {
-  final TextEditingController _passwordController = TextEditingController();
+  //final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
+  //final TextEditingController _dateController = TextEditingController();
   String _username = '';
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
 // id찾기 함수
   Future<void> _findid(BuildContext context) async {
     final String name = _nameController.text;
-    final String password = _passwordController.text;
-    final String date = _dateController.text;
+    // final String password = _passwordController.text;
+    // final String date = _dateController.text;
 
     try {
       final response = await http.post(
         Uri.parse('$baseUrl:3000/findid'),
         body: jsonEncode({
           'name': name,
-          'password': password,
-          'date': date,
+          // 'password': password,
+          // 'date': date,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ class _IDFindAppState extends State<IDFindApp> {
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    backgroundColor: const Color(0xFF03C95B),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -187,32 +188,32 @@ class _IDFindAppState extends State<IDFindApp> {
                           },
                         ),
                         const SizedBox(height: 15),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: '비밀번호를 입력해주세요.',
-                            prefixIcon:
-                                const Icon(Icons.lock_open, color: Colors.grey),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                          validator: (value) {
-                            String pattern =
-                                r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-                            RegExp regex = RegExp(pattern);
+                        // TextFormField(
+                        //   controller: _passwordController,
+                        //   obscureText: true,
+                        //   decoration: InputDecoration(
+                        //     hintText: '비밀번호를 입력해주세요.',
+                        //     prefixIcon:
+                        //         const Icon(Icons.lock_open, color: Colors.grey),
+                        //     border: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(12.0),
+                        //     ),
+                        //   ),
+                        //   validator: (value) {
+                        //     String pattern =
+                        //         r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
+                        //     RegExp regex = RegExp(pattern);
 
-                            if (value == null || value.isEmpty) {
-                              return '비밀번호를 입력하세요.';
-                            } else if (!regex.hasMatch(value) ||
-                                value.length < 5) {
-                              return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
-                            }
+                        //     if (value == null || value.isEmpty) {
+                        //       return '비밀번호를 입력하세요.';
+                        //     } else if (!regex.hasMatch(value) ||
+                        //         value.length < 5) {
+                        //       return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
+                        //     }
 
-                            return null;
-                          },
-                        ),
+                        //     return null;
+                        //   },
+                        // ),
                         const SizedBox(height: 15),
                         // DatePickerButton(
                         //   controller: _dateController,

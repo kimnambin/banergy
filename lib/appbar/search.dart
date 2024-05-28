@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -64,6 +65,15 @@ class _SearchScreenState extends State<SearchScreen> {
             child: SearchWidget(),
           ),
         ],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
+            );
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -149,7 +159,7 @@ class _SearchScreenState extends State<SearchScreen> {
         screen = const DrinkScreen();
         break;
       case '간식':
-        screen = const snacksScreen();
+        screen = const SnacksScreen();
         break;
       case '과자':
         screen = const BigsnacksScreen();

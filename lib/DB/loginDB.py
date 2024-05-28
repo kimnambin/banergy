@@ -151,10 +151,10 @@ def find_username():
     if request.method == 'POST':
         data = request.json
         name = data.get('name')  
-        password = data.get('password')
+        # password = data.get('password')
         #date = data.get('date')
         
-        user = User.query.filter_by(name=name , password=password).first()  
+        user = User.query.filter_by(name=name).first()  
    
         if user:
             return jsonify({'username': user.username}), 200  
