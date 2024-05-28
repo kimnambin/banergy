@@ -216,7 +216,34 @@ class _pdScreenState extends State<pdScreen> {
                 child: SizedBox(
                   width: 300,
                   height: 250,
-                  child: _buildImage(context, widget.product!.frontproduct),
+                  child: Stack(
+                    children: [
+                      _buildImage(context, widget.product!.frontproduct),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 32),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isLiked = !isLiked;
+                      if (isLiked) {
+                        likedProducts.add(widget.product!.id);
+                      } else {
+                        likedProducts.remove(widget.product!.id);
+                      }
+                    });
+                  },
+                  icon: Icon(
+                    isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: isLiked ? Colors.red : Colors.grey,
+                  ),
+                  iconSize: 28,
                 ),
               ),
             ),
@@ -239,25 +266,6 @@ class _pdScreenState extends State<pdScreen> {
                     padding: const EdgeInsets.only(bottom: 40.0, right: 26.0),
                     child: Row(
                       children: [
-                        /*
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isLiked = !isLiked;
-                            if (isLiked) {
-                              likedProducts.add(widget.product!.id);
-                            } else {
-                              likedProducts.remove(widget.product!.id);
-                            }
-                          });
-                        },
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : Colors.grey,
-                        ),
-                        iconSize: 28,
-                      ),
-                      */
                         IconButton(
                           icon: Icon(
                             Icons.zoom_in,
