@@ -124,10 +124,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "상품 추가",
-          textAlign: TextAlign.center,
-        ),
         centerTitle: true,
         backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
@@ -144,35 +140,26 @@ class _AddProductScreenState extends State<AddProductScreen> {
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(40.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  'images/000.jpeg',
-                  width: 80,
-                  height: 80,
-                ),
-                const SizedBox(height: 20),
                 const Text(
                   '상품추가',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
                 InputField(
-                  label: '제목',
-                  hintText: '제목을 입력하세요',
+                  hintText: '상품명',
                   controller: _addtitleController,
+                  isTextArea: false,
                 ),
                 const SizedBox(height: 20),
-                InputField(
-                  label: '상품 내용',
-                  hintText: '간단한 상품 내용을 적어주세요.',
-                  controller: _addcontentController,
+                const InputField(
+                  hintText: '추가할 내용을 적어주세요.',
+                  isTextArea: true,
                 ),
-                const SizedBox(height: 20),
                 _buildPhotoArea(),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -180,32 +167,43 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       onPressed: () {
                         _getImage(ImageSource.camera);
                       },
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
+                      icon: const Icon(
+                        Icons.camera_alt,
+                        color: Color(0xFFA7A6A6),
+                      ),
                       label: const Text("카메라",
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(
+                            color: Color(0xFFA7A6A6),
+                          )),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 29, 171, 102),
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           side: const BorderSide(color: Color(0xFFEBEBEB)),
-                          borderRadius: BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(40.0),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 15), // 간격 조절
+                    const SizedBox(width: 30), // 간격 조절
                     ElevatedButton.icon(
                       onPressed: () {
                         _getImage(ImageSource.gallery);
                       },
-                      icon: const Icon(Icons.perm_media, color: Colors.white),
-                      label: const Text("갤러리",
-                          style: TextStyle(color: Colors.white)),
+                      icon: const Icon(
+                        Icons.perm_media,
+                        color: Color(0xFFA7A6A6),
+                      ),
+                      label: const Text(
+                        "갤러리",
+                        style: TextStyle(
+                          color: Color(0xFFA7A6A6),
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 29, 171, 102),
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Color(0xFFEBEBEB)),
-                          borderRadius: BorderRadius.circular(30.0),
+                          side: const BorderSide(
+                              color: Color.fromRGBO(227, 227, 227, 1.0)),
+                          borderRadius: BorderRadius.circular(40.0),
                         ),
                       ),
                     ),
@@ -224,11 +222,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
       return Column(
         children: [
           SizedBox(
-            width: 300,
-            height: 300,
+            width: 250,
+            height: 250,
             child: Image.file(_image!),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: () {
               if (_image != null) {
@@ -250,24 +248,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
       );
     } else {
       return Container(
-        width: 300,
-        height: 300,
-        color: Colors.grey,
+        width: 250,
+        height: 250,
+        color: Colors.white,
       );
     }
   }
 }
 
 class InputField extends StatelessWidget {
-  final String label;
+  final bool isTextArea;
   final String hintText;
   final TextEditingController? controller;
 
   const InputField({
     super.key,
-    required this.label,
     this.hintText = "",
     this.controller,
+    this.isTextArea = false,
   });
 
   @override
@@ -275,29 +273,26 @@ class InputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30.0),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: InputBorder.none,
-              ),
-              style: const TextStyle(
-                  color: Colors.black, fontWeight: FontWeight.bold),
+        if (isTextArea)
+          TextFormField(
+            maxLines: 2,
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none,
             ),
+            controller: controller,
+          )
+        else
+          TextFormField(
+            decoration: InputDecoration(
+              hintText: hintText,
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+              ),
+            ),
+            controller: controller,
           ),
-        ),
       ],
     );
   }

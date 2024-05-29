@@ -126,10 +126,6 @@ class _InquiryScreenState extends State<InquiryScreen> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            "문의하기",
-            textAlign: TextAlign.center,
-          ),
           centerTitle: true,
           backgroundColor: const Color(0xFFF1F2F7),
           leading: IconButton(
@@ -146,38 +142,34 @@ class _InquiryScreenState extends State<InquiryScreen> {
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(40.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'images/000.jpeg',
-                    width: 80,
-                    height: 80,
-                  ),
                   const Text(
                     '문의하기',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 20),
                   Form(
                     key: _formKey,
                     child: Column(
                       children: [
                         InputField(
-                          label: '제목 *',
+                          isTextArea: false,
                           controller: inquirytitleController,
+                          hintText: "제목",
                         ),
                         const SizedBox(height: 20),
                         InputField(
-                          label: '내용 *',
                           isTextArea: true,
-                          hintText: "수정 요청, 유의 사항 등등 문의",
+                          hintText: "내용을 입력하세요",
                           controller: inquirycontentController,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 80),
                   ElevatedButton(
                     onPressed: () {
                       inquirysend(context);
@@ -189,10 +181,11 @@ class _InquiryScreenState extends State<InquiryScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                      minimumSize: const Size(double.infinity, 54),
+                      backgroundColor: const Color(0xFF03C95B),
                     ),
-                    child: const Text('문의하기',
-                        style: TextStyle(color: Colors.white)),
+                    child:
+                        const Text('완료', style: TextStyle(color: Colors.white)),
                   ),
                   const SizedBox(height: 40),
                   if (isFAQVisible) const FAQList(),
@@ -207,14 +200,12 @@ class _InquiryScreenState extends State<InquiryScreen> {
 }
 
 class InputField extends StatelessWidget {
-  final String label;
   final bool isTextArea;
   final String hintText;
   final TextEditingController controller;
 
   const InputField({
     super.key,
-    required this.label,
     this.isTextArea = false,
     this.hintText = "",
     required this.controller,
@@ -225,13 +216,9 @@ class InputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        if (isTextArea)
+        if (isTextArea) // isTextArea가 true일 때만 테두리 없애기
           TextFormField(
-            maxLines: 4,
+            maxLines: 8,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return '필수 입력 항목입니다.';
@@ -240,21 +227,22 @@ class InputField extends StatelessWidget {
             },
             decoration: InputDecoration(
               hintText: hintText,
-              border: const OutlineInputBorder(),
+              border: InputBorder.none,
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+              ),
             ),
             controller: controller,
-          )
-        else
+          ),
+        if (!isTextArea)
           TextFormField(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '필수 입력 항목입니다.';
-              }
-              return null;
-            },
             decoration: InputDecoration(
               hintText: hintText,
-              border: const OutlineInputBorder(),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+              ),
             ),
             controller: controller,
           ),

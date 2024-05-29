@@ -34,7 +34,7 @@ class FirstApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 앱 시작 시 자동 로그인 시도
-    autoLogin(context);
+    //autoLogin(context);
 
     return MaterialApp(
       home: Scaffold(

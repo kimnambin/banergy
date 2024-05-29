@@ -57,11 +57,13 @@ class LoginApp extends StatelessWidget {
                   InputField(
                     label: '아이디',
                     controller: _usernameController,
+                    obscureText: false,
                   ),
                   const SizedBox(height: 20),
                   InputField(
                     label: '비밀번호',
                     controller: _passwordController,
+                    obscureText: true,
                   ),
                   const SizedBox(height: 15),
                   const SizedBox(height: 80),
@@ -264,11 +266,13 @@ class InputField extends StatelessWidget {
   final bool isTextArea;
   final String label;
   final TextEditingController controller;
+  final bool obscureText;
 
   const InputField({
     this.isTextArea = false,
     required this.label,
     required this.controller,
+    required this.obscureText,
     super.key,
   });
 
@@ -282,6 +286,7 @@ class InputField extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
         ),
         TextFormField(
+          obscureText: obscureText,
           decoration: const InputDecoration(
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),

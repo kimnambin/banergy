@@ -143,6 +143,12 @@ class _IDFindAppState extends State<IDFindApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          title: const Text(
+            "아이디 찾기",
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xFFF1F2F7),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -157,106 +163,76 @@ class _IDFindAppState extends State<IDFindApp> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(40.0),
-              child: Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 60),
-                    Image.asset(
-                      'images/000.jpeg',
-                      width: 200,
-                      height: 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 40),
+                  InputField(
+                    label: '계정 이름',
+                    controller: _nameController,
+                  ),
+                  const SizedBox(height: 20),
+                  // const InputField(
+                  //   label: '계정 비밀번호',
+                  //   //controller: _passwordController,
+                  // ),
+                  const SizedBox(height: 95),
+                  ElevatedButton(
+                    onPressed: () => _findid(context),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF03C95B),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
-                    const SizedBox(height: 50),
-                    Column(
-                      children: [
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: InputDecoration(
-                            hintText: '이름',
-                            prefixIcon: const Icon(Icons.account_circle,
-                                color: Colors.grey),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return '다시 확인해주세요.';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                        // TextFormField(
-                        //   controller: _passwordController,
-                        //   obscureText: true,
-                        //   decoration: InputDecoration(
-                        //     hintText: '비밀번호를 입력해주세요.',
-                        //     prefixIcon:
-                        //         const Icon(Icons.lock_open, color: Colors.grey),
-                        //     border: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(12.0),
-                        //     ),
-                        //   ),
-                        //   validator: (value) {
-                        //     String pattern =
-                        //         r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-                        //     RegExp regex = RegExp(pattern);
-
-                        //     if (value == null || value.isEmpty) {
-                        //       return '비밀번호를 입력하세요.';
-                        //     } else if (!regex.hasMatch(value) ||
-                        //         value.length < 5) {
-                        //       return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
-                        //     }
-
-                        //     return null;
-                        //   },
-                        // ),
-                        const SizedBox(height: 15),
-                        // DatePickerButton(
-                        //   controller: _dateController,
-                        //   onChanged: (selectedDate) {
-                        //     setState(() {
-                        //       _dateController.text = selectedDate.toString();
-                        //     });
-                        //   },
-                        //   label: '',
-                        //   hintText: '생년월일',
-                        //   iconColor: Colors.grey,
-                        //   hintTextColor: Colors.grey,
-                        //   icon: Icons.calendar_today,
-                        //   borderRadius: BorderRadius.circular(12.0),
-                        // ),
-                        // const SizedBox(height: 35),
-                        ElevatedButton(
-                          onPressed: () => _findid(context),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor:
-                                const Color.fromARGB(255, 29, 171, 102),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: Center(
-                              child: Text('완료'),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: const SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: Center(
+                        child: Text('완료'),
+                      ),
                     ),
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ),
         ),
+        //bottomNavigationBar: BottomNavBar(),
       ),
+    );
+  }
+}
+
+class InputField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+
+  const InputField({
+    required this.label,
+    required this.controller,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        ),
+        TextFormField(
+          decoration: const InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+            ),
+          ),
+          controller: controller,
+        ),
+      ],
     );
   }
 }

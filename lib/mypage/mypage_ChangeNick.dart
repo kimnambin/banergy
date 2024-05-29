@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
 import '../mypage/mypage.dart';
@@ -61,16 +62,17 @@ class _ChangeNickState extends State<ChangeNick>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                const Text(
-                  '닉네임 변경',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const SizedBox(height: 40),
+                const InputField(
+                  label: '기존 아이디',
+                  //controller: _usernameController,
                 ),
-                const SizedBox(height: 60),
-                const InputField(label: '원래 닉네임 *'),
                 const SizedBox(height: 20),
                 const InputField(
-                    label: '변경할 닉네임 *', hintText: '변경할 닉네임을 입력하세요'),
-                const SizedBox(height: 20),
+                  label: '새 아이디',
+                  //controller: _passwordController,
+                ),
+                const SizedBox(height: 95),
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -91,11 +93,20 @@ class _ChangeNickState extends State<ChangeNick>
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFF03C95B),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
-                  child: const Text('닉네임 변경',
-                      style: TextStyle(color: Colors.white)),
-                ),
+                  child: const SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Center(
+                      child: Text('완료'),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -107,10 +118,14 @@ class _ChangeNickState extends State<ChangeNick>
 }
 
 class InputField extends StatelessWidget {
+  //final TextEditingController controller;
   final String label;
-  final String hintText;
 
-  const InputField({super.key, required this.label, this.hintText = ""});
+  const InputField({
+    required this.label,
+    //required this.controller,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -119,19 +134,21 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
-        TextField(
-          decoration: InputDecoration(
-              hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              )),
+        TextFormField(
+          decoration: const InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+            ),
+          ),
+          //controller: controller,
         ),
       ],
     );
   }
 }
+
 /*
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({Key? key}) : super(key: key);
