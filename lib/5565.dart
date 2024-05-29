@@ -1,3 +1,5 @@
+//메인 페이지 연습용
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
@@ -162,25 +164,6 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       appBar: AppBar(
         title: const SearchWidget(), // 검색 위젯
-        actions: [
-          IconButton(
-            icon: Image.asset(
-              'assets/images/filter.png',
-              width: 24.0,
-              height: 24.0,
-            ),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FilteringPage(),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.check_box),
-            onPressed: () => _showLikedProducts(context),
-          ),
-        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -256,33 +239,34 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-          // SliverPadding(
-          //   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-          //   sliver: SliverToBoxAdapter(
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.end,
-          //       children: [
-          //         IconButton(
-          //           icon: Image.asset(
-          //             'assets/images/filter.png',
-          //             width: 24.0,
-          //             height: 24.0,
-          //           ),
-          //           onPressed: () => Navigator.push(
-          //             context,
-          //             MaterialPageRoute(
-          //               builder: (context) => const FilteringPage(),
-          //             ),
-          //           ),
-          //         ),
-          //         IconButton(
-          //           icon: const Icon(Icons.check_box),
-          //           onPressed: () => _showLikedProducts(context),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+          SliverPadding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Image.asset(
+                      'assets/images/filter.png',
+                      width: 24.0,
+                      height: 24.0,
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FilteringPage(),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.check_box),
+                    onPressed: () => _showLikedProducts(context),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const ProductGrid(), // 상품 그리드
 
           if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시

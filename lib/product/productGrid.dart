@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
@@ -82,92 +83,103 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                icon: Image.asset(
-                  'assets/images/filter.png',
-                  width: 24.0,
-                  height: 24.0,
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FilteringPage(),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Image.asset(
+                    'assets/images/filter.png',
+                    width: 24.0,
+                    height: 24.0,
                   ),
-                ),
-              ),
-              //일단 이걸 클릭하면 좋아요 누른 상품들 보러가도록 함
-              IconButton(
-                icon: const Icon(Icons.check_box),
-                onPressed: () => _showLikedProducts(context),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: InkWell(
-              onTap: () {
-                _handleProductClick(context, products[index]);
-              },
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Image.network(
-                            products[index].frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              products[index].name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(products[index].allergens),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: likedProducts.contains(products[index])
-                          ? const Icon(Icons.favorite, color: Colors.red)
-                          : const Icon(Icons.favorite_border),
-                      onPressed: () {
-                        _toggleLikedStatus(products[index]);
-                      },
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FilteringPage(),
                     ),
                   ),
-                ],
-              ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.check_box),
+                  onPressed: () => _showLikedProducts(context),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        ),
+        SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return Card(
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        _handleProductClick(context, products[index]);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 110, // Image height limit
+                            child: Center(
+                              child: Image.network(
+                                products[index].frontproduct,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  products[index].name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'PretendardRegular',
+                                  ),
+                                ),
+                                const SizedBox(height: 4.0),
+                                Text(products[index].allergens),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: likedProducts.contains(products[index])
+                            ? const Icon(Icons.favorite, color: Colors.red)
+                            : const Icon(Icons.favorite_border),
+                        onPressed: () {
+                          _toggleLikedStatus(products[index]);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            childCount: products.length,
+          ),
+        ),
+      ],
     );
   }
 
@@ -198,6 +210,7 @@ class LikedProductsWidget extends StatelessWidget {
           },
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

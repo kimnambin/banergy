@@ -498,7 +498,7 @@ class LikedProductsWidget extends StatelessWidget {
 class SearchScreen extends StatelessWidget {
   final String searchText;
 
-  SearchScreen({super.key, required this.searchText});
+  const SearchScreen({super.key, required this.searchText});
 
   @override
   Widget build(BuildContext context) {

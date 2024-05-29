@@ -1,6 +1,11 @@
+// appbar 검색하는 부분
+
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/appbar/menu.dart';
 import 'package:flutter_banergy/appbar/search.dart';
+import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/product/product_detail.dart';
 //import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -15,10 +20,10 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
   bool _isSearching = false;
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -41,7 +46,10 @@ class _SearchWidgetState extends State<SearchWidget> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
+            );
           },
         ),
         title: Padding(
@@ -57,29 +65,35 @@ class _SearchWidgetState extends State<SearchWidget> {
                     color: const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: '궁금했던 상품 정보를 검색해보세요',
-                      border: InputBorder.none, // 선 없애기
-                      contentPadding:
-                          const EdgeInsets.only(left: 10, bottom: 10),
+                  child: Center(
+                    // 중앙 정렬을 위해 Center 위젯 추가
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(
+                        fontFamily: 'PretendardBold',
+                      ),
+                      decoration: InputDecoration(
+                        hintText: '궁금했던 상품 정보를 검색해보세요',
+                        border: InputBorder.none, // 선 없애기
+                        contentPadding: const EdgeInsets.only(
+                            left: 30, bottom: 13), // 여기서 bottom 값을 음수로 조정
 
-                      suffixIcon: IconButton(
-                        onPressed: _onSearchPressed,
-                        icon: const Icon(
-                          Icons.search,
-                          size: 20,
+                        suffixIcon: IconButton(
+                          onPressed: _onSearchPressed,
+                          icon: const Icon(
+                            Icons.search,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              /*IconButton(
+                /*IconButton(
                 onPressed: _onMenuPressed,
                 icon: const Icon(Icons.menu),
               ),*/
+              )
             ],
           ),
         ),
@@ -100,13 +114,6 @@ class _SearchWidgetState extends State<SearchWidget> {
       ),
     );
   }
-
-  /* void _onMenuPressed() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MenuScreen()),
-    );
-  }*/
 
 //여기가 검색창 밑에 뜨게 해주는 부분
   Widget _buildProductList() {
@@ -147,8 +154,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       _isSearching = true;
     });
 
-    final response =
-        await http.get(Uri.parse('http://192.168.112.174:8000/?query=$query'));
+    final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
@@ -161,4 +167,14 @@ class _SearchWidgetState extends State<SearchWidget> {
       throw Exception('Failed to load products');
     }
   }
+}
+
+// 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
+void _handleProductClick(BuildContext context, Product product) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => pdScreen(product: product),
+    ),
+  );
 }
