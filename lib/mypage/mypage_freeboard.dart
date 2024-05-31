@@ -8,10 +8,6 @@ import 'package:flutter_banergy/mypage/mypage_Freeboard_WriteScreen.dart.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  runApp(const Freeboard());
-}
-
 class Freeboard extends StatelessWidget {
   const Freeboard({super.key});
 
@@ -91,6 +87,16 @@ class FreeboardList extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  const Text(
+                                    //'${item.freetitle}',
+                                    '사용자 이름 :',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
                                   Text(
                                     '${item.freetitle}',
                                     textAlign: TextAlign.left,
@@ -99,7 +105,7 @@ class FreeboardList extends StatelessWidget {
                                       fontSize: 18,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 12),
                                   Text(
                                     '${item.freecontent}',
                                     textAlign: TextAlign.left,

@@ -84,34 +84,43 @@ def get_ocr_result():
     # OCR 수행
     ocr_texts = perform_ocr(recent_file_path)
 
-    #최근에 저장된 정보 가져오기
+    # 최근에 저장된 정보 가져오기
     recently = NoUserOCR.query.order_by(NoUserOCR.timestamp.desc()).first()
         
     if recently:
-        # allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
-        allergies_str = recently.allergies.strip('[]')  
+        allergies_str = recently.allergies.strip('[]')
         allergies_list = allergies_str.replace('"', '').split(',')
+        
+        
 
-        allergies_list = [allergy.strip() for allergy in allergies_list]
-        print('가져온 사용자 알레르기 정보:', allergies_list)
-
-        highlighted_texts = []
+    # OCR 텍스트에서 하이라이팅 단어 찾기 
         for text in ocr_texts:
-            highlighted_text = []
-            for word in text.split():
-                if any(allergies_str in word for allergies_str in allergies_list):
-                    highlighted_text.append('『' + word + '』')
-                else:
-                    highlighted_text.append(word)
-            highlighted_texts.append(highlighted_text)
+            highlighted_text = [] #이게 하이라이팅 단어
+            displayed_allergies = set() #  # 하이라이팅 단어 중복 방지
+            for word in text.split():  # 단어 단위로 분리해서 반복
+                original_word = word  
+        for allergy in allergies_list:  # 이게 사용자의 알레르기 부분
 
+            #사용자 알레르기와 일치하는 단어가 있는 경우
+            if allergy in word and allergy not in displayed_allergies:  
+                        word = word.replace(allergy, '『' + allergy + '』') 
+                        print("알레르기 단어 발견:", allergy)  
+                        
+                        #ocr 텍스트들을 highlighted_text 여기에 추가
+                        highlighted_text.append(word if word != original_word else original_word)
+                        highlighted_texts.append(' '.join(highlighted_text))
+
+
+            else: #하이라이팅이 없는 경우
+                highlighted_texts = ocr_texts
+
+    print('일반:', ocr_texts)
+    print('하이라이팅:', highlighted_texts)
+    
+    return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
+
+            
        
-        print('일반:', ocr_texts) 
-        print('하이라이팅:', highlighted_texts)
-        return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
-
-    else:
-        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
 
 
 
@@ -134,29 +143,38 @@ def ocr_image():
 
     # OCR 수행
     ocr_texts = perform_ocr(filepath)
-    #최근에 저장된 정보 가져오기
+    # 최근에 저장된 정보 가져오기
     recently = NoUserOCR.query.order_by(NoUserOCR.timestamp.desc()).first()
-        
-    if recently:
-            allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
-            print('가져온 사용자 알레르기 정보:', allergies)
     
+    if recently:
+        allergies = recently.allergies.replace('"', '').split(", ") if recently.allergies else []
+        print('가져온 사용자 알레르기 정보:', allergies)
+     # OCR 텍스트에서 하이라이팅 단어 찾기 
+        for text in ocr_texts:
+            highlighted_text = [] #이게 하이라이팅 단어
+            displayed_allergies = set() #하이라이팅 단어 중복 방지
+            for word in text.split():  # 단어 단위로 분리
+                original_word = word  
+        for allergy in allergies:  # 이게 사용자의 알레르기 부분
 
-    # 텍스트에서 특정 단어를 찾아 하이라이팅 적용
-    highlighted_texts = []
-    for text in ocr_texts:
-            highlighted_text = []
-            for word in text.split():
-                if any(allergy in word for allergy in allergies):
-                    highlighted_text.append('『' + word + '』')
-                else:
-                    highlighted_text.append(word)
-            highlighted_texts.append(highlighted_text)
+            #사용자 알레르기와 일치하는 단어가 있는 경우
+            if allergy in word and allergy not in displayed_allergies:  
+                        word = word.replace(allergy, '『' + allergy + '』') 
+                        print("알레르기 단어 발견:", allergy)  
+                        
+                        #ocr 텍스트들을 highlighted_text 여기에 추가
+                        highlighted_text.append(word if word != original_word else original_word)
+                        highlighted_texts.append(' '.join(highlighted_text))
 
-       
-            print('일반:', ocr_texts) 
-            print('하이라이팅:', highlighted_texts)
-            return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
+
+            else: #하이라이팅이 없는 경우
+                highlighted_texts = ocr_texts
+
+    print('일반:', ocr_texts)
+    print('하이라이팅:', highlighted_texts)
+    
+    return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=7000, debug=True)

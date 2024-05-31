@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/appbar/search_widget.dart';
-import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
+import 'package:flutter_banergy/product/basket.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_banergy/product/product_detail.dart';
@@ -60,20 +61,26 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          Flexible(
-            child: SearchWidget(),
+        title: const SearchWidget(), // 검색 위젯
+        actions: [
+          IconButton(
+            icon: Image.asset(
+              'assets/images/filter.png',
+              width: 24.0,
+              height: 24.0,
+            ),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FilteringPage(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.check_box),
+            onPressed: () => Basket(context),
           ),
         ],
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
-            );
-          },
-        ),
       ),
       body: Column(
         children: [

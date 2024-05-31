@@ -4,9 +4,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 CORS(app)
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mypage.db'
 db = SQLAlchemy(app)
@@ -136,5 +136,8 @@ def free():
             Mypage_list.append(mypage_data)
             print('현재시간:' ,mypage.timestamp)
         return jsonify(Mypage_list)  
+    
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6000, debug=True)

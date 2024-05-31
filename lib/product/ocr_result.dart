@@ -220,11 +220,22 @@ class _OcrresultState extends State<Ocrresult> {
                         decoration: const BoxDecoration(
                           color: Colors.yellow,
                         ),
-                        child: Text(
-                          _hirightingResult,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                          ),
+                        child: Column(
+                          children: [
+                            // const Text(
+                            //   '사용자와 맞지 않은 상품입니다.',
+                            //   style: TextStyle(
+                            //     fontSize: 20.0,
+                            //   ),
+                            // ),
+                            const SizedBox(height: 10),
+                            Text(
+                              _hirightingResult,
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     const SizedBox(height: 20),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 //import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +13,7 @@ import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// ignore: must_be_immutable
 class SearchWidget extends StatefulWidget {
   const SearchWidget({super.key});
 
@@ -23,6 +25,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
+  List<Product> likedProducts = [];
   bool _isSearching = false;
 
   @override
@@ -38,6 +41,15 @@ class _SearchWidgetState extends State<SearchWidget> {
     super.dispose();
   }
 
+  void _showLikedProducts(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +62,25 @@ class _SearchWidgetState extends State<SearchWidget> {
               context,
               MaterialPageRoute(builder: (context) => const MainpageApp()),
             );
+            [
+              IconButton(
+                icon: Image.asset(
+                  'assets/images/filter.png',
+                  width: 24.0,
+                  height: 24.0,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FilteringPage(),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.check_box),
+                onPressed: () => _showLikedProducts(context),
+              ),
+            ];
           },
         ),
         title: Padding(

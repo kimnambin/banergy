@@ -649,17 +649,18 @@ class _ProductGridState extends State<ProductGrid> {
     });
   }
 
-  void _showLikedProducts(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
-      ),
-    );
-  }
+  // void _showLikedProducts(BuildContext context) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
+    const backgroundColor = Color(0xFFFFFFFF);
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -667,6 +668,7 @@ class _ProductGridState extends State<ProductGrid> {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return Card(
+            color: backgroundColor,
             child: Stack(
               children: [
                 InkWell(
