@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/search.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 //import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
@@ -197,9 +197,9 @@ class _pdScreenState extends State<pdScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const SearchScreen(
-                  searchText: '',
-                ),
+                builder: (context) => const HomeScreen(
+                    //searchText: '',
+                    ),
               ),
             );
           },

@@ -61,7 +61,6 @@ class _ChangeNickState extends State<ChangeNick>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                const SizedBox(height: 40),
                 const InputField(
                   label: '기존 아이디',
                   //controller: _usernameController,
