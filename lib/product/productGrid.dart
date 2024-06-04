@@ -160,18 +160,18 @@ class _ProductGridState extends State<ProductGrid> {
                         ],
                       ),
                     ),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: IconButton(
-                        icon: likedProducts.contains(products[index])
-                            ? const Icon(Icons.favorite, color: Colors.red)
-                            : const Icon(Icons.favorite_border),
-                        onPressed: () {
-                          _toggleLikedStatus(products[index]);
-                        },
-                      ),
-                    ),
+                    // Positioned(
+                    //   top: 0,
+                    //   right: 0,
+                    //   child: IconButton(
+                    //     icon: likedProducts.contains(products[index])
+                    //         ? const Icon(Icons.favorite, color: Colors.red)
+                    //         : const Icon(Icons.favorite_border),
+                    //     onPressed: () {
+                    //       _toggleLikedStatus(products[index]);
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
               );

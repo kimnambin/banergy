@@ -688,21 +688,27 @@ class _ProductGridState extends State<ProductGrid> {
                         ),
                       ),
                       const SizedBox(height: 24.0),
-                      Text(
-                        products[index].name,
-                        maxLines: 1, //한줄만 보이게 하는 것
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'PretendardRegular',
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          products[index].name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'PretendardRegular',
+                          ),
                         ),
                       ),
                       const SizedBox(height: 4.0),
-                      Text(
-                        products[index].allergens,
-                        maxLines: 1, //한줄만 보이게 하는 것
-                        overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
-                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          products[index].allergens,
+                          maxLines: 1, //한줄만 보이게 하는 것
+                          overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                        ),
+                      )
                     ],
                   ),
                 ),
