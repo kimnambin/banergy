@@ -54,6 +54,7 @@ class Product {
 }
 
 //커뮤니티용
+// ignore: camel_case_types
 class freeDB {
   final String? freetitle;
   final String? freecontent;

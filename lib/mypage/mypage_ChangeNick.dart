@@ -1,6 +1,5 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import '../mypage/mypage.dart';
 
 void main() {
@@ -53,7 +52,7 @@ class _ChangeNickState extends State<ChangeNick>
           },
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      //bottomNavigationBar: const BottomNavBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(

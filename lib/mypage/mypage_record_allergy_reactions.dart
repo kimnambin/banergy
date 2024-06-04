@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 
 void main() {
   runApp(const Recordallergyreactions());
 }
 
 class Recordallergyreactions extends StatelessWidget {
-  const Recordallergyreactions({Key? key});
+  const Recordallergyreactions({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage>
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
+              MaterialPageRoute(builder: (context) => const MypageApp()),
             );
           },
         ),
@@ -77,7 +77,6 @@ class _MyHomePageState extends State<MyHomePage>
       ),
       // body: _selectedIndex == 0
       body: Container(),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

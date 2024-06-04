@@ -4,9 +4,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
+
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
@@ -138,7 +139,6 @@ class _InquiryScreenState extends State<InquiryScreen> {
             },
           ),
         ),
-        bottomNavigationBar: const BottomNavBar(),
         body: SingleChildScrollView(
           child: Center(
             child: Padding(

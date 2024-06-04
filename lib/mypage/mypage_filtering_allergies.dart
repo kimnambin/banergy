@@ -2,7 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
+//import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -215,7 +215,6 @@ class _FilteringPageState extends State<FilteringPage> {
           },
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
       body: Column(
         children: [
           // Image 추가

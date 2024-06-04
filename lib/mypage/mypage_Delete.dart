@@ -1,7 +1,7 @@
+// ignore: file_names
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
 import '../mypage/mypage.dart';
 import 'package:http/http.dart' as http;
@@ -125,7 +125,6 @@ class Delete extends StatelessWidget {
             },
           ),
         ),
-        bottomNavigationBar: const BottomNavBar(),
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
