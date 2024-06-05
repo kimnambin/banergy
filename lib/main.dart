@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const SearchWidget(), // 검색 위젯
+        title: const Home_SearchWidget(), // 검색 위젯
         actions: [
           IconButton(
             icon: Image.asset(
@@ -697,7 +697,7 @@ class _ProductGridState extends State<ProductGrid> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24.0),
+                      const SizedBox(height: 12.0),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(

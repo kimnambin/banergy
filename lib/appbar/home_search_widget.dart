@@ -1,20 +1,21 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search.dart';
-import 'package:flutter_banergy/mainDB.dart';
-import 'package:flutter_banergy/product/product_detail.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+class Home_SearchWidget extends StatefulWidget {
+  const Home_SearchWidget({super.key});
 
   @override
-  State<SearchWidget> createState() => _SearchWidgetState();
+  State<Home_SearchWidget> createState() => _Home_SearchWidgetState();
 }
 
-class _SearchWidgetState extends State<SearchWidget> {
+class _Home_SearchWidgetState extends State<Home_SearchWidget> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _products = [];
@@ -76,28 +77,6 @@ class _SearchWidgetState extends State<SearchWidget> {
     );
   }
 
-  Widget _buildProductList() {
-    return ListView.builder(
-      itemCount: _products.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(_products[index]['name']),
-        );
-      },
-    );
-  }
-
-  Widget _buildSearchResults() {
-    return ListView.builder(
-      itemCount: _products.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(_products[index]['name']),
-        );
-      },
-    );
-  }
-
   void _performSearch() async {
     final query = _searchController.text;
     if (query.isEmpty) {
@@ -121,13 +100,4 @@ class _SearchWidgetState extends State<SearchWidget> {
       throw Exception('Failed to load products');
     }
   }
-}
-
-void _handleProductClick(BuildContext context, Product product) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => pdScreen(product: product),
-    ),
-  );
 }

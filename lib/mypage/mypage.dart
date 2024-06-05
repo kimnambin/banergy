@@ -3,14 +3,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
-import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
+import 'package:flutter_banergy/mypage/allergy.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addproductScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_allergy_information.dart';
 import 'package:flutter_banergy/mypage/mypage_changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
-import 'package:flutter_banergy/mypage/mypage_record_allergy_reactions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
@@ -129,13 +128,6 @@ class _MyHomePageState extends State<MyHomePage>
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => FilteringAllergies()),
-        );
-        break;
-      case "닉네임 변경":
-        // 닉네임 변경 페이지로 이동
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ChangeNick()),
         );
         break;
       case "비밀번호 변경":
@@ -424,7 +416,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       );
 
-//나의 알러지쪽 버튼
+//알레르기 반응 버튼
   Widget _buildButton3(IconData iconData) => SizedBox(
         width: 30, // 버튼의 너비 설정
         height: 30, // 버튼의 높이 설정
@@ -447,7 +439,7 @@ class _MyHomePageState extends State<MyHomePage>
           ),
         ),
       );
-  //나의 알러지쪽 버튼
+  //병원 진료 버튼
   Widget _buildButton2(IconData iconData) => SizedBox(
         width: 30, // 버튼의 너비 설정
         height: 30, // 버튼의 높이 설정

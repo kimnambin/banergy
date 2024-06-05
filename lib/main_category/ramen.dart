@@ -348,54 +348,65 @@ class SliverFoodGrid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return Card(
-            child: InkWell(
-              onTap: () {
-                _handleProductClick(context, products[index]);
-              },
-              child: Stack(
-                children: [
-                  Column(
+            child: Stack(
+              children: [
+                InkWell(
+                  onTap: () {
+                    _handleProductClick(context, products[index]);
+                  },
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
+                      SizedBox(
+                        height: 110, // 이미지 높이 제한
                         child: Center(
-                          child: Image.network(
-                            products[index].frontproduct,
-                            fit: BoxFit.cover,
+                          child: Container(
+                            color: Colors.white, // 하얀색 배경
+                            child: Image.network(
+                              products[index].frontproduct,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24.0),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              products[index].name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(products[index].allergens),
-                          ],
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          products[index].name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'PretendardRegular',
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 4.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          products[index].allergens,
+                          maxLines: 1, //한줄만 보이게 하는 것
+                          overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                        ),
+                      )
                     ],
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: likedProducts.contains(products[index])
-                          ? const Icon(Icons.favorite, color: Colors.red)
-                          : const Icon(Icons.favorite_border),
-                      onPressed: () {
-                        toggleLikedStatus(products[index]);
-                      },
-                    ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: likedProducts.contains(products[index])
+                        ? const Icon(Icons.favorite, color: Colors.red)
+                        : const Icon(Icons.favorite_border),
+                    onPressed: () {
+                      toggleLikedStatus(products[index]);
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

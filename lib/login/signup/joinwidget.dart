@@ -1,4 +1,7 @@
+// ignore: duplicate_ignore
 //회원가입 페이지에 달력과 성별 부분
+
+// ignore_for_file: library_private_types_in_public_api, camel_case_types, duplicate_ignore
 
 import 'package:flutter/material.dart';
 

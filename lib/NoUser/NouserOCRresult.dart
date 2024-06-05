@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/NoUser/NouserMain.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -116,11 +115,7 @@ class _OcrresultState extends State<Ocrresult2> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const NoUserMainpageApp()),
-            );
+            Navigator.of(context).pop();
           },
         ),
       ),
