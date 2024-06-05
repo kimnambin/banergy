@@ -105,7 +105,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MypageApp(),
+                        builder: (context) => const MyHomePage(),
                       ),
                     );
                   },

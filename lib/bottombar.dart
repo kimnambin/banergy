@@ -245,7 +245,7 @@ class _BottomNavBarState extends State<BottomNavBar>
           });
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MypageApp()),
+            MaterialPageRoute(builder: (context) => const MyHomePage()),
           );
         }
       },

@@ -84,7 +84,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MypageApp(),
+                        builder: (context) => const MyHomePage(),
                       ),
                     );
                   },

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/mypage_ChangeNick.dart';
@@ -56,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage>
       if (isValid) {
         final userName = await _fetchUserName(token);
         setState(() {
-          print('로그인한 유저네임 : $loginName');
+          if (kDebugMode) {
+            print('로그인한 유저네임 : $loginName');
+          }
           authToken = token;
           loginName = userName;
         });
@@ -308,7 +311,7 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               child: Column(
                 children: [
-                  _buildButton("닉네임 변경", Icons.arrow_forward_ios),
+                  // _buildButton("닉네임 변경", Icons.arrow_forward_ios),
                   _buildButton("비밀번호 변경", Icons.arrow_forward_ios),
                   _buildButton("탈퇴하기", Icons.arrow_forward_ios),
                 ],

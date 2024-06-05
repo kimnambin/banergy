@@ -224,7 +224,10 @@ class _genderboxState extends State<genderbox> {
             children: [
               const Text('성별'),
               ListTile(
-                title: const Text('남자'),
+                title: const Text(
+                  '남자',
+                  style: TextStyle(fontFamily: 'PretendardSemiBold'),
+                ),
                 leading: Radio(
                   value: '남자',
                   groupValue: widget.selectedGender,
@@ -235,7 +238,10 @@ class _genderboxState extends State<genderbox> {
                 ),
               ),
               ListTile(
-                title: const Text('여자'),
+                title: const Text(
+                  '여자',
+                  style: TextStyle(fontFamily: 'PretendardSemiBold'),
+                ),
                 leading: Radio(
                   value: '여자',
                   groupValue: widget.selectedGender,

@@ -30,7 +30,7 @@ class _BasketState extends State<Basket> with SingleTickerProviderStateMixin {
       ),
       body: const SingleChildScrollView(
         child: Center(
-          child: Text('찜 화면 임시 구현'),
+          child: Text('찜 화면'),
         ),
       ),
       bottomNavigationBar: const BottomNavBar(),

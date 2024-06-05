@@ -30,8 +30,6 @@ void main() {
   ));
 }
 
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
 class InquiryScreen extends StatefulWidget {
   const InquiryScreen({super.key});
 
@@ -46,6 +44,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
   final TextEditingController inquirycontentController =
       TextEditingController();
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // 문의하기 함수
   Future<void> inquirysend(BuildContext context) async {

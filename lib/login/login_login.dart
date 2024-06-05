@@ -286,7 +286,6 @@ class InputField extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
         ),
         TextFormField(
-          obscureText: obscureText,
           decoration: const InputDecoration(
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),

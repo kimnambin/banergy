@@ -143,85 +143,69 @@ class _PWFindAppAppState extends State<PWFindApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "비밀번호 찾기",
-          textAlign: TextAlign.center,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "비밀번호 찾기",
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xFFF1F2F7),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FirstApp()),
+              );
+            },
+          ),
         ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FirstApp()),
-            );
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Form(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 40),
-                  InputField(
-                    label: '계정 이름',
-                    controller: _nameController,
-                  ),
-                  const SizedBox(height: 20),
-                  InputField(
-                    label: '계정 아이디',
-                    controller: _usernameController,
-                  ),
-                  const SizedBox(height: 95),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            content: const Text('닉네임이 성공적으로 변경되었습니다.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('확인'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF03C95B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Form(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 40),
+                    InputField(
+                      label: '계정 이름',
+                      controller: _nameController,
                     ),
-                    child: const SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Center(
-                        child: Text('완료'),
-                      ),
+                    const SizedBox(height: 20),
+                    InputField(
+                      label: '계정 아이디',
+                      controller: _usernameController,
                     ),
-                  )
-                ],
+                    const SizedBox(height: 95),
+                    ElevatedButton(
+                      onPressed: () => _findpw(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text('완료'),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
+          //bottomNavigationBar: BottomNavBar(),
         ),
-        //bottomNavigationBar: BottomNavBar(),
       ),
-    ));
+    );
   }
 }
 

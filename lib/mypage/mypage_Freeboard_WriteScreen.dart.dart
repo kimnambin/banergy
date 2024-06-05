@@ -10,6 +10,13 @@ import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(MaterialApp(
+    home: Freeboard_WriteScreen(),
+  ));
+}
+
 // ignore: camel_case_types, must_be_immutable
 class Freeboard_WriteScreen extends StatelessWidget {
   Freeboard_WriteScreen({super.key});

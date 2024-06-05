@@ -130,7 +130,7 @@ class _ProductGridState extends State<ProductGrid> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 110, // Image height limit
+                            height: 110,
                             child: Center(
                               child: Image.network(
                                 products[index].frontproduct,

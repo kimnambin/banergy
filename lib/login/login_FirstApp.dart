@@ -172,6 +172,7 @@ class FirstApp extends StatelessWidget {
 
   // 로그인 함수
   Future<void> _login(BuildContext context) async {
+    String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
@@ -271,6 +272,7 @@ class FirstApp extends StatelessWidget {
 
   // 사용자 정보를 가져오는 함수
   Future<void> fetchUserInfo(String token) async {
+    String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
     try {
       final response = await http.get(
         Uri.parse('$baseUrl:3000/loginuser'),
