@@ -147,6 +147,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
         appBar: AppBar(
           title: const Text(
             "비밀번호 찾기",
+            style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
             textAlign: TextAlign.center,
           ),
           centerTitle: true,
@@ -193,7 +194,11 @@ class _PWFindAppAppState extends State<PWFindApp> {
                         width: double.infinity,
                         height: 50,
                         child: Center(
-                          child: Text('완료'),
+                          child: Text(
+                            '완료',
+                            style: TextStyle(
+                                fontFamily: 'PretendardSemiBold', fontSize: 22),
+                          ),
                         ),
                       ),
                     )
@@ -228,7 +233,7 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
         ),
         TextFormField(
           controller: controller,

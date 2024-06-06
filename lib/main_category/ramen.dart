@@ -198,6 +198,25 @@ class _RamenScreenState extends State<RamenScreen> {
                 ),
               ),
             ),
+            actions: [
+              IconButton(
+                icon: Image.asset(
+                  'assets/images/filter.png',
+                  width: 24.0,
+                  height: 24.0,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FilteringPage(),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.check_box),
+                onPressed: () => _showLikedProducts(context),
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: SizedBox(
                 height: 120,
@@ -254,38 +273,6 @@ class _RamenScreenState extends State<RamenScreen> {
               ),
             ),
           ),
-          SliverPersistentHeader(
-            delegate: _SliverAppBarDelegate(
-              actions: Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: Image.asset(
-                            'assets/images/filter.png',
-                            width: 24.0,
-                            height: 24.0,
-                          ),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const FilteringPage(),
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.check_box),
-                          onPressed: () => _showLikedProducts(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           SliverFoodGrid(
             products: _products,
             likedProducts: likedProducts,
@@ -295,33 +282,6 @@ class _RamenScreenState extends State<RamenScreen> {
         ],
       ),
     );
-  }
-}
-
-//필터링과 찜부분을 보여주기 위함
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({required this.actions});
-
-  final Widget actions;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Colors.white,
-      child: actions,
-    );
-  }
-
-  @override
-  double get maxExtent => 50.0;
-
-  @override
-  double get minExtent => 50.0;
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
   }
 }
 

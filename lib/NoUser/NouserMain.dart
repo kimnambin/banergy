@@ -25,15 +25,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-  runApp(
-    const MaterialApp(
-      home: NoUserMainpageApp(),
-    ),
-  );
-}
-
 class NoUserMainpageApp extends StatefulWidget {
   const NoUserMainpageApp({super.key});
 
@@ -90,6 +81,7 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Home_SearchWidget(), // 검색 위젯
         actions: [
           IconButton(

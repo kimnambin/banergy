@@ -1,45 +1,39 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
+import 'package:flutter_banergy/bottombar.dart';
+import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-  runApp(FilteringAllergies());
+void main() {
+  runApp(const FilteringAllergies());
 }
 
-// ignore: must_be_immutable
 class FilteringAllergies extends StatelessWidget {
-  FilteringAllergies({super.key});
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  const FilteringAllergies({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: FilteringPage(),
+      home: MainFilteringPage(),
     );
   }
 }
 
-class FilteringPage extends StatefulWidget {
-  const FilteringPage({super.key});
+class MainFilteringPage extends StatefulWidget {
+  const MainFilteringPage({Key? key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _FilteringPageState createState() => _FilteringPageState();
+  _MainFilteringPageState createState() => _MainFilteringPageState();
 }
 
-class _FilteringPageState extends State<FilteringPage> {
-  List<String?> checkListValue2 = []; //이게 사용자가 실시간으로 선택하는 거
-  List<String> userAllergies = []; //이게 저장된 거 불러오는 것
+class _MainFilteringPageState extends State<MainFilteringPage> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  List<String?> checkListValue2 = [];
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -95,7 +89,7 @@ class _FilteringPageState extends State<FilteringPage> {
     return token;
   }
 
-  Future<bool> _validateToken(token) async {
+  Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl:3000/loginuser'),
@@ -103,20 +97,13 @@ class _FilteringPageState extends State<FilteringPage> {
           'Authorization': 'Bearer $token',
         },
       );
-      //저장된 알레르기 정보 가져오기
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        setState(() {
-          userAllergies = List<String>.from(data['allergies'] ?? []);
-        });
         return true;
       } else {
-        throw Exception('Failed to fetch user allergies');
+        return false;
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching user allergies: $e');
-      }
+      print('Error validating token: $e');
       return false;
     }
   }
@@ -147,7 +134,7 @@ class _FilteringPageState extends State<FilteringPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MypageApp(),
+                        builder: (context) => const MainpageApp(),
                       ),
                     );
                   },
@@ -189,9 +176,7 @@ class _FilteringPageState extends State<FilteringPage> {
             });
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Error sending request: $e');
-      }
+      print('Error sending request: $e');
     }
   }
 
@@ -201,6 +186,7 @@ class _FilteringPageState extends State<FilteringPage> {
       appBar: AppBar(
         title: const Text(
           "알러지 필터링",
+          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -208,10 +194,14 @@ class _FilteringPageState extends State<FilteringPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MainpageApp()),
+            );
           },
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: Column(
         children: [
           // Image 추가
@@ -224,16 +214,12 @@ class _FilteringPageState extends State<FilteringPage> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            userAllergies.isNotEmpty
-                ? userAllergies.join(", ")
-                : "해당하는 알레르기를 체크해주세요",
-            style: const TextStyle(
+          const Text(
+            "해당하는 알레르기를 체크해주세요",
+            style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 15),
-
           // 중앙에 정렬된 필터 영역
           Expanded(
             child: Container(
@@ -255,7 +241,7 @@ class _FilteringPageState extends State<FilteringPage> {
             color: Colors.white,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF03C95B),
+                primary: const Color(0xFF03C95B),
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -263,7 +249,6 @@ class _FilteringPageState extends State<FilteringPage> {
               ),
               onPressed: () => {
                 _userFiltering(context, checkListValue2),
-                // ignore: avoid_print
                 print("저장된 값: $checkListValue2")
               },
               child: const Text(

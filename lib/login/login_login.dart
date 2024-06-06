@@ -79,8 +79,10 @@ class LoginApp extends StatelessWidget {
                     child: const SizedBox(
                       width: double.infinity,
                       height: 50,
-                      child: Center(
-                        child: Text('로그인'),
+                      child: Text(
+                        '로그인',
+                        style: TextStyle(
+                            fontFamily: 'PretendardSemiBold', fontSize: 22),
                       ),
                     ),
                   ),
@@ -283,7 +285,7 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
         ),
         TextFormField(
           obscureText: obscureText,

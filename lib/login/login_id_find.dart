@@ -145,6 +145,7 @@ class _IDFindAppState extends State<IDFindApp> {
         appBar: AppBar(
           title: const Text(
             "아이디 찾기",
+            style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 22),
             textAlign: TextAlign.center,
           ),
           centerTitle: true,
@@ -178,28 +179,30 @@ class _IDFindAppState extends State<IDFindApp> {
                   // ),
                   const SizedBox(height: 95),
                   ElevatedButton(
-                    onPressed: () => _findid(context),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF03C95B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                      onPressed: () => _findid(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
-                    ),
-                    child: const SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Center(
-                        child: Text('완료'),
-                      ),
-                    ),
-                  )
+                      child: const SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '완료',
+                              style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 22),
+                            ),
+                          )))
                 ],
               ),
             ),
           ),
         ),
-        //bottomNavigationBar: BottomNavBar(),
       ),
     );
   }
@@ -222,7 +225,7 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
         ),
         TextFormField(
           decoration: const InputDecoration(

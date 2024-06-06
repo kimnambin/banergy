@@ -199,8 +199,8 @@ class _JoinAppState extends State<JoinApp> {
                     const SizedBox(height: 10),
                     const Text(
                       '회원가입',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 22, fontFamily: 'PretendardSemiBold'),
                     ),
                     const SizedBox(height: 40),
                     Column(
@@ -209,9 +209,7 @@ class _JoinAppState extends State<JoinApp> {
                         const Text(
                           '아이디',
                           style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontFamily: 'PretendardBold', fontSize: 24),
                         ),
                         TextFormField(
                           controller: _usernameController,
@@ -241,9 +239,7 @@ class _JoinAppState extends State<JoinApp> {
                             const Text(
                               '비밀번호',
                               style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  fontSize: 24, fontFamily: 'PretendardBold'),
                             ),
                             TextFormField(
                               controller: _passwordController,
@@ -275,7 +271,7 @@ class _JoinAppState extends State<JoinApp> {
                                   '비밀번호 재확인',
                                   style: TextStyle(
                                     fontSize: 24,
-                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'PretendardBold',
                                   ),
                                 ),
                                 TextFormField(
@@ -303,7 +299,7 @@ class _JoinAppState extends State<JoinApp> {
                                       '이름',
                                       style: TextStyle(
                                         fontSize: 24,
-                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'PretendardBold',
                                       ),
                                     ),
                                     TextFormField(
@@ -330,7 +326,7 @@ class _JoinAppState extends State<JoinApp> {
                                           '성별',
                                           style: TextStyle(
                                             fontSize: 24,
-                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'PretendardBold',
                                           ),
                                         ),
                                         const SizedBox(height: 10), // 간격 조정
@@ -391,7 +387,7 @@ class _JoinAppState extends State<JoinApp> {
                                           '생년월일',
                                           style: TextStyle(
                                             fontSize: 24,
-                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'PretendardBold',
                                           ),
                                         ),
                                         const SizedBox(height: 10), // 간격 조정
@@ -462,7 +458,13 @@ class _JoinAppState extends State<JoinApp> {
                                         width: double.infinity,
                                         height: 50,
                                         child: Center(
-                                          child: Text('회원가입'),
+                                          child: Text(
+                                            '회원가입',
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    'PretendardSemiBold',
+                                                fontSize: 22),
+                                          ),
                                         ),
                                       ),
                                     ),
