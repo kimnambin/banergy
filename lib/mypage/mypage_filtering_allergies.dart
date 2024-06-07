@@ -229,7 +229,7 @@ class _FilteringPageState extends State<FilteringPage> {
                 ? userAllergies.join(", ")
                 : "해당하는 알레르기를 체크해주세요",
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
+              fontFamily: 'PretendardSemiBold',
             ),
           ),
           const SizedBox(height: 15),

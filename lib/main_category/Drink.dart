@@ -1,19 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/main_category/ramen.dart';
-import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
 import 'package:flutter_banergy/main_category/gimbap.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
+import 'package:flutter_banergy/main_category/ramen.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/lunchbox.dart';
-import 'package:flutter_banergy/main_category/sandwich.dart';
+import 'package:flutter_banergy/main_category/Sandwich.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_banergy/product/pd_choice.dart';
 
 class DrinkScreen extends StatefulWidget {
   const DrinkScreen({super.key});
@@ -25,24 +23,23 @@ class DrinkScreen extends StatefulWidget {
 class _DrinkScreenState extends State<DrinkScreen> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final TextEditingController _searchController = TextEditingController();
-  List<Product> _products = [];
-  List<Product> likedProducts = [];
+  List<Map<String, dynamic>> _products = [];
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_performSearch);
-    fetchData();
+    _searchController.addListener(_performSearch); // 검색어가 변경될 때마다 검색
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_performSearch);
+    _searchController.removeListener(_performSearch); // 검색어 변경시 끝
     _searchController.dispose();
     super.dispose();
   }
 
   void _onSearchPressed() {
+    // 검색 실행
     _performSearch();
     Navigator.push(
       context,
@@ -52,103 +49,6 @@ class _DrinkScreenState extends State<DrinkScreen> {
         ),
       ),
     );
-  }
-
-  void _toggleLikedStatus(Product product) {
-    setState(() {
-      if (likedProducts.contains(product)) {
-        likedProducts.remove(product);
-      } else {
-        likedProducts.add(product);
-      }
-    });
-  }
-
-  void _showLikedProducts(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
-      ),
-    );
-  }
-
-  Future<void> fetchData() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl:8000/?query=음료'));
-      if (response.statusCode == 200) {
-        setState(() {
-          final List<dynamic> productList = json.decode(response.body);
-          _products =
-              productList.map((item) => Product.fromJson(item)).toList();
-        });
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load data: $error'),
-        ),
-      );
-    }
-  }
-
-  void _performSearch() async {
-    final query = _searchController.text;
-    if (query.isEmpty) {
-      setState(() {
-        _products.clear();
-      });
-      return;
-    }
-
-    final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        _products =
-            data.map<Product>((item) => Product.fromJson(item)).toList();
-      });
-    } else {
-      throw Exception('Failed to load products');
-    }
-  }
-
-  void _navigateToScreen(BuildContext context, String categoryName) {
-    Widget? screen;
-    switch (categoryName) {
-      case '라면':
-        screen = const RamenScreen();
-        break;
-      case '패스트푸드':
-        screen = const InstantfoodScreen();
-        break;
-      case '김밥':
-        screen = const GimbapScreen();
-        break;
-      case '도시락':
-        screen = const LunchboxScreen();
-        break;
-      case '샌드위치':
-        screen = const SandwichScreen();
-        break;
-      case '음료':
-        screen = const DrinkScreen();
-        break;
-      case '간식':
-        screen = const SnacksScreen();
-        break;
-      case '과자':
-        screen = const BigsnacksScreen();
-        break;
-    }
-    if (screen != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => screen!),
-      );
-    }
   }
 
   @override
@@ -198,33 +98,16 @@ class _DrinkScreenState extends State<DrinkScreen> {
                 ),
               ),
             ),
-            actions: [
-              IconButton(
-                icon: Image.asset(
-                  'assets/images/filter.png',
-                  width: 24.0,
-                  height: 24.0,
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FilteringPage(),
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.check_box),
-                onPressed: () => _showLikedProducts(context),
-              ),
-            ],
             flexibleSpace: FlexibleSpaceBar(
               background: SizedBox(
                 height: 120,
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20), // 위아래 여백을 조절
                   scrollDirection: Axis.horizontal,
-                  itemCount: 8,
+                  itemCount: 8, // 카테고리 개수
                   itemBuilder: (BuildContext context, int index) {
+                    // 카테고리 정보 (이름과 이미지 파일 이름)
                     List<Map<String, String>> categories = [
                       {"name": "라면", "image": "001.png"},
                       {"name": "패스트푸드", "image": "002.png"},
@@ -235,15 +118,21 @@ class _DrinkScreenState extends State<DrinkScreen> {
                       {"name": "간식", "image": "007.png"},
                       {"name": "과자", "image": "008.png"},
                     ];
+
+                    // 현재 카테고리
                     var category = categories[index];
+
                     return GestureDetector(
                       onTap: () {
-                        _navigateToScreen(context, category["name"]!);
+                        _navigateToScreen(
+                          context,
+                          category["name"]!,
+                        );
                       },
                       child: SizedBox(
                         width: 100,
                         child: Container(
-                          margin: const EdgeInsets.all(20),
+                          margin: const EdgeInsets.all(20), // 상하 여백 삭제
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -273,31 +162,106 @@ class _DrinkScreenState extends State<DrinkScreen> {
               ),
             ),
           ),
-          SliverFoodGrid(
-            products: _products,
-            likedProducts: likedProducts,
-            toggleLikedStatus: _toggleLikedStatus,
-            showLikedProducts: _showLikedProducts,
-          ),
+          const SliverFoodGrid(), // SliverGrid로 변경
         ],
       ),
     );
   }
+
+  void _navigateToScreen(BuildContext context, String categoryName) {
+    Widget? screen;
+    switch (categoryName) {
+      case '라면':
+        screen = const RamenScreen();
+        break;
+      case '패스트푸드':
+        screen = const InstantfoodScreen();
+        break;
+      case '김밥':
+        screen = const GimbapScreen();
+        break;
+      case '도시락':
+        screen = const LunchboxScreen();
+        break;
+      case '샌드위치':
+        screen = const SandwichScreen();
+        break;
+      case '음료':
+        screen = const DrinkScreen();
+        break;
+      case '간식':
+        screen = const SnacksScreen();
+        break;
+      case '과자':
+        screen = const BigsnacksScreen();
+        break;
+    }
+    if (screen != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => screen!),
+      );
+    }
+  }
+
+  //여기가 검색 결과
+  void _performSearch() async {
+    final query = _searchController.text;
+    if (query.isEmpty) {
+      setState(() {
+        _products.clear();
+      });
+      return;
+    }
+
+    setState(() {});
+
+    final response = await http.get(Uri.parse('$baseUrl:8000/?query=$query'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        _products = data
+            .map<Map<String, dynamic>>((item) => item as Map<String, dynamic>)
+            .toList();
+      });
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
 }
 
-class SliverFoodGrid extends StatelessWidget {
-  final List<Product> products;
-  final List<Product> likedProducts;
-  final Function(Product) toggleLikedStatus;
-  final Function(BuildContext) showLikedProducts;
+// SliverFoodGrid 클래스
+class SliverFoodGrid extends StatefulWidget {
+  const SliverFoodGrid({super.key});
 
-  const SliverFoodGrid({
-    super.key,
-    required this.products,
-    required this.likedProducts,
-    required this.toggleLikedStatus,
-    required this.showLikedProducts,
-  });
+  @override
+  // ignore: library_private_types_in_public_api
+  _SliverFoodGridState createState() => _SliverFoodGridState();
+}
+
+class _SliverFoodGridState extends State<SliverFoodGrid> {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  late List<Product> products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // initState에서 데이터를 불러옵니다.
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl:8000/?query=음료'),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        final List<dynamic> productList = json.decode(response.body);
+        products = productList.map((item) => Product.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,54 +270,30 @@ class SliverFoodGrid extends StatelessWidget {
         crossAxisCount: 2,
       ),
       delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
+        (context, index) {
           return Card(
             child: InkWell(
               onTap: () {
                 _handleProductClick(context, products[index]);
               },
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Image.network(
-                            products[index].frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                  Expanded(
+                    child: Center(
+                      child: Image.network(
+                        products[index].frontproduct,
+                        fit: BoxFit.cover,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              products[index].name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(products[index].allergens),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: likedProducts.contains(products[index])
-                          ? const Icon(Icons.favorite, color: Colors.red)
-                          : const Icon(Icons.favorite_border),
-                      onPressed: () {
-                        toggleLikedStatus(products[index]);
-                      },
                     ),
                   ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    products[index].name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(products[index].allergens),
                 ],
               ),
             ),
@@ -364,6 +304,7 @@ class SliverFoodGrid extends StatelessWidget {
     );
   }
 
+  // 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
     Navigator.push(
       context,
@@ -374,97 +315,25 @@ class SliverFoodGrid extends StatelessWidget {
   }
 }
 
-class LikedProductsWidget extends StatelessWidget {
-  final List<Product> likedProducts;
-
-  const LikedProductsWidget({super.key, required this.likedProducts});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemCount: likedProducts.length,
-        itemBuilder: (context, index) {
-          final product = likedProducts[index];
-          return Card(
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => pd_choice(product: product),
-                  ),
-                );
-              },
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Image.network(
-                            product.frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(product.allergens),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.favorite, color: Colors.red),
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
+// 검색 결과 화면
+// ignore: must_be_immutable
 class SearchScreen extends StatelessWidget {
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final String searchText;
 
-  const SearchScreen({super.key, required this.searchText});
+  SearchScreen({super.key, required this.searchText});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('검색결과 "$searchText"'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: FutureBuilder<List<Product>>(
         future: _fetchSearchResults(searchText),
@@ -479,10 +348,10 @@ class SearchScreen extends StatelessWidget {
             final products = snapshot.data!;
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-                childAspectRatio: 0.75,
+                crossAxisCount: 2, // 한 줄에 2개의 열을 표시
+                crossAxisSpacing: 10.0, // 열 사이의 간격
+                mainAxisSpacing: 10.0, // 행 사이의 간격
+                childAspectRatio: 0.75, // 아이템의 가로 세로 비율
               ),
               itemCount: products.length,
               itemBuilder: (context, index) {
@@ -531,7 +400,6 @@ class SearchScreen extends StatelessWidget {
   }
 
   Future<List<Product>> _fetchSearchResults(String query) async {
-    String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
     final response = await http.get(
       Uri.parse('$baseUrl:8000/?query=$query'),
     );

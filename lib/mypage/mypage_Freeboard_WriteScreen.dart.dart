@@ -146,8 +146,11 @@ class Freeboard_WriteScreen extends StatelessWidget {
                     minimumSize: const Size(double.infinity, 54),
                     backgroundColor: const Color(0xFF03C95B),
                   ),
-                  child:
-                      const Text('완료', style: TextStyle(color: Colors.white)),
+                  child: const Text('완료',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'PretendardSemiBold',
+                          fontSize: 22)),
                 ),
               ],
             ),

@@ -156,14 +156,19 @@ class Delete extends StatelessWidget {
                           foregroundColor: Colors.white,
                           backgroundColor: const Color(0xFF03C95B),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
                         child: const SizedBox(
                           width: double.infinity,
                           height: 50,
                           child: Center(
-                            child: Text('완료'),
+                            child: Text(
+                              '완료',
+                              style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 22),
+                            ),
                           ),
                         ),
                       )
@@ -198,7 +203,8 @@ class InputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style:
+              const TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 30),
         ),
         TextFormField(
           obscureText: obscureText,

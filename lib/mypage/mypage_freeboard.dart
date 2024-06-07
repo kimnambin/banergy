@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../product/임시찜.dart';
+
 void main() async {
   await dotenv.load();
   runApp(const Freeboard());
@@ -305,6 +307,12 @@ class _FreeboardState extends State<Freeboard>
                 );
               },
             );
+          } else if (index == 3) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MainpageApp2()));
           } else if (index == 4) {
             setState(() {
               _selectedIndex = index;
