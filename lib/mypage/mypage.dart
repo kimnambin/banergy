@@ -10,6 +10,7 @@ import 'package:flutter_banergy/mypage/mypage_addproductScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_allergy_information.dart';
 import 'package:flutter_banergy/mypage/mypage_changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../mypage/mypage_freeboard.dart';
 import 'package:http/http.dart' as http;
@@ -421,7 +422,9 @@ class _MyHomePageState extends State<MyHomePage>
         width: 30, // 버튼의 너비 설정
         height: 30, // 버튼의 높이 설정
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            await initializeDateFormatting('ko_KR', null);
+            // ignore: use_build_context_synchronously
             Navigator.push(
               context,
               MaterialPageRoute(

@@ -1,5 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/clinic.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +11,9 @@ import 'package:intl/intl.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
+  if (kDebugMode) {
+    print("Locale 확인했다");
+  }
   runApp(const Recordallergyreactions());
 }
 
@@ -16,6 +23,7 @@ class Recordallergyreactions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: const Locale('ko', 'KR'), // locale 정보 명시적 지정
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -25,7 +33,7 @@ class Recordallergyreactions extends StatelessWidget {
 }
 
 class StartPage extends StatefulWidget {
-  const StartPage({Key? key}) : super(key: key);
+  const StartPage({super.key});
 
   @override
   _StartPageState createState() => _StartPageState();
@@ -37,9 +45,12 @@ class _StartPageState extends State<StartPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () => //Navigator.of(context).pop(),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                )),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),

@@ -47,7 +47,7 @@ class _MainCalendarState extends State<MainCalendar> {
             ), //sheet의 외각을 정의할 수 있음. 여기에서는 위쪽의 양옆음 둥글게 함.
             builder: (BuildContext context) {
               return Container(
-                margin: EdgeInsets.only(),
+                margin: const EdgeInsets.only(),
                 height: 390,
                 color: Colors.transparent,
                 child: Center(
@@ -55,20 +55,20 @@ class _MainCalendarState extends State<MainCalendar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerLeft, // 우측 정렬
                         child: Text(
-                          '   ${selectDay.month}월 ${selectDay.day}일 (${dayOfWeek})',
-                          style: TextStyle(
+                          '   ${selectDay.month}월 ${selectDay.day}일 ($dayOfWeek)',
+                          style: const TextStyle(
                             fontSize: 18, // 텍스트 크기를 키움
                             fontWeight: FontWeight.bold, // 텍스트 굵게
                           ),
                         ),
                       ),
-                      Divider(),
-                      SizedBox(height: 56),
-                      Align(
+                      const Divider(),
+                      const SizedBox(height: 56),
+                      const Align(
                         alignment: Alignment.centerLeft, // 우측 정렬
                         child: ListTile(
                           leading: Icon(
@@ -79,7 +79,7 @@ class _MainCalendarState extends State<MainCalendar> {
                           title: Text('메모'),
                         ),
                       ),
-                      Align(
+                      const Align(
                         alignment: Alignment.centerLeft, // 우측 정렬
                         child: ListTile(
                           leading: Icon(
@@ -90,13 +90,14 @@ class _MainCalendarState extends State<MainCalendar> {
                           title: Text('병원진료'),
                         ),
                       ),
-                      SizedBox(height: 100),
+                      const SizedBox(height: 100),
                       SizedBox(
                         width: MediaQuery.of(context).size.width -
                             32, // 버튼의 가로 길이를 화면 전체로 설정
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 70, 138, 71),
+                            backgroundColor:
+                                const Color.fromARGB(255, 70, 138, 71),
                           ),
                           child: const Text(
                             '기록 수정하러 가기',
@@ -127,14 +128,14 @@ class _MainCalendarState extends State<MainCalendar> {
       firstDay: DateTime(2024, 1, 1),
       lastDay: DateTime(2025, 12, 31),
       focusedDay: focusedDay,
-      headerStyle: HeaderStyle(
+      headerStyle: const HeaderStyle(
           titleCentered: false,
           formatButtonVisible: false,
           titleTextStyle: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
           )),
-      daysOfWeekStyle: DaysOfWeekStyle(
+      daysOfWeekStyle: const DaysOfWeekStyle(
         weekdayStyle: TextStyle(fontSize: 0), // 요일 텍스트 크기를 0으로 설정
         weekendStyle: TextStyle(fontSize: 0), // 주말 텍스트 크기를 0으로 설정
       ),
@@ -148,7 +149,7 @@ class _MainCalendarState extends State<MainCalendar> {
           fontWeight: FontWeight.w600,
           color: Colors.grey[600],
         ),
-        selectedTextStyle: TextStyle(
+        selectedTextStyle: const TextStyle(
           fontWeight: FontWeight.w600,
         ),
         outsideDaysVisible: false,
