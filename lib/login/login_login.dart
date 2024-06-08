@@ -68,24 +68,28 @@ class LoginApp extends StatelessWidget {
                   const SizedBox(height: 15),
                   const SizedBox(height: 80),
                   ElevatedButton(
-                    onPressed: () => _login(context),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF03C95B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                      onPressed: () => _login(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
-                    ),
-                    child: const SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Text(
-                        '로그인',
-                        style: TextStyle(
-                            fontFamily: 'PretendardSemiBold', fontSize: 22),
-                      ),
-                    ),
-                  ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text(
+                            '로그인',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'PretendardSemiBold',
+                              fontSize: 22,
+                            ),
+                          ),
+                        ),
+                      ))
                 ],
               ),
             ),

@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         actions: const [
           Flexible(
-            child: SearchWidget(), // Flexible 추가
+            child: SearchWidget(),
           ),
         ],
       ),
@@ -182,50 +182,13 @@ class _ProductGridState extends State<ProductGrid> {
     );
   }
 
+// 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
   void _handleProductClick(BuildContext context, Product product) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('상품 정보'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('카테고리: ${product.kategorie}'),
-                Text('이름: ${product.name}'),
-                Image.network(
-                  product.frontproduct,
-                  fit: BoxFit.cover,
-                ),
-                Image.network(
-                  product.backproduct,
-                  fit: BoxFit.cover,
-                ),
-                Text('알레르기 식품: ${product.allergens}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('닫기'),
-            ),
-          ],
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => pdScreen(product: product),
+      ),
     );
   }
-}
-
-// 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
-void _handleProductClick(BuildContext context, Product product) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => pdScreen(product: product),
-    ),
-  );
 }

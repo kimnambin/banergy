@@ -27,7 +27,6 @@ class _BasketState extends State<Basket> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: const SearchWidget(), // 검색 위젯
-        // 검색 위젯
       ),
       body: const SingleChildScrollView(
         child: Center(

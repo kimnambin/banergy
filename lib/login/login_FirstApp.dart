@@ -72,14 +72,22 @@ class FirstApp extends StatelessWidget {
                         ),
                       ),
                       child: const SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: Text(
-                          '로그인',
-                          style: TextStyle(
-                              fontFamily: 'PretendardSemiBold', fontSize: 18),
-                        ),
-                      ),
+                          width: double.infinity,
+                          height: 50,
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                '로그인',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          )),
                     ),
 
                     //회원가입 이용하기
@@ -99,14 +107,22 @@ class FirstApp extends StatelessWidget {
                         ),
                       ),
                       child: const SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: Text(
-                          '회원 가입하기',
-                          style: TextStyle(
-                              fontFamily: 'PretendardSemiBold', fontSize: 18),
-                        ),
-                      ),
+                          width: double.infinity,
+                          height: 50,
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                '회원가입',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'PretendardSemiBold',
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          )),
                     ),
                     const SizedBox(height: 40),
 
