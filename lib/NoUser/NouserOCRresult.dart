@@ -1,8 +1,10 @@
+// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/NoUser/NouserMain.dart';
 import 'package:http/http.dart' as http;
-// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Ocrresult2 extends StatefulWidget {
@@ -10,10 +12,10 @@ class Ocrresult2 extends StatefulWidget {
   final String ocrResult;
 
   const Ocrresult2({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.ocrResult,
-  }) : super(key: key);
+  });
 
   @override
   _OcrresultState createState() => _OcrresultState();
@@ -25,7 +27,6 @@ class _OcrresultState extends State<Ocrresult2> {
   bool isOcrInProgress = true;
   List<String> userAllergies = []; // 사용자 알레르기 정보를 저장할 리스트
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-
   @override
   void initState() {
     super.initState();
@@ -39,7 +40,6 @@ class _OcrresultState extends State<Ocrresult2> {
     try {
       final url = Uri.parse('$baseUrl:7000/ftr');
       var response = await http.get(url);
-
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         userAllergies = (data['allergies'] as List).cast<String>();
@@ -56,15 +56,12 @@ class _OcrresultState extends State<Ocrresult2> {
     try {
       final url = Uri.parse('$baseUrl:7000/result');
       var response = await http.get(url);
-
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         List<String> ocrResult = (data['text'] as List).cast<String>();
-
         // // 사용자의 알레르기 정보
         // final SharedPreferences prefs = await SharedPreferences.getInstance();
         // final userAllergies = prefs.getStringList('allergies') ?? [];
-
 // 정규 표현식을 사용하여 사용자의 알레르기 정보와 일치하는 부분 추출
         RegExp regex = RegExp(r'『(.*?)』');
         List<String> highlightingTexts = [];
@@ -77,11 +74,8 @@ class _OcrresultState extends State<Ocrresult2> {
               //       .toList(),
               );
         }
-
         String highlightingResult = highlightingTexts.join(', ');
-
         String plainText = ocrResult.join(' ');
-
         setState(() {
           _hirightingResult = highlightingResult.trim();
           _ocrResult = plainText.trim();
@@ -115,7 +109,11 @@ class _OcrresultState extends State<Ocrresult2> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const NoUserMainpageApp()),
+            );
           },
         ),
       ),
@@ -190,10 +188,27 @@ class _OcrresultState extends State<Ocrresult2> {
               ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // 현재 화면 닫기
+                Navigator.pop(context);
               },
-              child: const Text('닫기'),
-            ),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF03C95B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
+              child: const SizedBox(
+                width: 50,
+                height: 30,
+                child: Center(
+                  child: Text(
+                    '닫기',
+                    style: TextStyle(
+                        fontFamily: 'PretendardSemiBold', fontSize: 18),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
