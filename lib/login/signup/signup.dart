@@ -213,10 +213,7 @@ class _JoinAppState extends State<JoinApp> {
                         ),
                         TextFormField(
                           controller: _usernameController,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 66.0, vertical: 12.0),
-                          ),
+                          decoration: const InputDecoration(),
                           validator: (value) {
                             String pattern =
                                 r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$';
@@ -244,10 +241,7 @@ class _JoinAppState extends State<JoinApp> {
                             TextFormField(
                               controller: _passwordController,
                               obscureText: true,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 66.0, vertical: 12.0),
-                              ),
+                              decoration: const InputDecoration(),
                               validator: (value) {
                                 String pattern =
                                     r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
@@ -277,10 +271,7 @@ class _JoinAppState extends State<JoinApp> {
                                 TextFormField(
                                   controller: _confirmPasswordController,
                                   obscureText: true,
-                                  decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 66.0, vertical: 12.0),
-                                  ),
+                                  decoration: const InputDecoration(),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return '비밀번호 재확인.';
@@ -304,10 +295,7 @@ class _JoinAppState extends State<JoinApp> {
                                     ),
                                     TextFormField(
                                       controller: _nameController,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 66.0, vertical: 12.0),
-                                      ),
+                                      decoration: const InputDecoration(),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return '다시 확인해주세요.';

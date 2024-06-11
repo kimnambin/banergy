@@ -208,7 +208,11 @@ class _FilteringPageState extends State<FilteringPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              //마이페이지에서는 뒤로 가면 마이페이지가 되도록(아니면 오류가 남 ㅠ)
+              MaterialPageRoute(builder: (context) => const MypageApp()),
+            );
           },
         ),
       ),

@@ -180,7 +180,6 @@ class _ChangeidpwState extends State<Changeidpw> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -189,6 +188,7 @@ class _ChangeidpwState extends State<Changeidpw> {
                         style: TextStyle(
                             fontSize: 30, fontFamily: 'PretendardSemiBold'),
                       ),
+
                       InputField(
                         controller: _passwordController,
                         obscureText: true,

@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search_widget.dart';
-import 'package:flutter_banergy/product/product_detail.dart';
+import 'package:flutter_banergy/main.dart';
+import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
@@ -40,23 +41,24 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> {
+  //with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const SearchWidget(), // 검색 위젯
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: const [
-          Flexible(
-            child: SearchWidget(),
-          ),
-        ],
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () => {
+                  //pop으로 하면 오류가 떠서 홈스크린으로 대체
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainpageApp(),
+                    ),
+                  ),
+                }),
       ),
       body: const Expanded(
         child: ProductGrid(),
@@ -187,7 +189,7 @@ class _ProductGridState extends State<ProductGrid> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => pdScreen(product: product),
+        builder: (context) => pd_choice(product: product),
       ),
     );
   }

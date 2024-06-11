@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search_widget.dart';
@@ -64,20 +66,16 @@ class _CodeScreenState extends State<CodeScreen> {
   }
 }
 
-class scanGrid extends StatefulWidget {
+class scanGrid extends StatelessWidget {
   final List<Product> products;
 
   scanGrid({super.key, required this.products});
 
-  @override
-  State<scanGrid> createState() => _scanGridState();
-}
-
-class _scanGridState extends State<scanGrid> {
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+
   @override
   Widget build(BuildContext context) {
-    if (widget.products.isEmpty) {
+    if (products.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -113,29 +111,29 @@ class _scanGridState extends State<scanGrid> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
         ),
-        itemCount: widget.products.length,
+        itemCount: products.length,
         itemBuilder: (context, index) {
           return Card(
             child: InkWell(
               onTap: () {
-                _handleProductClick(context, widget.products[index]);
+                _handleProductClick(context, products[index]);
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Image.network(
-                      widget.products[index].frontproduct,
+                      products[index].frontproduct,
                       fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    widget.products[index].name,
+                    products[index].name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4.0),
-                  Text(widget.products[index].allergens),
+                  Text(products[index].allergens),
                 ],
               ),
             ),

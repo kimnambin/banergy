@@ -179,7 +179,12 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           IconButton(
             icon: const Icon(Icons.check_box),
-            onPressed: () => _showLikedProducts(context),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainpageApp2(),
+              ),
+            ),
           ),
         ],
       ),

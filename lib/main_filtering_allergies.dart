@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/bottombar.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -25,15 +25,17 @@ class FilteringAllergies extends StatelessWidget {
 }
 
 class MainFilteringPage extends StatefulWidget {
-  const MainFilteringPage({Key? key});
+  const MainFilteringPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MainFilteringPageState createState() => _MainFilteringPageState();
 }
 
 class _MainFilteringPageState extends State<MainFilteringPage> {
+  List<String?> checkListValue2 = []; //이게 사용자가 실시간으로 선택하는 거
+  List<String> userAllergies = []; //이게 저장된 거 불러오는 것
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  List<String?> checkListValue2 = [];
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -89,7 +91,7 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
     return token;
   }
 
-  Future<bool> _validateToken(String token) async {
+  Future<bool> _validateToken(token) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl:3000/loginuser'),
@@ -97,13 +99,20 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
           'Authorization': 'Bearer $token',
         },
       );
+      //저장된 알레르기 정보 가져오기
       if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        setState(() {
+          userAllergies = List<String>.from(data['allergies'] ?? []);
+        });
         return true;
       } else {
-        return false;
+        throw Exception('Failed to fetch user allergies');
       }
     } catch (e) {
-      print('Error validating token: $e');
+      if (kDebugMode) {
+        print('Error fetching user allergies: $e');
+      }
       return false;
     }
   }
@@ -134,7 +143,7 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MainpageApp(),
+                        builder: (context) => const HomeScreen(),
                       ),
                     );
                   },
@@ -176,7 +185,9 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
             });
       }
     } catch (e) {
-      print('Error sending request: $e');
+      if (kDebugMode) {
+        print('Error sending request: $e');
+      }
     }
   }
 
@@ -186,7 +197,6 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
       appBar: AppBar(
         title: const Text(
           "알러지 필터링",
-          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -196,12 +206,12 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
+              //마이페이지에서는 뒤로 가면 마이페이지가 되도록(아니면 오류가 남 ㅠ)
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           },
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
       body: Column(
         children: [
           // Image 추가
@@ -214,12 +224,16 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            "해당하는 알레르기를 체크해주세요",
-            style: TextStyle(
+          Text(
+            userAllergies.isNotEmpty
+                ? userAllergies.join(", ")
+                : "해당하는 알레르기를 체크해주세요",
+            style: const TextStyle(
               fontFamily: 'PretendardSemiBold',
             ),
           ),
+          const SizedBox(height: 15),
+
           // 중앙에 정렬된 필터 영역
           Expanded(
             child: Container(
@@ -249,14 +263,16 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
               ),
               onPressed: () => {
                 _userFiltering(context, checkListValue2),
+                // ignore: avoid_print
                 print("저장된 값: $checkListValue2")
               },
               child: const Text(
                 '적용',
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontFamily: 'PretendardSemiBold'),
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -284,11 +300,7 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
                 checkListValue2.add(filter);
               });
             },
-            title: Text(
-              filter,
-              style: const TextStyle(
-                  fontFamily: 'PretendardSemiBold', fontSize: 18),
-            ),
+            title: Text(filter),
             value: checkListValue2.contains(filter) ? true : false,
           ),
         );

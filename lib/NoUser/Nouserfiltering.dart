@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/NouserMain.dart';
+import 'package:flutter_banergy/login/login_FirstApp.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -143,7 +144,12 @@ class _FilteringPageState extends State<FilteringPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FirstApp(),
+              ),
+            );
           },
         ),
       ),
