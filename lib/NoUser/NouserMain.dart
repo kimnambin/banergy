@@ -348,7 +348,7 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp>
                               });
                             }
                           },
-                          child: const Text('Camera'),
+                          child: const Text('카메라'),
                         ),
                       ),
                       Expanded(
@@ -378,7 +378,7 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp>
                               debugPrint('OCR failed: $e');
                             }
                           },
-                          child: const Text('Gallery'),
+                          child: const Text('갤러리'),
                         ),
                       ),
                       Expanded(
@@ -398,7 +398,7 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp>
                               },
                             );
                           },
-                          child: const Text('QR/Barcode'),
+                          child: const Text('QR/바코드'),
                         ),
                       ),
                     ],

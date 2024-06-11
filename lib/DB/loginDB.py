@@ -148,14 +148,14 @@ def allergies():
 # 아이디 찾기 
 @app.route('/findid', methods=['GET','POST'])
 def find_username():
-    if request.method == 'POST':
+     if request.method == 'POST':
         data = request.json
         name = data.get('name')  
         # password = data.get('password')
         #date = data.get('date')
-        
+
         user = User.query.filter_by(name=name).first()  
-   
+
         if user:
             return jsonify({'username': user.username}), 200  
         else:
@@ -174,7 +174,6 @@ def find_password():
     else:
         return jsonify({'message': '사용자를 찾을 수 없습니다.'}), 404
     
-
 # 비밀번호 변경하기
 @app.route('/changepw', methods=['GET','POST'])
 def change_password():
@@ -183,9 +182,7 @@ def change_password():
         
         password = data.get('password')
         new_password = data.get('new_password')
-
         user = User.query.filter_by(password=password).first()
-
         if user:
             user.password = new_password
             try:
@@ -196,7 +193,6 @@ def change_password():
                 return jsonify({'message': '비밀번호 변경 실패 ㅠ.ㅠ'}), 500
         else:
             return jsonify({'message': '사용자를 찾을 수 없거나 현재 비밀번호가 올바르지 않습니다.'}), 404
-
 # 회원탈퇴하기
 @app.route("/delete", methods=["POST", "DELETE"])
 def delete_user():
@@ -204,38 +200,26 @@ def delete_user():
         data = request.json
         password = data.get('password')
         reason_text = data.get('reason')  # 탈퇴 이유
-
         # 사용자 인증
         user = User.query.filter_by(password=password).first()
-
         if user:
             try:
                 # 회원 삭제
                 db.session.delete(user)
                 db.session.commit()
-
                 # 탈퇴 이유 추가
                 new_reason = Reason(user_id=user.id, reason=reason_text)
                 db.session.add(new_reason)
                 db.session.commit()
-
                 return jsonify({'message': '회원 탈퇴 성공'}), 200
             except Exception as e:
                 db.session.rollback()
                 return jsonify({'message': '회원 탈퇴 실패 ㅠ.ㅠ'}), 500
         else:
             return jsonify({'message': '사용자 인증 실패'}), 401
-
-
-
-
-
 ocr = PaddleOCR(lang="korean")
-
-
 # 이미지가 있는 경로
 img_dir = "assets/ocrimg/"
-
 # OCR 수행 함수
 def perform_ocr(image_path):
     result = ocr.ocr(image_path, cls=False)
@@ -243,9 +227,6 @@ def perform_ocr(image_path):
     for line in result[0]:
         ocr_texts.append(line[1][0]) 
     return ocr_texts
-
-
-
 # 이미지를 받아서 OCR을 수행하는 엔드포인트
 @app.route('/ocr', methods=['POST'])
 @jwt_required()
@@ -254,25 +235,19 @@ def ocr_image():
         return jsonify({'message': '이미지가 없습니다.'}), 400
     
     image = request.files['image']
-
     if image.filename == '':
         return jsonify({'message': '이미지가 선택되지 않았습니다.'}), 400
-
     # 이미지를 저장할 경로
     filepath = os.path.join(img_dir, image.filename)
     image.save(filepath)
-
     # OCR 수행
     ocr_texts = perform_ocr(filepath)
     # 로그인한 사용자의 정보 가져오기
     current_username = get_jwt_identity()
     user = User.query.filter_by(username=current_username).first()
-
     if user:
         allergies = user.allergies.replace('"', '').split(", ") if user.allergies else []
-
         print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
-
         highlighted_texts = []
         for text in ocr_texts:
             highlighted_text = []
@@ -282,13 +257,10 @@ def ocr_image():
                 else:
                     highlighted_text.append(word)
             highlighted_texts.append(highlighted_text)
-
         
         return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
-
     else:
         return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
-
 # OCR 결과 부분
 @app.route('/result', methods=['GET'])
 @jwt_required()
@@ -301,48 +273,25 @@ def get_ocr_result():
     
     # OCR 수행
     ocr_texts = perform_ocr(recent_file_path)
-
     # 로그인한 사용자의 정보 가져오기
     current_username = get_jwt_identity()
     user = User.query.filter_by(username=current_username).first()
-
     if user:
         # 사용자의 알레르기 정보에서 따옴표와 대괄호 제거
         allergies = [allergy.strip('[]"') for allergy in user.allergies.split(',')] if user.allergies else []
-
         print("사용자의 알레르기 정보:", allergies)  # 사용자의 알레르기 정보 출력
-
-        highlighted_texts = []  # 하이라이팅된 텍스트를 저장할 리스트
-
-        # OCR 텍스트에서 하이라이팅 단어 찾기 
+        highlighted_texts = []
         for text in ocr_texts:
-            highlighted_text = []  # 현재 텍스트의 하이라이팅된 부분을 저장할 리스트
-            displayed_allergies = set()  # 중복된 알레르기 단어를 방지하기 위한 set
-            for word in text.split(): 
-                original_word = word  
-                for allergy in allergies:  
-                    # 사용자 알레르기와 일치하는 단어가 있는 경우
-                    if allergy in word and allergy not in displayed_allergies:
-                        # 단어를 하이라이팅된 형태로 바꿔줌
-                        word = word.replace(allergy, '『' + allergy + '』')
-                        print("알레르기 단어 발견:", allergy)  
-                        
-                        highlighted_text.append(word if word != original_word else original_word)
-                        # 중복 방지
-                        displayed_allergies.add(allergy)
-
-            
-            highlighted_texts.append(' '.join(highlighted_text))
-
-        print('일반:', ocr_texts)
+            highlighted_text = []
+            for word in text.split():
+                if any(allergy in word for allergy in allergies):
+                    highlighted_text.append('『' + word + '』')
+                else:
+                    highlighted_text.append(word)
+            highlighted_texts.append(highlighted_text)
+       
+        print('일반:', ocr_texts) 
         print('하이라이팅:', highlighted_texts)
-        
-        return jsonify({'text': highlighted_texts}), 200
-
-    else:
-        return jsonify({'message': '사용자 정보를 찾을 수 없습니다.'}), 404
-
-
-
+        return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)

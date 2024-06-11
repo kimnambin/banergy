@@ -174,9 +174,12 @@ class _OcrresultState extends State<Ocrresult2> {
                         decoration: const BoxDecoration(
                           color: Colors.yellow,
                         ),
-                        child: Text(
-                          _hirightingResult,
-                          style: const TextStyle(
+                        child: const Text(
+                          //_hirightingResult,
+
+                          '사용자와 맞지 않은 상품입니다.',
+
+                          style: TextStyle(
                             fontSize: 20.0,
                             color: Colors.black, // 텍스트 색상 지정
                           ),
