@@ -18,7 +18,7 @@ import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler/permission_handler.dart';
 //import 'package:photo_view/photo_view.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -313,43 +313,69 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp>
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () async {
-                            var cameraStatus = await Permission.camera.status;
-                            if (!cameraStatus.isGranted) {
-                              await Permission.camera.request();
-                            }
-                            final pickedFile = await _imagePicker.pickImage(
-                              source: ImageSource.camera,
-                            ) as XFile;
-
-                            setState(() {
-                              // 이미지 선택 후에 진행 바를 나타냅니다.
-                              isOcrInProgress = true;
-                            });
-
-                            try {
-                              await _uploadImage(pickedFile);
-                              // ignore: use_build_context_synchronously
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => Ocrresult2(
-                                    imagePath: pickedFile.path,
-                                    ocrResult: ocrResult,
-                                  ),
-                                ),
+                            onPressed: () async {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    content: const Text('오류를 수정 중입니다.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // 다이얼로그 닫기
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 29, 171, 102),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                        ),
+                                        child: const Text('확인'),
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
-                            } catch (e) {
-                              debugPrint('OCR failed: $e');
-                            } finally {
-                              setState(() {
-                                // OCR 작업 완료 후에 진행 바를 숨깁니다.
-                                isOcrInProgress = false;
-                              });
-                            }
-                          },
-                          child: const Text('카메라'),
-                        ),
+                              //   var cameraStatus = await Permission.camera.status;
+                              //   if (!cameraStatus.isGranted) {
+                              //     await Permission.camera.request();
+                              //   }
+                              //   final pickedFile = await _imagePicker.pickImage(
+                              //     source: ImageSource.camera,
+                              //   ) as XFile;
+
+                              //   setState(() {
+                              //     // 이미지 선택 후에 진행 바를 나타냅니다.
+                              //     isOcrInProgress = true;
+                              //   });
+
+                              //   try {
+                              //     await _uploadImage(pickedFile);
+                              //     // ignore: use_build_context_synchronously
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (BuildContext context) => Ocrresult2(
+                              //           imagePath: pickedFile.path,
+                              //           ocrResult: ocrResult,
+                              //         ),
+                              //       ),
+                              //     );
+                              //   } catch (e) {
+                              //     debugPrint('OCR failed: $e');
+                              //   } finally {
+                              //     setState(() {
+                              //       // OCR 작업 완료 후에 진행 바를 숨깁니다.
+                              //       isOcrInProgress = false;
+                              //     });
+                              //   }
+                              // },
+                            },
+                            child: const Text('카메라')),
                       ),
                       Expanded(
                         child: ElevatedButton(
