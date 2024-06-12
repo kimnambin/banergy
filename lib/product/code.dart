@@ -10,6 +10,7 @@ import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
+import 'package:flutter_banergy/main.dart';
 
 class CodeScreen extends StatefulWidget {
   final String resultCode;
@@ -54,11 +55,18 @@ class _CodeScreenState extends State<CodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          Flexible(
-            child: SearchWidget(),
-          ),
-        ],
+        title: const SearchWidget(), // 검색 위젯
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () => {
+                  //pop으로 하면 오류가 떠서 홈스크린으로 대체
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainpageApp(),
+                    ),
+                  ),
+                }),
       ),
       body: scanGrid(products: products),
       bottomNavigationBar: const BottomNavBar(),
