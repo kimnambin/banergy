@@ -67,7 +67,7 @@ class _FilteringPageState extends State<FilteringPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:7000/ftr'),
+        Uri.parse('$baseUrl:8000/nouser/ftr'),
         body: jsonEncode({'allergies': allergies}),
         headers: {
           'Content-Type': 'application/json',

@@ -94,7 +94,7 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
   Future<bool> _validateToken(token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -123,7 +123,7 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:3000/allergies'),
+        Uri.parse('$baseUrl:8000/logindb/allergies'),
         body: jsonEncode({'allergies': allergies}),
         headers: {
           'Content-Type': 'application/json',

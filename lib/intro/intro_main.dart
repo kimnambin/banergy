@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:beamer/beamer.dart';
@@ -64,7 +66,6 @@ class _introAppState extends State<introApp> {
 
   StatelessWidget _splashLodingWidget(AsyncSnapshot<Object> snapshot) {
     if (snapshot.hasError) {
-      print('에러 발생');
       return const Text('Error');
     } else if (snapshot.hasData) {
       return const RadishApp();
@@ -83,7 +84,7 @@ class _introAppState extends State<introApp> {
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

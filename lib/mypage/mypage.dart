@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<String?> _fetchUserName(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 200) {
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;

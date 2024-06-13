@@ -12,11 +12,11 @@ import 'package:flutter_banergy/product/product_detail.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_banergy/main_category/Drink.dart';
-import 'package:flutter_banergy/main_category/Sandwich.dart';
+//import 'package:flutter_banergy/main_category/Sandwich.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
-import 'package:flutter_banergy/main_category/gimbap.dart';
+//import 'package:flutter_banergy/main_category/gimbap.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
-import 'package:flutter_banergy/main_category/lunchbox.dart';
+//import 'package:flutter_banergy/main_category/lunchbox.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
 
@@ -95,15 +95,15 @@ class _SearchScreenState extends State<SearchScreen> {
             height: 120, // 라벨을 포함하기에 충분한 높이 설정
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 8, // 카테고리 개수
+              itemCount: 5, // 카테고리 개수
               itemBuilder: (BuildContext context, int index) {
                 // 카테고리 정보 (이름과 이미지 파일 이름)
                 List<Map<String, String>> categories = [
                   {"name": "라면", "image": "001.png"},
                   {"name": "패스트푸드", "image": "002.png"},
-                  {"name": "김밥", "image": "003.png"},
-                  {"name": "도시락", "image": "004.png"},
-                  {"name": "샌드위치", "image": "005.png"},
+                  // {"name": "김밥", "image": "003.png"},
+                  // {"name": "도시락", "image": "004.png"},
+                  // {"name": "샌드위치", "image": "005.png"},
                   {"name": "음료", "image": "006.png"},
                   {"name": "간식", "image": "007.png"},
                   {"name": "과자", "image": "008.png"},
@@ -159,15 +159,15 @@ class _SearchScreenState extends State<SearchScreen> {
       case '패스트푸드':
         screen = const InstantfoodScreen();
         break;
-      case '김밥':
-        screen = const GimbapScreen();
-        break;
-      case '도시락':
-        screen = const LunchboxScreen();
-        break;
-      case '샌드위치':
-        screen = const SandwichScreen();
-        break;
+      // case '김밥':
+      //   screen = const GimbapScreen();
+      //   break;
+      // case '도시락':
+      //   screen = const LunchboxScreen();
+      //   break;
+      // case '샌드위치':
+      //   screen = const SandwichScreen();
+      //   break;
       case '음료':
         screen = const DrinkScreen();
         break;

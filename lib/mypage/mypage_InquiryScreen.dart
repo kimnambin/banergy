@@ -53,7 +53,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:6000/inquiry'),
+        Uri.parse('$baseUrl:8000/mypage/inquiry'),
         body: jsonEncode({
           'inquirytitle': inquirytitle,
           'inquirycontent': inquirycontent,

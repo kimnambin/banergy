@@ -31,7 +31,7 @@ class Freeboard_WriteScreen extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:6000/free'),
+        Uri.parse('$baseUrl:8000/mypage/free'),
         body: jsonEncode({
           'freetitle': freetitle,
           'freecontent': freecontent,

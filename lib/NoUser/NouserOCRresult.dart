@@ -40,7 +40,7 @@ class _OcrresultState extends State<Ocrresult2> {
 
   Future<void> _getAllergies() async {
     try {
-      final url = Uri.parse('$baseUrl:7000/ftr');
+      final url = Uri.parse('$baseUrl:8000/nouser/ftr');
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -57,7 +57,7 @@ class _OcrresultState extends State<Ocrresult2> {
 
   Future<void> _getOCRResult() async {
     try {
-      final url = Uri.parse('$baseUrl:7000/result');
+      final url = Uri.parse('$baseUrl:8000/nouser/result');
       var response = await http.get(url);
 
       if (response.statusCode == 200) {

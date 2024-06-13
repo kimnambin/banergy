@@ -39,7 +39,7 @@ class _IDFindAppState extends State<IDFindApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:3000/findid'),
+        Uri.parse('$baseUrl:8000/logindb/findid'),
         body: jsonEncode({
           'name': name,
           // 'password': password,
@@ -124,7 +124,7 @@ class _IDFindAppState extends State<IDFindApp> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/sign'),
+        Uri.parse('$baseUrl:8000/logindb/sign'),
       );
       if (response.statusCode == 200) {
         _findid;

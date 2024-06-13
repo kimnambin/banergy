@@ -24,13 +24,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:photo_view/photo_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
-import 'package:flutter_banergy/main_category/gimbap.dart';
+//import 'package:flutter_banergy/main_category/gimbap.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
 import 'package:flutter_banergy/main_category/Drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
-import 'package:flutter_banergy/main_category/lunchbox.dart';
-import 'package:flutter_banergy/main_category/Sandwich.dart';
+//import 'package:flutter_banergy/main_category/lunchbox.dart';
+//import 'package:flutter_banergy/main_category/Sandwich.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:3000/ocr');
+    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -209,15 +209,15 @@ class _HomeScreenState extends State<HomeScreen>
               height: 120,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 8, // 카테고리 개수
+                itemCount: 5, // 카테고리 개수
                 itemBuilder: (BuildContext context, int index) {
                   // 카테고리 정보 (이름과 이미지 파일 이름)
                   List<Map<String, String>> categories = [
                     {"name": "라면", "image": "001.png"},
                     {"name": "패스트푸드", "image": "002.png"},
-                    {"name": "김밥", "image": "003.png"},
-                    {"name": "도시락", "image": "004.png"},
-                    {"name": "샌드위치", "image": "005.png"},
+                    // {"name": "김밥", "image": "003.png"},
+                    // {"name": "도시락", "image": "004.png"},
+                    // {"name": "샌드위치", "image": "005.png"},
                     {"name": "음료", "image": "006.png"},
                     {"name": "간식", "image": "007.png"},
                     {"name": "과자", "image": "008.png"},
@@ -534,15 +534,15 @@ class _HomeScreenState extends State<HomeScreen>
       case '패스트푸드':
         screen = const InstantfoodScreen();
         break;
-      case '김밥':
-        screen = const GimbapScreen();
-        break;
-      case '도시락':
-        screen = const LunchboxScreen();
-        break;
-      case '샌드위치':
-        screen = const SandwichScreen();
-        break;
+      // case '김밥':
+      //   screen = const GimbapScreen();
+      //   break;
+      // case '도시락':
+      //   screen = const LunchboxScreen();
+      //   break;
+      // case '샌드위치':
+      //   screen = const SandwichScreen();
+      //break;
       case '음료':
         screen = const DrinkScreen();
         break;

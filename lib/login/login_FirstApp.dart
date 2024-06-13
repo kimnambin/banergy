@@ -212,7 +212,7 @@ class FirstApp extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:3000/login'),
+        Uri.parse('$baseUrl:8000/logindb/login'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -305,7 +305,7 @@ class FirstApp extends StatelessWidget {
     String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },

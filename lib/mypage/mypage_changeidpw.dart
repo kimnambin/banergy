@@ -80,7 +80,7 @@ class _ChangeidpwState extends State<Changeidpw> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:3000/changepw'),
+        Uri.parse('$baseUrl:8000/logindb/changepw'),
         body: jsonEncode({
           'password': password,
           'new_password': newPassword,

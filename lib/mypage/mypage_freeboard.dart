@@ -52,7 +52,7 @@ class _FreeboardState extends State<Freeboard>
       isOcrInProgress = true; // 이미지 업로드 시작
     });
 
-    final url = Uri.parse('$baseUrl:3000/ocr');
+    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $authToken';
     request.files
@@ -94,7 +94,7 @@ class _FreeboardState extends State<Freeboard>
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200;
@@ -451,7 +451,7 @@ class _FreeboardListState extends State<FreeboardList> {
 
   Future<List<freeDB>> fetchFreeboardData() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl:6000/free'));
+      final response = await http.get(Uri.parse('$baseUrl:8000/mypage/free'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((item) => freeDB.fromJson(item)).toList();

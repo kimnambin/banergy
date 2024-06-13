@@ -47,7 +47,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl:6000/add'),
+        Uri.parse('$baseUrl:8000/mypage/add'),
       );
 
       // 이미지 파일 추가

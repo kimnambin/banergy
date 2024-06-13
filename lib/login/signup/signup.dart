@@ -49,7 +49,7 @@ class _JoinAppState extends State<JoinApp> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl:3000/sign'),
+        Uri.parse('$baseUrl:8000/logindb/sign'),
         body: jsonEncode({
           'username': username,
           'password': password,

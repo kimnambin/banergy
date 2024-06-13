@@ -72,7 +72,7 @@ class _pdScreenState extends State<pdScreen> {
   //로그인한 사용자의 알레르기 가져오기
   Future<void> _getUserAllergies(String token) async {
     try {
-      final url = Uri.parse('$baseUrl:3000/loginuser');
+      final url = Uri.parse('$baseUrl:8000/logindb/loginuser');
       var response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $token'},
@@ -135,7 +135,7 @@ class _pdScreenState extends State<pdScreen> {
   Future<bool> _validateToken(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:3000/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {
           'Authorization': 'Bearer $token',
         },
