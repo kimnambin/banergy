@@ -252,7 +252,7 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl:8000/?query=패스트푸드'),
+        Uri.parse('$baseUrl:8000/?query=가공식품'),
       );
       if (response.statusCode == 200) {
         setState(() {
