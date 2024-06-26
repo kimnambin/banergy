@@ -24,15 +24,14 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      barcode: json['barcode'],
-      kategorie: json['kategorie'],
-      name: json['name'],
-      frontproduct: json['frontproduct'],
-      backproduct: json['backproduct'],
-      allergens: json['allergens'],
-      isHearted: json['isHearted'] ?? false,
-    );
+        id: json['id'],
+        barcode: json['barcode'],
+        kategorie: json['kategorie'],
+        name: json['name'],
+        frontproduct: json['frontproduct'],
+        backproduct: json['backproduct'],
+        allergens: json['allergens'],
+        isHearted: json['isHearted'] ?? false);
   }
   Map<String, dynamic> toJson() {
     return {

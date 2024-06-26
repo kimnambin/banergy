@@ -1,10 +1,11 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, duplicate_ignore, collection_methods_unrelated_type, non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
 import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/login/login_login.dart';
+//import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
@@ -625,19 +626,21 @@ class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProductGridState createState() => _ProductGridState();
 }
 
 class _ProductGridState extends State<ProductGrid> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late List<Product> products = [];
-  List<Product> likedProducts = [];
+  List<int> likedProductIds = [];
+  String? authToken;
 
   @override
   void initState() {
     super.initState();
+    _checkLoginStatus();
     fetchData(); // 데이터 가져오기
+    likeData();
   }
 
   // 상품 데이터를 가져오는 비동기 함수
@@ -655,35 +658,92 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
-  // 사용자의 로그인 상태를 확인하고 메인 페이지로 리디렉션하는 함수
-  Future<void> checkLoginStatus(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    if (!isLoggedIn) {
-      // 로그인x
+  //좋아요 누른 상품들
+  Future<void> likeData() async {
+    if (authToken == null) return;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginApp()),
-      );
+    final response = await http.get(
+      Uri.parse('$baseUrl:8000/logindb/getlike'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        likedProductIds =
+            List<int>.from(json.decode(response.body)['liked_products']);
+      });
     } else {
-      // 로그인 o -> 메인 페이지로 이동
+      throw Exception('Failed to load liked products');
+    }
+  }
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainpageApp()),
+  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
+  Future<void> _checkLoginStatus() async {
+    final token = await _loginUser();
+    if (token != null) {
+      final isValid = await _validateToken(token);
+      setState(() {
+        authToken = isValid ? token : null;
+      });
+    }
+  }
+
+  // 사용자가 이미 로그인했는지 확인합니다.
+  Future<String?> _loginUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('authToken');
+  }
+
+  // 토큰의 유효성을 확인합니다.
+  Future<bool> _validateToken(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
+        headers: {'Authorization': 'Bearer $token'},
       );
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Error validating token: $e');
+      return false;
+    }
+  }
+
+  Future<void> Likeproduct(Product product) async {
+    final url = Uri.parse('$baseUrl:8000/logindb/like');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      },
+      body: json.encode({'product_id': product.id}),
+    );
+
+    // 상품 정보 출력
+    if (kDebugMode) {
+      print(
+          '상품아이디 : ${product.id} \n  상품 이름 : ${product.name} \n 상품 이미지 :${product.frontproduct} \n 상품 알레르기 : ${product.allergens} ');
+    }
+
+    if (response.statusCode == 200) {
+      setState(() {
+        product.isHearted = !product.isHearted;
+      });
+    } else {
+      throw Exception('Failed to toggle like');
     }
   }
 
   void _toggleLikedStatus(Product product) {
     setState(() {
-      if (likedProducts.contains(product)) {
-        likedProducts.remove(product);
+      if (likedProductIds.contains(product.id)) {
+        likedProductIds.remove(product.id); // 이미 좋아요 상태이면 삭제
       } else {
-        likedProducts.add(product);
+        likedProductIds.add(product.id); // 좋아요 상태가 아니면 추가
       }
     });
+
+    // 서버로 좋아요 상태를 업데이트하는 요청 보내기 (예: toggleLike 함수 호출)
+    Likeproduct(product);
   }
 
   // void _showLikedProducts(BuildContext context) {
@@ -704,6 +764,8 @@ class _ProductGridState extends State<ProductGrid> {
       ),
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
+          final product = products[index];
+
           return Card(
             color: backgroundColor,
             child: Stack(
@@ -753,10 +815,11 @@ class _ProductGridState extends State<ProductGrid> {
                   top: 0,
                   right: 0,
                   child: IconButton(
-                    icon: likedProducts.contains(products[index])
+                    icon: likedProductIds.contains(product.id)
                         ? const Icon(Icons.favorite, color: Colors.red)
                         : const Icon(Icons.favorite_border),
                     onPressed: () {
+                      Likeproduct(products[index]);
                       _toggleLikedStatus(products[index]);
                     },
                   ),
