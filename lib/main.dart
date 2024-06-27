@@ -4,14 +4,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
-import 'package:flutter_banergy/bottombar.dart';
 //import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
-import 'package:flutter_banergy/product/%EC%9E%84%EC%8B%9C%EC%B0%9C.dart';
+import 'package:flutter_banergy/product/like_product.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
-import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
 import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:http/http.dart' as http;
@@ -153,15 +151,6 @@ class _HomeScreenState extends State<HomeScreen>
   ];
   List<Product> likedProducts = [];
 
-  void _showLikedProducts(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen>
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const MainpageApp2(),
+                builder: (context) => const LPscreen(),
               ),
             ),
           ),
@@ -510,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen>
             });
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const MainpageApp2()),
+              MaterialPageRoute(builder: (context) => const LPscreen()),
             );
           } else if (index == 4) {
             setState(() {
@@ -632,7 +621,7 @@ class ProductGrid extends StatefulWidget {
 class _ProductGridState extends State<ProductGrid> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   late List<Product> products = [];
-  List<int> likedProductIds = [];
+  List<Product> likedProducts = [];
   String? authToken;
 
   @override
@@ -640,7 +629,7 @@ class _ProductGridState extends State<ProductGrid> {
     super.initState();
     _checkLoginStatus();
     fetchData(); // 데이터 가져오기
-    likeData();
+    //likeData();
   }
 
   // 상품 데이터를 가져오는 비동기 함수
@@ -653,26 +642,10 @@ class _ProductGridState extends State<ProductGrid> {
         final List<dynamic> productList = json.decode(response.body);
         products = productList.map((item) => Product.fromJson(item)).toList();
       });
+      //await likeData(); // Like data 가져오기
+      //_updateLiked(); // 좋아요 상태 업데이트
     } else {
       throw Exception('Failed to load data');
-    }
-  }
-
-  //좋아요 누른 상품들
-  Future<void> likeData() async {
-    if (authToken == null) return;
-
-    final response = await http.get(
-      Uri.parse('$baseUrl:8000/logindb/getlike'),
-      headers: {'Authorization': 'Bearer $authToken'},
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        likedProductIds =
-            List<int>.from(json.decode(response.body)['liked_products']);
-      });
-    } else {
-      throw Exception('Failed to load liked products');
     }
   }
 
@@ -683,6 +656,9 @@ class _ProductGridState extends State<ProductGrid> {
       final isValid = await _validateToken(token);
       setState(() {
         authToken = isValid ? token : null;
+        if (isValid) {
+          likeData(); // 좋아요 누른 상품들 데이터 가져오기
+        }
       });
     }
   }
@@ -707,6 +683,43 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
+  // 좋아요 누른 상품들
+  Future<void> likeData() async {
+    if (authToken == null) return;
+
+    final response = await http.get(
+      Uri.parse('$baseUrl:8000/logindb/getlike'),
+      headers: {'Authorization': 'Bearer $authToken'},
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        final data = json.decode(response.body);
+        likedProducts = (data['liked_products'] as List)
+            .map((item) => Product.fromJson(item))
+            .toList();
+
+        // 좋아요 누른 상품들 콘솔창에 보기
+        for (var product in likedProducts) {
+          if (kDebugMode) {
+            print('좋아요 누른 상품들 -> ${product.name}');
+          }
+        }
+      });
+    } else {
+      throw Exception('Failed to load liked products');
+    }
+  }
+
+  //이게 좋아요 업데이트 해주는 거
+  // void _updateLiked() {
+  //   setState(() {
+  //     for (var product in products) {
+  //       product.isHearted = likedProducts.contains(product.id);
+  //     }
+  //   });
+  // }
+
   Future<void> Likeproduct(Product product) async {
     final url = Uri.parse('$baseUrl:8000/logindb/like');
     final response = await http.post(
@@ -718,15 +731,10 @@ class _ProductGridState extends State<ProductGrid> {
       body: json.encode({'product_id': product.id}),
     );
 
-    // 상품 정보 출력
-    if (kDebugMode) {
-      print(
-          '상품아이디 : ${product.id} \n  상품 이름 : ${product.name} \n 상품 이미지 :${product.frontproduct} \n 상품 알레르기 : ${product.allergens} ');
-    }
-
     if (response.statusCode == 200) {
       setState(() {
         product.isHearted = !product.isHearted;
+        _toggleLikedStatus(product); // 하트 상태 업데이트
       });
     } else {
       throw Exception('Failed to toggle like');
@@ -735,15 +743,12 @@ class _ProductGridState extends State<ProductGrid> {
 
   void _toggleLikedStatus(Product product) {
     setState(() {
-      if (likedProductIds.contains(product.id)) {
-        likedProductIds.remove(product.id); // 이미 좋아요 상태이면 삭제
+      if (likedProducts.contains(product)) {
+        likedProducts.remove(product); // 좋아요 상태 삭제
       } else {
-        likedProductIds.add(product.id); // 좋아요 상태가 아니면 추가
+        likedProducts.add(product); // 좋아요 상태 추가
       }
     });
-
-    // 서버로 좋아요 상태를 업데이트하는 요청 보내기 (예: toggleLike 함수 호출)
-    Likeproduct(product);
   }
 
   // void _showLikedProducts(BuildContext context) {
@@ -765,9 +770,24 @@ class _ProductGridState extends State<ProductGrid> {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           final product = products[index];
-
+          //  return Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: Container(
+          //           decoration: BoxDecoration(
+          //             color: backgroundColor,
+          //             borderRadius: BorderRadius.circular(10),
+          //             boxShadow: [
+          //               BoxShadow(
+          //                 color: Colors.grey.withOpacity(0.5),
+          //                 spreadRadius: 2,
+          //                 blurRadius: 5,
+          //                 offset: const Offset(0, 3),
+          //               ),
+          //             ],
+          //           ),
           return Card(
             color: backgroundColor,
+            //여기 위까지 없애면 됨
             child: Stack(
               children: [
                 InkWell(
@@ -815,17 +835,18 @@ class _ProductGridState extends State<ProductGrid> {
                   top: 0,
                   right: 0,
                   child: IconButton(
-                    icon: likedProductIds.contains(product.id)
+                    icon: likedProducts.contains(product.id)
                         ? const Icon(Icons.favorite, color: Colors.red)
                         : const Icon(Icons.favorite_border),
                     onPressed: () {
-                      Likeproduct(products[index]);
+                      Likeproduct(product);
                       _toggleLikedStatus(products[index]);
                     },
                   ),
                 ),
               ],
             ),
+            //)
           );
         },
         childCount: products.length,
@@ -839,91 +860,6 @@ class _ProductGridState extends State<ProductGrid> {
       context,
       MaterialPageRoute(
         builder: (context) => pdScreen(product: product),
-      ),
-    );
-  }
-}
-
-//좋아요 누른걸 보여주는 부분
-class LikedProductsWidget extends StatelessWidget {
-  final List<Product> likedProducts;
-
-  const LikedProductsWidget({super.key, required this.likedProducts});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      bottomNavigationBar: const BottomNavBar(),
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemCount: likedProducts.length,
-        itemBuilder: (context, index) {
-          final product = likedProducts[index];
-          return Card(
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => pd_choice(product: product),
-                  ),
-                );
-              },
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Image.network(
-                            product.frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(product.allergens),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.favorite, color: Colors.red),
-                      onPressed: () {
-                        // 좋아요 취소 기능을 추가할 수 있음
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
