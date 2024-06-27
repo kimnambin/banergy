@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search_widget.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
-import 'package:flutter_banergy/product/basket.dart';
+import 'package:flutter_banergy/product/like_product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_banergy/product/product_detail.dart';
@@ -84,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.check_box),
-            onPressed: () => Basket(context),
+            onPressed: () => LPscreen,
           ),
         ],
       ),
