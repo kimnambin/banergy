@@ -632,23 +632,6 @@ class _ProductGridState extends State<ProductGrid> {
     //likeData();
   }
 
-  // 상품 데이터를 가져오는 비동기 함수
-  Future<void> fetchData() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl:8000/'),
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        final List<dynamic> productList = json.decode(response.body);
-        products = productList.map((item) => Product.fromJson(item)).toList();
-      });
-      //await likeData(); // Like data 가져오기
-      //_updateLiked(); // 좋아요 상태 업데이트
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
   // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
   Future<void> _checkLoginStatus() async {
     final token = await _loginUser();
@@ -657,7 +640,7 @@ class _ProductGridState extends State<ProductGrid> {
       setState(() {
         authToken = isValid ? token : null;
         if (isValid) {
-          likeData(); // 좋아요 누른 상품들 데이터 가져오기
+          fetchData(); // 상품 정보 가져오기
         }
       });
     }
@@ -683,42 +666,21 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
-  // 좋아요 누른 상품들
-  Future<void> likeData() async {
+  //상품 정보 불러오기
+  Future<void> fetchData() async {
     if (authToken == null) return;
-
     final response = await http.get(
-      Uri.parse('$baseUrl:8000/logindb/getlike'),
+      Uri.parse('$baseUrl:8000/logindb/show_product'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
 
     if (response.statusCode == 200) {
       setState(() {
-        final data = json.decode(response.body);
-        likedProducts = (data['liked_products'] as List)
-            .map((item) => Product.fromJson(item))
-            .toList();
-
-        // 좋아요 누른 상품들 콘솔창에 보기
-        for (var product in likedProducts) {
-          if (kDebugMode) {
-            print('좋아요 누른 상품들 -> ${product.name}');
-          }
-        }
+        final List<dynamic> productList = json.decode(response.body);
+        products = productList.map((json) => Product.fromJson(json)).toList();
       });
-    } else {
-      throw Exception('Failed to load liked products');
     }
   }
-
-  //이게 좋아요 업데이트 해주는 거
-  // void _updateLiked() {
-  //   setState(() {
-  //     for (var product in products) {
-  //       product.isHearted = likedProducts.contains(product.id);
-  //     }
-  //   });
-  // }
 
   Future<void> Likeproduct(Product product) async {
     final url = Uri.parse('$baseUrl:8000/logindb/like');
@@ -750,15 +712,6 @@ class _ProductGridState extends State<ProductGrid> {
       }
     });
   }
-
-  // void _showLikedProducts(BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => LikedProductsWidget(likedProducts: likedProducts),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -835,12 +788,15 @@ class _ProductGridState extends State<ProductGrid> {
                   top: 0,
                   right: 0,
                   child: IconButton(
-                    icon: likedProducts.contains(product.id)
-                        ? const Icon(Icons.favorite, color: Colors.red)
-                        : const Icon(Icons.favorite_border),
+                    icon: Icon(
+                      product.isHearted
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: product.isHearted ? Colors.red : null,
+                    ),
                     onPressed: () {
-                      Likeproduct(product);
                       _toggleLikedStatus(products[index]);
+                      Likeproduct(product);
                     },
                   ),
                 ),

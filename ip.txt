@@ -64,6 +64,7 @@ ip 주소 수정해야 하는 부분
 
 //06월 26일 -> 찜기능 구현해보기
 //06월 27일 -> 찜한 상품들 보기 + 삭제 완료 (메인 페이지 어떻게 할지 고민...) + (찜 보는 UI 물어보기)
+//07월 02일 -> 메인 페이지 수정 (좋아요 누른 상품들 제외하고 보여주기)
 
 //테스트
 py
@@ -140,3 +141,41 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+#좋아요 누른 상품들 제외하고 보여주기!!
+@app.route('/logindb/show_product', methods=['GET'])
+@jwt_required()
+def get_product():
+    current_username = get_jwt_identity()  # 현재 로그인한 사용자의 username 가져오기
+    user = User.query.filter_by(username=current_username).first()  # 로그인한 사용자에서 찜한 상품들 가져오기
+    
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    # 사용자가 좋아요한 상품 ID 리스트
+    liked_product_ids = json.loads(user.liked_products or '[]')
+    print(liked_product_ids)
+    # 좋아요한 상품들 가져오기
+    liked_products = Product.query.filter(Product.id.in_(liked_product_ids)).all()
+
+    # 모든 제품 정보를 가져오기
+    all_products = Product.query.all()
+    
+    # 좋아요하지 않은 상품 정보만 필터링하여 반환
+    filtered_products = []
+    for product in all_products:
+        if product not in liked_products:
+            product_data = {
+                'id': product.id,
+                'barcode': product.barcode,
+                'name': product.name,
+                'kategorie': product.kategorie,
+                'frontproduct': product.frontproduct,
+                'backproduct': product.backproduct,
+                'allergens': product.allergens
+            }
+            filtered_products.append(product_data)
+    
+    shuffle(filtered_products)  # 랜덤으로 보여줌
+    return jsonify(filtered_products), 200

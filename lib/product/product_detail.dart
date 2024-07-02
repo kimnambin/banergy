@@ -1,3 +1,5 @@
+//메인페이지 -> 상품 디테일
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
