@@ -723,87 +723,87 @@ class _ProductGridState extends State<ProductGrid> {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           final product = products[index];
-          //  return Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Container(
-          //           decoration: BoxDecoration(
-          //             color: backgroundColor,
-          //             borderRadius: BorderRadius.circular(10),
-          //             boxShadow: [
-          //               BoxShadow(
-          //                 color: Colors.grey.withOpacity(0.5),
-          //                 spreadRadius: 2,
-          //                 blurRadius: 5,
-          //                 offset: const Offset(0, 3),
-          //               ),
-          //             ],
-          //           ),
-          return Card(
-            color: backgroundColor,
-            //여기 위까지 없애면 됨
-            child: Stack(
-              children: [
-                InkWell(
-                  onTap: () {
-                    _handleProductClick(context, products[index]);
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 110, // 이미지 높이 제한
-                        child: Center(
-                          child: Image.network(
-                            products[index].frontproduct,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 14.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          products[index].name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'PretendardRegular',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          products[index].allergens,
-                          maxLines: 1, //한줄만 보이게 하는 것
-                          overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: Icon(
-                      product.isHearted
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: product.isHearted ? Colors.red : null,
+          return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
                     ),
-                    onPressed: () {
-                      _toggleLikedStatus(products[index]);
-                      Likeproduct(product);
-                    },
-                  ),
+                  ],
                 ),
-              ],
-            ),
-            //)
-          );
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        _handleProductClick(context, products[index]);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 15, // 이미지 높이 제한
+                          ),
+                          SizedBox(
+                            height: 90,
+                            child: Center(
+                              child: Image.network(
+                                products[index].frontproduct,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 14.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              products[index].name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'PretendardRegular',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              products[index].allergens,
+                              maxLines: 1, //한줄만 보이게 하는 것
+                              overflow:
+                                  TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          product.isHearted
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: product.isHearted ? Colors.red : null,
+                        ),
+                        onPressed: () {
+                          _toggleLikedStatus(products[index]);
+                          Likeproduct(product);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ));
         },
         childCount: products.length,
       ),

@@ -237,8 +237,11 @@ class _ProductGridState extends State<ProductGrid> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(
+                              height: 15, // 이미지 높이 제한
+                            ),
                             SizedBox(
-                              height: 110, // 이미지 높이 제한
+                              height: 90, // 이미지 높이 제한
                               child: Center(
                                 child: Image.network(
                                   product.frontproduct,

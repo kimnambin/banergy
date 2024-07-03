@@ -222,23 +222,37 @@ class _FilteringPageState extends State<FilteringPage> {
   Widget buildFilterList(List<String> filterList) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: filterList.length,
+      itemCount: (filterList.length + 1) ~/ 2,
       itemBuilder: (context, index) {
-        String filter = filterList[index];
+        int start = index * 2;
+        int end =
+            (start + 2) < filterList.length ? start + 2 : filterList.length;
+        List<String> rowFilters = filterList.sublist(start, end);
+
         return Container(
           margin: const EdgeInsets.all(10.0),
-          child: CheckboxListTile(
-            onChanged: (bool? check) {
-              setState(() {
-                if (checkListValue2.contains(filter)) {
-                  checkListValue2.remove(filter);
-                  return;
-                }
-                checkListValue2.add(filter);
-              });
-            },
-            title: Text(filter),
-            value: checkListValue2.contains(filter) ? true : false,
+          child: Row(
+            children: [
+              for (String filter in rowFilters)
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: CheckboxListTile(
+                      onChanged: (bool? check) {
+                        setState(() {
+                          if (checkListValue2.contains(filter)) {
+                            checkListValue2.remove(filter);
+                            return;
+                          }
+                          checkListValue2.add(filter);
+                        });
+                      },
+                      title: Text(filter),
+                      value: checkListValue2.contains(filter) ? true : false,
+                    ),
+                  ),
+                ),
+            ],
           ),
         );
       },
