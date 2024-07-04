@@ -238,22 +238,6 @@ class _FilteringPageState extends State<FilteringPage> {
             ),
           ),
           const SizedBox(height: 15),
-
-          // 중앙에 정렬된 필터 영역
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(20.0),
-              color: Colors.white,
-              child: Row(
-                children: [
-                  // 왼쪽 필터
-                  Expanded(
-                    child: buildFilterList(checkList2),
-                  ),
-                ],
-              ),
-            ),
-          ),
           //여기가 검색부분
           Padding(
             padding: const EdgeInsets.all(10.0),
@@ -273,6 +257,21 @@ class _FilteringPageState extends State<FilteringPage> {
                   searchText = value;
                 });
               },
+            ),
+          ),
+          // 중앙에 정렬된 필터 영역
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  // 왼쪽 필터
+                  Expanded(
+                    child: buildFilterList(checkList2),
+                  ),
+                ],
+              ),
             ),
           ),
 
