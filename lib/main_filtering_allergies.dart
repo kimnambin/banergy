@@ -59,6 +59,8 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
 
   String? authToken;
 
+  String searchText = ''; //검색 부분 초기화
+
   @override
   void initState() {
     super.initState();
@@ -249,6 +251,29 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
               ),
             ),
           ),
+
+          //여기가 검색부분
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              style: const TextStyle(
+                fontFamily: 'PretendardBold',
+              ),
+              decoration: const InputDecoration(
+                hintText: '알레르기를 검색해보세요!!',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                ),
+                contentPadding: EdgeInsets.only(left: 30, bottom: 13),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchText = value;
+                });
+              },
+            ),
+          ),
+
           // 적용 버튼 추가
           Container(
             padding: const EdgeInsets.all(16.0),

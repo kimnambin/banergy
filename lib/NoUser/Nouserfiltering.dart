@@ -10,8 +10,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:flutter_banergy/bottombar.dart';
-// import 'package:flutter_banergy/mypage/mypage.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -60,6 +58,8 @@ class _FilteringPageState extends State<FilteringPage> {
     "조개류",
     "기타"
   ];
+
+  String searchText = ''; //검색 부분 초기화
 
   Future<void> _userFiltering(
       BuildContext context, List<String?> checkListValue2) async {
@@ -153,7 +153,6 @@ class _FilteringPageState extends State<FilteringPage> {
           },
         ),
       ),
-      //bottomNavigationBar: const BottomNavBar(),
       body: Column(
         children: [
           // Image 추가
@@ -173,22 +172,35 @@ class _FilteringPageState extends State<FilteringPage> {
               fontFamily: 'PretendardSemiBold',
             ),
           ),
-          // 중앙에 정렬된 필터 영역
+          //여기가 검색부분
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              style: const TextStyle(
+                fontFamily: 'PretendardBold',
+              ),
+              decoration: const InputDecoration(
+                hintText: '알레르기를 검색해보세요!!',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                ),
+                contentPadding: EdgeInsets.only(left: 30, bottom: 13),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchText = value;
+                });
+              },
+            ),
+          ),
+
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(20.0),
               color: Colors.white,
-              child: Row(
-                children: [
-                  // 왼쪽 필터
-                  Expanded(
-                    child: buildFilterList(checkList2),
-                  ),
-                ],
-              ),
+              child: buildFilterList(checkList2),
             ),
           ),
-          // 적용 버튼 추가
           Container(
             padding: const EdgeInsets.all(16.0),
             color: Colors.white,
@@ -218,7 +230,6 @@ class _FilteringPageState extends State<FilteringPage> {
     );
   }
 
-  // 체크박스 리스트를 생성하는 함수
   Widget buildFilterList(List<String> filterList) {
     return ListView.builder(
       shrinkWrap: true,
@@ -234,24 +245,26 @@ class _FilteringPageState extends State<FilteringPage> {
           child: Row(
             children: [
               for (String filter in rowFilters)
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: CheckboxListTile(
-                      onChanged: (bool? check) {
-                        setState(() {
-                          if (checkListValue2.contains(filter)) {
-                            checkListValue2.remove(filter);
-                            return;
-                          }
-                          checkListValue2.add(filter);
-                        });
-                      },
-                      title: Text(filter),
-                      value: checkListValue2.contains(filter) ? true : false,
+                if (searchText.isEmpty ||
+                    filter.toLowerCase().contains(searchText.toLowerCase()))
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: CheckboxListTile(
+                        onChanged: (bool? check) {
+                          setState(() {
+                            if (checkListValue2.contains(filter)) {
+                              checkListValue2.remove(filter);
+                              return;
+                            }
+                            checkListValue2.add(filter);
+                          });
+                        },
+                        title: Text(filter),
+                        value: checkListValue2.contains(filter) ? true : false,
+                      ),
                     ),
                   ),
-                ),
             ],
           ),
         );
