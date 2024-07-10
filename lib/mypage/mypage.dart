@@ -387,16 +387,20 @@ class _MyHomePageState extends State<MyHomePage>
             _navigateToPage(buttonText);
           },
           style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFEFFFE),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
             fixedSize: const Size(double.infinity, 60),
             elevation: 0, // 그림자 제거
             padding: EdgeInsets.zero,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 45.0),
-                child: Text(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 45.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
                   buttonText,
                   style: const TextStyle(
                     fontSize: 16,
@@ -404,15 +408,12 @@ class _MyHomePageState extends State<MyHomePage>
                     color: Colors.black,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0), // 아이콘 오른쪽 여백 추가
-                child: Icon(
+                Icon(
                   iconData,
-                  color: Colors.black, // 아이콘 색상 지정
+                  color: Colors.black,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

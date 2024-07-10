@@ -263,6 +263,7 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
     }
   }
 
+  //상품 보여지는 부분
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
@@ -271,30 +272,65 @@ class _SliverFoodGridState extends State<SliverFoodGrid> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return Card(
-            child: InkWell(
-              onTap: () {
-                _handleProductClick(context, products[index]);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Image.network(
-                        products[index].frontproduct,
-                        fit: BoxFit.cover,
+          final product = products[index];
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: InkWell(
+                onTap: () {
+                  _handleProductClick(context, product);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 15, // 이미지 높이 제한
+                    ),
+                    SizedBox(
+                      height: 90,
+                      child: Center(
+                        child: Image.network(
+                          product.frontproduct,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    products[index].name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(products[index].allergens),
-                ],
+                    const SizedBox(height: 14.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        product.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'PretendardRegular',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        product.allergens,
+                        maxLines: 1, //한줄만 보이게 하는 것
+                        overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           );

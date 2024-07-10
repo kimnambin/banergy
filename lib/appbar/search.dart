@@ -202,60 +202,94 @@ class _SerachGridState extends State<SerachGrid> {
 
   @override
   Widget build(BuildContext context) {
+    const backgroundColor = Color(0xFFFFFFFF);
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
+        childAspectRatio: 0.75,
       ),
       itemCount: widget.products.length,
       itemBuilder: (context, index) {
-        return Card(
-          child: InkWell(
-            onTap: () {
-              _handleProductClick(context, widget.products[index]);
-            },
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Image.network(
-                          widget.products[index].frontproduct,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.products[index].name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4.0),
-                          Text(widget.products[index].allergens),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: likedProducts.contains(index)
-                        ? const Icon(Icons.favorite, color: Colors.red)
-                        : const Icon(Icons.favorite_border),
-                    onPressed: () {
-                      _toggleLikedStatus(index);
-                      // _updateLikeStatus(index);
-                    },
-                  ),
+        final product = widget.products[index];
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
                 ),
               ],
+            ),
+            child: InkWell(
+              onTap: () {
+                _handleProductClick(context, product);
+              },
+              child: Stack(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      _handleProductClick(context, product);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 15, // 이미지 높이 제한
+                        ),
+                        SizedBox(
+                          height: 90,
+                          child: Center(
+                            child: Image.network(
+                              product.frontproduct,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 14.0),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            product.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'PretendardRegular',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            product.allergens,
+                            maxLines: 1, //한줄만 보이게 하는 것
+                            overflow: TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: likedProducts.contains(index)
+                          ? const Icon(Icons.favorite, color: Colors.red)
+                          : const Icon(Icons.favorite_border),
+                      onPressed: () {
+                        _toggleLikedStatus(index);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
