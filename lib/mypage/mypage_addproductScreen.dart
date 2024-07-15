@@ -159,6 +159,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   isTextArea: true,
                 ),
                 _buildPhotoArea(),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -225,7 +226,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             height: 250,
             child: Image.file(_image!),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () {
               if (_image != null) {

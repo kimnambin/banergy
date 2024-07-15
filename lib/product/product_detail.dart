@@ -190,167 +190,172 @@ class _pdScreenState extends State<pdScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const HomeScreen(
-            //         //searchText: '',
-            //         ),
-            //),
-            //);
-            Navigator.pop(context);
-          },
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: const Color(0xFFF1F2F7),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const HomeScreen(
+              //         //searchText: '',
+              //         ),
+              //),
+              //);
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 32, top: 8),
-                child: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isLiked = !isLiked;
-                      if (isLiked) {
-                        likedProducts.add(widget.product!.id);
-                      } else {
-                        likedProducts.remove(widget.product!.id);
-                      }
-                    });
-                  },
-                  icon: Icon(
-                    isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: isLiked ? Colors.red : Colors.grey,
-                  ),
-                  iconSize: 28,
-                ),
-              ),
+        body: SingleChildScrollView(
+          child: Container(
+            // 배경색 지정을 위해 Container 추가
+            decoration: const BoxDecoration(
+              color: Colors.white,
             ),
-            Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Center(
-                child: SizedBox(
-                  width: 250,
-                  height: 200,
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: _buildImage(
-                          context,
-                          widget.product!.frontproduct,
-                          borderColor: Colors.blue,
-                        ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 32, top: 8),
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isLiked = !isLiked;
+                          if (isLiked) {
+                            likedProducts.add(widget.product!.id);
+                          } else {
+                            likedProducts.remove(widget.product!.id);
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.red : Colors.grey,
                       ),
+                      iconSize: 28,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Center(
+                    child: SizedBox(
+                      width: 250,
+                      height: 200,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: _buildImage(
+                              context,
+                              widget.product!.frontproduct,
+                              borderColor: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 32, bottom: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.zoom_in,
+                            color: textScaleFactor > minTextScaleFactor
+                                ? const Color(0xFF7C7C7C)
+                                : Colors.green,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor += 0.5;
+                              if (textScaleFactor > maxTextScaleFactor) {
+                                textScaleFactor = maxTextScaleFactor;
+                              }
+                            });
+                          },
+                          iconSize: 28,
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        IconButton(
+                          icon: const Icon(Icons.zoom_out,
+                              color: Color(0xFF7C7C7C)),
+                          onPressed: () {
+                            setState(() {
+                              textScaleFactor -= 0.5;
+                              if (textScaleFactor < minTextScaleFactor) {
+                                textScaleFactor = minTextScaleFactor;
+                              }
+                            });
+                          },
+                          color: Colors.white,
+                          iconSize: 28,
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(
+                  color: Color(0xFFDDD7D7),
+                  thickness: 1.0,
+                  height: 5.0,
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _NOText({
+                        widget.product!.kategorie,
+                        widget.product!.name,
+                      }),
                     ],
                   ),
                 ),
-              ),
+                const SizedBox(height: 30),
+                const SizedBox(height: 20),
+                _buildText({
+                  '알레르기 식품:': widget.product!.allergens,
+                }, textScaleFactor),
+                const SizedBox(height: 20),
+                hasMatchingAllergy
+                    ? const Padding(
+                        padding: EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          '사용자와 맞지 않은 상품입니다.',
+                          style: TextStyle(
+                            backgroundColor: Colors.yellow,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(height: 40),
+                const SizedBox(height: 16),
+              ],
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 32, bottom: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.zoom_in,
-                        color: textScaleFactor > minTextScaleFactor
-                            ? const Color(0xFF7C7C7C)
-                            : Colors.green,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          textScaleFactor += 0.5;
-                          if (textScaleFactor > maxTextScaleFactor) {
-                            textScaleFactor = maxTextScaleFactor;
-                          }
-                        });
-                      },
-                      iconSize: 28,
-                      padding: const EdgeInsets.all(0),
-                      constraints: const BoxConstraints(
-                        minWidth: 48,
-                        minHeight: 48,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    IconButton(
-                      icon:
-                          const Icon(Icons.zoom_out, color: Color(0xFF7C7C7C)),
-                      onPressed: () {
-                        setState(() {
-                          textScaleFactor -= 0.5;
-                          if (textScaleFactor < minTextScaleFactor) {
-                            textScaleFactor = minTextScaleFactor;
-                          }
-                        });
-                      },
-                      color: Colors.white,
-                      iconSize: 28,
-                      padding: const EdgeInsets.all(0),
-                      constraints: const BoxConstraints(
-                        minWidth: 48,
-                        minHeight: 48,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Divider(
-              color: Color(0xFFDDD7D7),
-              thickness: 1.0,
-              height: 5.0,
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _NOText({
-                    widget.product!.kategorie,
-                    widget.product!.name,
-                  }),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            const SizedBox(height: 20),
-            _buildText({
-              '알레르기 식품:': widget.product!.allergens,
-            }, textScaleFactor),
-            const SizedBox(height: 20),
-            hasMatchingAllergy
-                ? const Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      '사용자와 맞지 않은 상품입니다.',
-                      style: TextStyle(
-                        backgroundColor: Colors.yellow,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                : const SizedBox(height: 40),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
 //하트 부분
