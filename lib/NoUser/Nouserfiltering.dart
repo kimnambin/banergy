@@ -134,100 +134,102 @@ class _FilteringPageState extends State<FilteringPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "알러지 필터링",
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FirstApp(),
-              ),
-            );
-          },
-        ),
-      ),
-      body: Column(
-        children: [
-          // Image 추가
-          Container(
-            color: Colors.white,
-            child: Image.asset(
-              'images/000.jpeg',
-              width: 80,
-              height: 80,
-            ),
+        appBar: AppBar(
+          title: const Text(
+            "알러지 필터링",
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 10),
-          const Text(
-            "해당하는 알레르기를 체크해주세요",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'PretendardSemiBold',
-            ),
-          ),
-          //여기가 검색부분
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              style: const TextStyle(
-                fontFamily: 'PretendardBold',
-              ),
-              decoration: const InputDecoration(
-                hintText: '알레르기를 검색해보세요!!',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FirstApp(),
                 ),
-                contentPadding: EdgeInsets.only(left: 30, bottom: 13),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  searchText = value;
-                });
-              },
-            ),
+              );
+            },
           ),
-
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(20.0),
-              color: Colors.white,
-              child: buildFilterList(checkList2),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            color: Colors.white,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF03C95B),
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(color: Colors.white),
+          child: Column(
+            children: [
+              // Image 추가
+              Container(
+                color: Colors.white,
+                child: Image.asset(
+                  'images/000.jpeg',
+                  width: 80,
+                  height: 80,
                 ),
               ),
-              onPressed: () => {
-                _userFiltering(context, checkListValue2),
-                print("저장된 값: $checkListValue2")
-              },
-              child: const Text(
-                '적용',
+              const SizedBox(height: 10),
+              const Text(
+                "해당하는 알레르기를 체크해주세요",
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontFamily: 'PretendardSemiBold'),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'PretendardSemiBold',
+                ),
               ),
-            ),
+              //여기가 검색부분
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  style: const TextStyle(
+                    fontFamily: 'PretendardBold',
+                  ),
+                  decoration: const InputDecoration(
+                    hintText: '알레르기를 검색해보세요!!',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                    ),
+                    contentPadding: EdgeInsets.only(left: 30, bottom: 13),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                ),
+              ),
+
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  color: Colors.white,
+                  child: buildFilterList(checkList2),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                color: Colors.white,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF03C95B),
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  onPressed: () => {
+                    _userFiltering(context, checkListValue2),
+                    print("저장된 값: $checkListValue2")
+                  },
+                  child: const Text(
+                    '적용',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontFamily: 'PretendardSemiBold'),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget buildFilterList(List<String> filterList) {

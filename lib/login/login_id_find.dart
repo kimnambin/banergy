@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
@@ -141,26 +142,28 @@ class _IDFindAppState extends State<IDFindApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "아이디 찾기",
-            style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 22),
-            textAlign: TextAlign.center,
-          ),
-          centerTitle: true,
-          backgroundColor: const Color(0xFFF1F2F7),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FirstApp()),
-              );
-            },
-          ),
+        home: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          "아이디 찾기",
+          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 22),
+          textAlign: TextAlign.center,
         ),
-        body: SingleChildScrollView(
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FirstApp()),
+            );
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(color: Colors.white),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(40.0),
@@ -204,7 +207,7 @@ class _IDFindAppState extends State<IDFindApp> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 

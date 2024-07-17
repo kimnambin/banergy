@@ -116,7 +116,7 @@ class _FreeboardState extends State<Freeboard>
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -341,112 +341,115 @@ class _FreeboardListState extends State<FreeboardList> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetchFreeboardData(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final List<freeDB>? dataList = snapshot.data;
-          return ListView.builder(
-            itemCount: dataList?.length,
-            itemBuilder: (context, index) {
-              final freeDB item = dataList![index];
-              if (item.freetitle != null && item.freecontent != null) {
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: const Color(0xFFF1F2F7),
-                              content: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    '${item.freetitle}',
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+    return Container(
+        color: Colors.white,
+        child: FutureBuilder(
+          future: fetchFreeboardData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final List<freeDB>? dataList = snapshot.data;
+              return ListView.builder(
+                itemCount: dataList?.length,
+                itemBuilder: (context, index) {
+                  final freeDB item = dataList![index];
+                  if (item.freetitle != null && item.freecontent != null) {
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: const Color(0xFFF1F2F7),
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '${item.freetitle}',
+                                        textAlign: TextAlign.left,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '${item.freecontent}',
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('확인'),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '${item.freecontent}',
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('확인'),
-                                ),
-                              ],
+                                  ],
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Card(
-                          elevation: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${item.freetitle}',
-                                  textAlign: TextAlign.right,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Card(
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${item.freetitle}',
+                                      textAlign: TextAlign.right,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      '${item.freecontent}',
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      '댓글  ${_getTimeDifference(item.timestamp)}',
+                                      style: const TextStyle(
+                                        color: Color(0xFF3C3C3C),
+                                        fontSize: 10,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  '${item.freecontent}',
-                                  textAlign: TextAlign.left,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  '댓글  ${_getTimeDifference(item.timestamp)}',
-                                  style: const TextStyle(
-                                    color: Color(0xFF3C3C3C),
-                                    fontSize: 10,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const Divider(
-                      color: Colors.grey,
-                      thickness: 0.5,
-                      height: 0,
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          );
-        }
-      },
-    );
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 0.5,
+                          height: 0,
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              );
+            }
+          },
+        ));
   }
 
   Future<List<freeDB>> fetchFreeboardData() async {

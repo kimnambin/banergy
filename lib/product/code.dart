@@ -55,6 +55,7 @@ class _CodeScreenState extends State<CodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const SearchWidget(), // 검색 위젯
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
@@ -84,70 +85,74 @@ class scanGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (products.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              '데이터베이스에 저장된 내용이 없습니다 ㅜ.ㅜ',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
-                  context: context,
-                  onCode: (code) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CodeScreen(
-                          resultCode: code ?? "스캔된 정보 없음",
-                        ),
-                      ),
+      return Container(
+          color: Colors.white,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  '데이터베이스에 저장된 내용이 없습니다 ㅜ.ㅜ',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
+                      context: context,
+                      onCode: (code) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CodeScreen(
+                              resultCode: code ?? "스캔된 정보 없음",
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-              child: const Text('다시찍기'),
+                  child: const Text('다시찍기'),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
+          ));
     } else {
-      return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: InkWell(
-              onTap: () {
-                _handleProductClick(context, products[index]);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Image.network(
-                      products[index].frontproduct,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    products[index].name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(products[index].allergens),
-                ],
-              ),
+      return Container(
+          color: Colors.white,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
             ),
-          );
-        },
-      );
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: InkWell(
+                  onTap: () {
+                    _handleProductClick(context, products[index]);
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          products[index].frontproduct,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        products[index].name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(products[index].allergens),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ));
     }
   }
 

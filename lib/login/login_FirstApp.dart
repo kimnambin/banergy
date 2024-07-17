@@ -37,8 +37,10 @@ class FirstApp extends StatelessWidget {
     //autoLogin(context);
 
     return MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView(
+        home: Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(color: Colors.white),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -197,7 +199,7 @@ class FirstApp extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 
   // 로그인 함수

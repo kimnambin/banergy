@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const SearchWidget(), // 검색 위젯
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
@@ -204,110 +205,112 @@ class _ProductGridState extends State<ProductGrid> {
   @override
   Widget build(BuildContext context) {
     const backgroundColor = Color(0xFFFFFFFF);
-    return CustomScrollView(
-      slivers: [
-        SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-              final product = likedProducts[index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          _handleProductClick(context, product);
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 15, // 이미지 높이 제한
-                            ),
-                            SizedBox(
-                              height: 90, // 이미지 높이 제한
-                              child: Center(
-                                child: Image.network(
-                                  product.frontproduct,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 14.0),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                product.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'PretendardRegular',
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 4.0),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                product.allergens,
-                                maxLines: 1, // 한줄만 보이게 하는 것
-                                overflow:
-                                    TextOverflow.ellipsis, // 넘치는 부분은 ...으로 표시
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        // child: IconButton(
-                        //   icon: product.isHearted
-                        //       ? const Icon(Icons.favorite, color: Colors.red)
-                        //       : const Icon(Icons.favorite_border),
-                        //   onPressed: () {
-                        //     _toggleLikedStatus(product);
-                        //   },
-                        // ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.favorite,
-                            color: Colors.red,
+    return Container(
+        color: Colors.white,
+        child: CustomScrollView(
+          slivers: [
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  final product = likedProducts[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
                           ),
-                          onPressed: () {
-                            _toggleLikedStatus(product);
-                            deleteProduct(product);
-                          },
-                          iconSize: 28,
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-            childCount: likedProducts.length,
-          ),
-        ),
-      ],
-    );
+                      child: Stack(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              _handleProductClick(context, product);
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 15, // 이미지 높이 제한
+                                ),
+                                SizedBox(
+                                  height: 90, // 이미지 높이 제한
+                                  child: Center(
+                                    child: Image.network(
+                                      product.frontproduct,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 14.0),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(
+                                    product.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'PretendardRegular',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 4.0),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(
+                                    product.allergens,
+                                    maxLines: 1, // 한줄만 보이게 하는 것
+                                    overflow: TextOverflow
+                                        .ellipsis, // 넘치는 부분은 ...으로 표시
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            // child: IconButton(
+                            //   icon: product.isHearted
+                            //       ? const Icon(Icons.favorite, color: Colors.red)
+                            //       : const Icon(Icons.favorite_border),
+                            //   onPressed: () {
+                            //     _toggleLikedStatus(product);
+                            //   },
+                            // ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                _toggleLikedStatus(product);
+                                deleteProduct(product);
+                              },
+                              iconSize: 28,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                childCount: likedProducts.length,
+              ),
+            ),
+          ],
+        ));
   }
 
 // 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수

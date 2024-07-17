@@ -114,7 +114,7 @@ class Delete extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           centerTitle: true,
-          backgroundColor: const Color(0xFFF1F2F7),
+          backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -125,60 +125,63 @@ class Delete extends StatelessWidget {
             },
           ),
         ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(40.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 40),
-                  Column(
+        body: Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      InputField(
-                        label: '계정 비밀번호',
-                        controller: _passwordController,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 20),
-                      InputField(
-                        label: '탈퇴 사유',
-                        controller: _resonController,
-                        obscureText: false,
-                      ),
-                      const SizedBox(height: 95),
-                      ElevatedButton(
-                        onPressed: () => _delete(
-                          context,
-                          MaterialPageRoute(builder: (context) => FirstApp()),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: const Color(0xFF03C95B),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      const SizedBox(height: 40),
+                      Column(
+                        children: [
+                          InputField(
+                            label: '계정 비밀번호',
+                            controller: _passwordController,
+                            obscureText: true,
                           ),
-                        ),
-                        child: const SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              '완료',
-                              style: TextStyle(
-                                  fontFamily: 'PretendardSemiBold',
-                                  fontSize: 22),
+                          const SizedBox(height: 20),
+                          InputField(
+                            label: '탈퇴 사유',
+                            controller: _resonController,
+                            obscureText: false,
+                          ),
+                          const SizedBox(height: 95),
+                          ElevatedButton(
+                            onPressed: () => _delete(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FirstApp()),
                             ),
-                          ),
-                        ),
-                      )
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: const Color(0xFF03C95B),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            child: const SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  '완료',
+                                  style: TextStyle(
+                                      fontFamily: 'PretendardSemiBold',
+                                      fontSize: 22),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ));
+            )));
   }
 }
 

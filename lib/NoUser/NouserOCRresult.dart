@@ -108,118 +108,120 @@ class _OcrresultState extends State<Ocrresult2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "OCR 결과",
-          textAlign: TextAlign.center,
+        appBar: AppBar(
+          title: const Text(
+            "OCR 결과",
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: 150,
-                height: 150,
-                child: Image.file(File(widget.imagePath)),
-              ),
-            ),
-            const Divider(
-              color: Color(0xFFDDD7D7),
-              thickness: 1.0,
-              height: 5.0,
-            ),
-            const Center(
-              child: Text(
-                'OCR 결과',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (isOcrInProgress)
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text(
-                      'OCR 결과를 가져오는 중...',
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    if (_hirightingResult.isNotEmpty)
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.yellow,
-                        ),
-                        child: const Text(
-                          //_hirightingResult,
-
-                          '사용자와 맞지 않은 상품입니다.',
-
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black, // 텍스트 색상 지정
-                          ),
-                        ),
-                      ),
-                    if (_ocrResult.isNotEmpty)
-                      Text(
-                        _ocrResult,
-                      ),
-                    if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
-                      const Text('No text detected'),
-                  ],
-                ),
-              ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFF03C95B),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-              ),
-              child: const SizedBox(
-                width: 50,
-                height: 30,
-                child: Center(
-                  child: Text(
-                    '닫기',
-                    style: TextStyle(
-                        fontFamily: 'PretendardSemiBold', fontSize: 18),
+        body: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: Image.file(File(widget.imagePath)),
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+                const Divider(
+                  color: Color(0xFFDDD7D7),
+                  thickness: 1.0,
+                  height: 5.0,
+                ),
+                const Center(
+                  child: Text(
+                    'OCR 결과',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (isOcrInProgress)
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 8),
+                        Text(
+                          'OCR 결과를 가져오는 중...',
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        if (_hirightingResult.isNotEmpty)
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.yellow,
+                            ),
+                            child: const Text(
+                              //_hirightingResult,
+
+                              '사용자와 맞지 않은 상품입니다.',
+
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black, // 텍스트 색상 지정
+                              ),
+                            ),
+                          ),
+                        if (_ocrResult.isNotEmpty)
+                          Text(
+                            _ocrResult,
+                          ),
+                        if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
+                          const Text('No text detected'),
+                      ],
+                    ),
+                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFF03C95B),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const SizedBox(
+                    width: 50,
+                    height: 30,
+                    child: Center(
+                      child: Text(
+                        '닫기',
+                        style: TextStyle(
+                            fontFamily: 'PretendardSemiBold', fontSize: 18),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }

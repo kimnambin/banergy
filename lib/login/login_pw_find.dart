@@ -143,26 +143,28 @@ class _PWFindAppAppState extends State<PWFindApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "비밀번호 찾기",
-            style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
-            textAlign: TextAlign.center,
-          ),
-          centerTitle: true,
-          backgroundColor: const Color(0xFFF1F2F7),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FirstApp()),
-              );
-            },
-          ),
+        home: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          "비밀번호 찾기",
+          style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
+          textAlign: TextAlign.center,
         ),
-        body: SingleChildScrollView(
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FirstApp()),
+            );
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(color: Colors.white),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(40.0),
@@ -210,7 +212,7 @@ class _PWFindAppAppState extends State<PWFindApp> {
           //bottomNavigationBar: BottomNavBar(),
         ),
       ),
-    );
+    ));
   }
 }
 

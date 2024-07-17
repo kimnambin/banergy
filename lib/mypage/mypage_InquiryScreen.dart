@@ -123,81 +123,84 @@ class _InquiryScreenState extends State<InquiryScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: const Color(0xFFF1F2F7),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyHomePage()),
-              );
-            },
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                );
+              },
+            ),
           ),
-        ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    '문의하기',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        InputField(
-                          isTextArea: false,
-                          controller: inquirytitleController,
-                          hintText: "제목",
-                        ),
-                        const SizedBox(height: 20),
-                        InputField(
-                          isTextArea: true,
-                          hintText: "내용을 입력하세요",
-                          controller: inquirycontentController,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 80),
-                  ElevatedButton(
-                    onPressed: () {
-                      inquirysend(context);
-                      if (_formKey.currentState != null &&
-                          _formKey.currentState!.validate()) {
-                        setState(() {
-                          isFAQVisible = true;
-                        });
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 54),
-                      backgroundColor: const Color(0xFF03C95B),
-                    ),
-                    child: const Text('완료',
+          body: Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '문의하기',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'PretendardSemiBold',
-                            fontSize: 22)),
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            InputField(
+                              isTextArea: false,
+                              controller: inquirytitleController,
+                              hintText: "제목",
+                            ),
+                            const SizedBox(height: 20),
+                            InputField(
+                              isTextArea: true,
+                              hintText: "내용을 입력하세요",
+                              controller: inquirycontentController,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 80),
+                      ElevatedButton(
+                        onPressed: () {
+                          inquirysend(context);
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate()) {
+                            setState(() {
+                              isFAQVisible = true;
+                            });
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 54),
+                          backgroundColor: const Color(0xFF03C95B),
+                        ),
+                        child: const Text('완료',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'PretendardSemiBold',
+                                fontSize: 22)),
+                      ),
+                      const SizedBox(height: 40),
+                      if (isFAQVisible) const FAQList(),
+                    ],
                   ),
-                  const SizedBox(height: 40),
-                  if (isFAQVisible) const FAQList(),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 

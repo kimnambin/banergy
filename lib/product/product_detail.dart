@@ -192,7 +192,7 @@ class _pdScreenState extends State<pdScreen> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: const Color(0xFFF1F2F7),
+          backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {

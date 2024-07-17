@@ -54,118 +54,115 @@ class _BigsnacksScreenState extends State<BigsnacksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            expandedHeight: 200.0,
-            backgroundColor: Colors.white,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: Container(
-                height: 35,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEEEEE),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Center(
-                  child: TextField(
-                    controller: _searchController,
-                    style: const TextStyle(
-                      fontFamily: 'PretendardBold',
-                    ),
-                    decoration: InputDecoration(
-                      hintText: '궁금했던 상품 정보를 검색해보세요',
-                      border: InputBorder.none,
-                      contentPadding:
-                          const EdgeInsets.only(left: 15, bottom: 13),
-                      suffixIcon: IconButton(
-                        onPressed: _onSearchPressed,
-                        icon: const Icon(
-                          Icons.search,
-                          size: 20,
-                        ),
+        body: CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          floating: true,
+          snap: true,
+          expandedHeight: 200.0,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: Container(
+              height: 35,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEEEEEE),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Center(
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(
+                    fontFamily: 'PretendardBold',
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '궁금했던 상품 정보를 검색해보세요',
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.only(left: 15, bottom: 13),
+                    suffixIcon: IconButton(
+                      onPressed: _onSearchPressed,
+                      icon: const Icon(
+                        Icons.search,
+                        size: 20,
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: SizedBox(
-                height: 120,
-                child: ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20), // 위아래 여백을 조절
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5, // 카테고리 개수
-                  itemBuilder: (BuildContext context, int index) {
-                    // 카테고리 정보 (이름과 이미지 파일 이름)
-                    List<Map<String, String>> categories = [
-                      {"name": "라면", "image": "001.png"},
-                      {"name": "패스트푸드", "image": "002.png"},
-                      // {"name": "김밥", "image": "003.png"},
-                      // {"name": "도시락", "image": "004.png"},
-                      // {"name": "샌드위치", "image": "005.png"},
-                      {"name": "음료", "image": "006.png"},
-                      {"name": "간식", "image": "007.png"},
-                      {"name": "과자", "image": "008.png"},
-                    ];
+          ),
+          flexibleSpace: FlexibleSpaceBar(
+            background: SizedBox(
+              height: 120,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 20), // 위아래 여백을 조절
+                scrollDirection: Axis.horizontal,
+                itemCount: 5, // 카테고리 개수
+                itemBuilder: (BuildContext context, int index) {
+                  // 카테고리 정보 (이름과 이미지 파일 이름)
+                  List<Map<String, String>> categories = [
+                    {"name": "라면", "image": "001.png"},
+                    {"name": "패스트푸드", "image": "002.png"},
+                    // {"name": "김밥", "image": "003.png"},
+                    // {"name": "도시락", "image": "004.png"},
+                    // {"name": "샌드위치", "image": "005.png"},
+                    {"name": "음료", "image": "006.png"},
+                    {"name": "간식", "image": "007.png"},
+                    {"name": "과자", "image": "008.png"},
+                  ];
 
-                    // 현재 카테고리
-                    var category = categories[index];
+                  // 현재 카테고리
+                  var category = categories[index];
 
-                    return GestureDetector(
-                      onTap: () {
-                        _navigateToScreen(
-                          context,
-                          category["name"]!,
-                        );
-                      },
-                      child: SizedBox(
-                        width: 100,
-                        child: Container(
-                          margin: const EdgeInsets.all(20), // 상하 여백 삭제
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Image.asset(
-                                'assets/images/${category["image"]}',
-                                width: 60,
-                                height: 60,
+                  return GestureDetector(
+                    onTap: () {
+                      _navigateToScreen(
+                        context,
+                        category["name"]!,
+                      );
+                    },
+                    child: SizedBox(
+                      width: 100,
+                      child: Container(
+                        margin: const EdgeInsets.all(20), // 상하 여백 삭제
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Image.asset(
+                              'assets/images/${category["image"]}',
+                              width: 60,
+                              height: 60,
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              category["name"]!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'PretendardBold',
                               ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                category["name"]!,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'PretendardBold',
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
-          const SliverFoodGrid(), // SliverGrid로 변경
-        ],
-      ),
-    );
+        ),
+        const SliverFoodGrid(),
+      ],
+    ));
   }
 
   void _navigateToScreen(BuildContext context, String categoryName) {

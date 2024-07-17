@@ -34,6 +34,7 @@ class LoginApp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -45,6 +46,8 @@ class LoginApp extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
+          child: Container(
+        decoration: const BoxDecoration(color: Colors.white),
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(40.0),
@@ -95,7 +98,7 @@ class LoginApp extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      )),
     );
   }
 

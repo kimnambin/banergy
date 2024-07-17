@@ -170,19 +170,25 @@ class _JoinAppState extends State<JoinApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FirstApp()),
-              );
-            },
-          ),
+        home: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FirstApp()),
+            );
+          },
         ),
-        body: SingleChildScrollView(
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          // 배경색 지정을 위해 Container 추가
+          decoration: const BoxDecoration(
+            color: Colors.white,
+          ),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(40.0),
@@ -471,6 +477,6 @@ class _JoinAppState extends State<JoinApp> {
           ),
         ),
       ),
-    );
+    ));
   }
 }

@@ -152,122 +152,124 @@ class _ChangeidpwState extends State<Changeidpw> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "비밀번호 변경하기",
-          textAlign: TextAlign.center,
+        appBar: AppBar(
+          title: const Text(
+            "비밀번호 변경하기",
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()),
+              );
+            },
+          ),
         ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
-            );
-          },
-        ),
-      ),
-      //bottomNavigationBar: const BottomNavBar(),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 40),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        //bottomNavigationBar: const BottomNavBar(),
+        body: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        '기존 비밀번호',
-                        style: TextStyle(
-                            fontSize: 30, fontFamily: 'PretendardSemiBold'),
-                      ),
-
-                      InputField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        validator: (value) {
-                          String pattern =
-                              r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-                          RegExp regex = RegExp(pattern);
-
-                          if (value == null || value.isEmpty) {
-                            return '비밀번호를 입력하세요.';
-                          } else if (!regex.hasMatch(value) ||
-                              value.length < 5) {
-                            return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
-                          }
-
-                          return null;
-                        },
-                        label: '',
-                      ),
-
-                      const SizedBox(height: 20),
-                      //여기부터 새 비밀번호 입력
-                      const Text(
-                        '새 비밀번호',
-                        style: TextStyle(
-                            fontSize: 30, fontFamily: 'PretendardSemiBold'),
-                      ),
-                      InputField(
-                        controller: newpasswordController,
-                        obscureText: true,
-                        validator: (value) {
-                          String pattern =
-                              r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-                          RegExp regex = RegExp(pattern);
-
-                          if (value == null || value.isEmpty) {
-                            return '비밀번호를 입력하세요.';
-                          } else if (!regex.hasMatch(value) ||
-                              value.length < 5) {
-                            return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
-                          }
-
-                          return null;
-                        },
-                        label: '',
-                      ),
-
-                      const SizedBox(height: 95),
-                      ElevatedButton(
-                        onPressed: () => _changepw(context),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: const Color(0xFF03C95B),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      const SizedBox(height: 40),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '기존 비밀번호',
+                            style: TextStyle(
+                                fontSize: 30, fontFamily: 'PretendardSemiBold'),
                           ),
-                        ),
-                        child: const SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              '완료',
-                              style: TextStyle(
-                                  fontFamily: 'PretendardSemiBold',
-                                  fontSize: 22),
+
+                          InputField(
+                            controller: _passwordController,
+                            obscureText: true,
+                            validator: (value) {
+                              String pattern =
+                                  r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
+                              RegExp regex = RegExp(pattern);
+
+                              if (value == null || value.isEmpty) {
+                                return '비밀번호를 입력하세요.';
+                              } else if (!regex.hasMatch(value) ||
+                                  value.length < 5) {
+                                return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
+                              }
+
+                              return null;
+                            },
+                            label: '',
+                          ),
+
+                          const SizedBox(height: 20),
+                          //여기부터 새 비밀번호 입력
+                          const Text(
+                            '새 비밀번호',
+                            style: TextStyle(
+                                fontSize: 30, fontFamily: 'PretendardSemiBold'),
+                          ),
+                          InputField(
+                            controller: newpasswordController,
+                            obscureText: true,
+                            validator: (value) {
+                              String pattern =
+                                  r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
+                              RegExp regex = RegExp(pattern);
+
+                              if (value == null || value.isEmpty) {
+                                return '비밀번호를 입력하세요.';
+                              } else if (!regex.hasMatch(value) ||
+                                  value.length < 5) {
+                                return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
+                              }
+
+                              return null;
+                            },
+                            label: '',
+                          ),
+
+                          const SizedBox(height: 95),
+                          ElevatedButton(
+                            onPressed: () => _changepw(context),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: const Color(0xFF03C95B),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            child: const SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  '완료',
+                                  style: TextStyle(
+                                      fontFamily: 'PretendardSemiBold',
+                                      fontSize: 22),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 

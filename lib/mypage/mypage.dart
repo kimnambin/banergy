@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage>
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
+        backgroundColor: const Color(0xFFF4F4F6),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -194,9 +194,13 @@ class _MyHomePageState extends State<MyHomePage>
       ),
       backgroundColor: const Color(0xFFF1F2F7),
 
-      body: SingleChildScrollView(
-        child: _buildList(),
-      ),
+      body: Container(
+          color: const Color(0xFFF4F4F6),
+
+          // 여기에 원하시는 위젯 구현
+          child: SingleChildScrollView(
+            child: _buildList(),
+          )),
       //bottomNavigationBar: const BottomNavBar(),
     );
   }

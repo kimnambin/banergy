@@ -162,120 +162,122 @@ class _OcrresultState extends State<Ocrresult> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "OCR 결과",
-          textAlign: TextAlign.center,
+        appBar: AppBar(
+          title: const Text(
+            "OCR 결과",
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MainpageApp()),
+              );
+            },
+          ),
         ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
-            );
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: 150,
-                height: 150,
-                child: Image.file(File(widget.imagePath)),
-              ),
-            ),
-            const Divider(
-              color: Color(0xFFDDD7D7),
-              thickness: 1.0,
-              height: 5.0,
-            ),
-            const SizedBox(height: 16),
-            if (isOcrInProgress)
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text(
-                      'OCR 결과를 가져오는 중...',
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    if (_hirightingResult.isNotEmpty)
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.yellow,
-                        ),
-                        child: const Column(
-                          children: [
-                            Text(
-                              '사용자와 맞지 않은 상품입니다.',
-                              style: TextStyle(
-                                fontSize: 20.0,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            // Text(
-                            //   _hirightingResult,
-                            //   style: const TextStyle(
-                            //     fontSize: 20.0,
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ),
-                    const SizedBox(height: 20),
-                    if (_ocrResult.isNotEmpty)
-                      Text(
-                        _ocrResult,
-                      ),
-                    if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
-                      const Text('No text detected'),
-                  ],
-                ),
-              ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFF03C95B),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-              ),
-              child: const SizedBox(
-                width: 50,
-                height: 30,
-                child: Center(
-                  child: Text(
-                    '닫기',
-                    style: TextStyle(
-                        fontFamily: 'PretendardSemiBold', fontSize: 18),
+        body: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: Image.file(File(widget.imagePath)),
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+                const Divider(
+                  color: Color(0xFFDDD7D7),
+                  thickness: 1.0,
+                  height: 5.0,
+                ),
+                const SizedBox(height: 16),
+                if (isOcrInProgress)
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 8),
+                        Text(
+                          'OCR 결과를 가져오는 중...',
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        if (_hirightingResult.isNotEmpty)
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.yellow,
+                            ),
+                            child: const Column(
+                              children: [
+                                Text(
+                                  '사용자와 맞지 않은 상품입니다.',
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                // Text(
+                                //   _hirightingResult,
+                                //   style: const TextStyle(
+                                //     fontSize: 20.0,
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 20),
+                        if (_ocrResult.isNotEmpty)
+                          Text(
+                            _ocrResult,
+                          ),
+                        if (_hirightingResult.isEmpty && _ocrResult.isEmpty)
+                          const Text('No text detected'),
+                      ],
+                    ),
+                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFF03C95B),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const SizedBox(
+                    width: 50,
+                    height: 30,
+                    child: Center(
+                      child: Text(
+                        '닫기',
+                        style: TextStyle(
+                            fontFamily: 'PretendardSemiBold', fontSize: 18),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }

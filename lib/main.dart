@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, duplicate_ignore, collection_methods_unrelated_type, non_constant_identifier_names
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
 //import 'package:flutter_banergy/login/login_login.dart';
@@ -20,16 +19,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:photo_view/photo_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
-//import 'package:flutter_banergy/main_category/gimbap.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
 import 'package:flutter_banergy/main_category/Drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
-//import 'package:flutter_banergy/main_category/lunchbox.dart';
-//import 'package:flutter_banergy/main_category/Sandwich.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -155,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Home_SearchWidget(), // 검색 위젯
         actions: [
           IconButton(
@@ -181,114 +177,119 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 220,
-              child: Stack(
-                children: [
-                  sliderWidget(),
-                  sliderIndicator(),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5, // 카테고리 개수
-                itemBuilder: (BuildContext context, int index) {
-                  // 카테고리 정보 (이름과 이미지 파일 이름)
-                  List<Map<String, String>> categories = [
-                    {"name": "라면", "image": "001.png"},
-                    {"name": "패스트푸드", "image": "002.png"},
-                    // {"name": "김밥", "image": "003.png"},
-                    // {"name": "도시락", "image": "004.png"},
-                    // {"name": "샌드위치", "image": "005.png"},
-                    {"name": "음료", "image": "006.png"},
-                    {"name": "간식", "image": "007.png"},
-                    {"name": "과자", "image": "008.png"},
-                  ];
-
-                  // 현재 카테고리
-                  var category = categories[index];
-
-                  return GestureDetector(
-                    onTap: () {
-                      _navigateToScreen(
-                        context,
-                        category["name"]!,
-                      );
-                    },
-                    child: SizedBox(
-                      width: 100,
-                      child: Container(
-                        margin: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: Image.asset(
-                                'assets/images/${category["image"]}',
-                                width: 60, // 이미지의 너비
-                                height: 60, // 이미지의 높이
-                              ),
-                            ),
-                            Text(
-                              '${category["name"]}', // 카테고리 이름 라벨
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'PretendardBold',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          const ProductGrid(), // 상품 그리드
-
-          if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        child: CustomScrollView(
+          slivers: [
             SliverToBoxAdapter(
-              child: Container(
-                alignment: Alignment.center,
-                color: Colors.black.withOpacity(0.5),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              child: SizedBox(
+                height: 220,
+                child: Stack(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text(
-                      '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
+                    sliderWidget(),
+                    sliderIndicator(),
                   ],
                 ),
               ),
             ),
-        ],
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5, // 카테고리 개수
+                  itemBuilder: (BuildContext context, int index) {
+                    // 카테고리 정보 (이름과 이미지 파일 이름)
+                    List<Map<String, String>> categories = [
+                      {"name": "라면", "image": "001.png"},
+                      {"name": "패스트푸드", "image": "002.png"},
+                      // {"name": "김밥", "image": "003.png"},
+                      // {"name": "도시락", "image": "004.png"},
+                      // {"name": "샌드위치", "image": "005.png"},
+                      {"name": "음료", "image": "006.png"},
+                      {"name": "간식", "image": "007.png"},
+                      {"name": "과자", "image": "008.png"},
+                    ];
+
+                    // 현재 카테고리
+                    var category = categories[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        _navigateToScreen(
+                          context,
+                          category["name"]!,
+                        );
+                      },
+                      child: SizedBox(
+                        width: 100,
+                        child: Container(
+                          margin: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                child: Image.asset(
+                                  'assets/images/${category["image"]}',
+                                  width: 60, // 이미지의 너비
+                                  height: 60, // 이미지의 높이
+                                ),
+                              ),
+                              Text(
+                                '${category["name"]}', // 카테고리 이름 라벨
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'PretendardBold',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            const ProductGrid(), // 상품 그리드
+
+            if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
+              SliverToBoxAdapter(
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 8),
+                      Text(
+                        '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        //type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.green, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
         selectedLabelStyle:
             const TextStyle(color: Colors.green), // 선택된 아이템의 라벨 색상
+
         items: const [
           BottomNavigationBarItem(
             icon: ImageIcon(

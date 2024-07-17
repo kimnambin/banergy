@@ -1,4 +1,5 @@
 // ignore_for_file: camel_case_types
+//메인 화면에서 보이는 검색 바
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/search.dart';
@@ -39,24 +40,29 @@ class _Home_SearchWidgetState extends State<Home_SearchWidget> {
       height: 35,
       width: MediaQuery.of(context).size.width * 1.0, // 너비를 조정하여 적절히 맞춤
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEEEE),
         borderRadius: BorderRadius.circular(50),
       ),
-      child: Center(
-        child: TextField(
-          controller: _searchController,
-          style: const TextStyle(
-            fontFamily: 'PretendardBold',
-          ),
-          decoration: InputDecoration(
-            hintText: '궁금했던 상품 정보를 검색해보세요',
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.only(left: 30, bottom: 13),
-            suffixIcon: IconButton(
-              onPressed: _onSearchPressed,
-              icon: const Icon(
-                Icons.search,
-                size: 20,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFEEEEEE),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Center(
+          child: TextField(
+            controller: _searchController,
+            style: const TextStyle(
+              fontFamily: 'PretendardBold',
+            ),
+            decoration: InputDecoration(
+              hintText: '궁금했던 상품 정보를 검색해보세요',
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.only(left: 30, bottom: 13),
+              suffixIcon: IconButton(
+                onPressed: _onSearchPressed,
+                icon: const Icon(
+                  Icons.search,
+                  size: 20,
+                ),
               ),
             ),
           ),

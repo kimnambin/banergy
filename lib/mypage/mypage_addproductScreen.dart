@@ -122,99 +122,102 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFFF1F2F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
-            );
-          },
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()),
+              );
+            },
+          ),
         ),
-      ),
-      //bottomNavigationBar: const BottomNavBar(),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  '상품추가',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                InputField(
-                  hintText: '상품명',
-                  controller: _addtitleController,
-                  isTextArea: false,
-                ),
-                const SizedBox(height: 20),
-                const InputField(
-                  hintText: '추가할 내용을 적어주세요.',
-                  isTextArea: true,
-                ),
-                _buildPhotoArea(),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        //bottomNavigationBar: const BottomNavBar(),
+        body: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        _getImage(ImageSource.camera);
-                      },
-                      icon: const Icon(
-                        Icons.camera_alt,
-                        color: Color(0xFFA7A6A6),
-                      ),
-                      label: const Text("카메라",
-                          style: TextStyle(
-                            color: Color(0xFFA7A6A6),
-                          )),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Color(0xFFEBEBEB)),
-                          borderRadius: BorderRadius.circular(40.0),
-                        ),
-                      ),
+                    const Text(
+                      '상품추가',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(width: 30), // 간격 조절
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        _getImage(ImageSource.gallery);
-                      },
-                      icon: const Icon(
-                        Icons.perm_media,
-                        color: Color(0xFFA7A6A6),
-                      ),
-                      label: const Text(
-                        "갤러리",
-                        style: TextStyle(
-                          color: Color(0xFFA7A6A6),
+                    const SizedBox(height: 20),
+                    InputField(
+                      hintText: '상품명',
+                      controller: _addtitleController,
+                      isTextArea: false,
+                    ),
+                    const SizedBox(height: 20),
+                    const InputField(
+                      hintText: '추가할 내용을 적어주세요.',
+                      isTextArea: true,
+                    ),
+                    _buildPhotoArea(),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            _getImage(ImageSource.camera);
+                          },
+                          icon: const Icon(
+                            Icons.camera_alt,
+                            color: Color(0xFFA7A6A6),
+                          ),
+                          label: const Text("카메라",
+                              style: TextStyle(
+                                color: Color(0xFFA7A6A6),
+                              )),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(color: Color(0xFFEBEBEB)),
+                              borderRadius: BorderRadius.circular(40.0),
+                            ),
+                          ),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                              color: Color.fromRGBO(227, 227, 227, 1.0)),
-                          borderRadius: BorderRadius.circular(40.0),
+                        const SizedBox(width: 30), // 간격 조절
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            _getImage(ImageSource.gallery);
+                          },
+                          icon: const Icon(
+                            Icons.perm_media,
+                            color: Color(0xFFA7A6A6),
+                          ),
+                          label: const Text(
+                            "갤러리",
+                            style: TextStyle(
+                              color: Color(0xFFA7A6A6),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  color: Color.fromRGBO(227, 227, 227, 1.0)),
+                              borderRadius: BorderRadius.circular(40.0),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _buildPhotoArea() {
