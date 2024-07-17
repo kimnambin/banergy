@@ -44,7 +44,7 @@ class _pdScreenState extends State<pdScreen> {
   double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
   double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
   double minTextScaleFactor = -2.0; // 텍스트 최소 크기
-  List<int> likedProducts = [];
+  List<Product> likedProducts = [];
 
   @override
   void initState() {
@@ -185,6 +185,37 @@ class _pdScreenState extends State<pdScreen> {
     }
   }
 
+  Future<void> likeproduct(Product product) async {
+    final url = Uri.parse('$baseUrl:8000/logindb/like');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      },
+      body: json.encode({'product_id': product.id}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        product.isHearted = !product.isHearted;
+        _toggleLikedStatus(product); // 하트 상태 업데이트
+      });
+    } else {
+      throw Exception('Failed to toggle like');
+    }
+  }
+
+  void _toggleLikedStatus(Product product) {
+    setState(() {
+      if (likedProducts.contains(product)) {
+        likedProducts.remove(product); // 좋아요 상태 삭제
+      } else {
+        likedProducts.add(product); // 좋아요 상태 추가
+      }
+    });
+  }
+
   bool isLiked = false;
 
   @override
@@ -223,21 +254,18 @@ class _pdScreenState extends State<pdScreen> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 32, top: 8),
                     child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isLiked = !isLiked;
-                          if (isLiked) {
-                            likedProducts.add(widget.product!.id);
-                          } else {
-                            likedProducts.remove(widget.product!.id);
-                          }
-                        });
-                      },
                       icon: Icon(
                         isLiked ? Icons.favorite : Icons.favorite_border,
                         color: isLiked ? Colors.red : Colors.grey,
                       ),
                       iconSize: 28,
+                      onPressed: () {
+                        setState(() {
+                          _toggleLikedStatus(widget.product!);
+                          likeproduct(widget.product!);
+                          isLiked = !isLiked;
+                        });
+                      },
                     ),
                   ),
                 ),

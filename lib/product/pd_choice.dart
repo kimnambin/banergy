@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/product/like_product.dart';
 //import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
@@ -43,7 +44,7 @@ class _pd_choiceState extends State<pd_choice> {
   double textScaleFactor = 1.0; // 텍스트 크기를 저장할 변수
   double maxTextScaleFactor = 2.0; // 텍스트 최대 크기
   double minTextScaleFactor = -2.0; // 텍스트 최소 크기
-  List<int> likedProducts = [];
+  List<Product> likedProducts = [];
 
   @override
   void initState() {
@@ -184,10 +185,32 @@ class _pd_choiceState extends State<pd_choice> {
     }
   }
 
+  //좋아요 삭제
+  Future<void> deleteProduct(Product product) async {
+    final url = Uri.parse('$baseUrl:8000/logindb/deletelike');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      },
+      body: json.encode({'product_id': product.id}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        likedProducts.remove(product); // 클라이언트에서의 삭제 처리
+      });
+    } else {
+      throw Exception('Failed to unlike product');
+    }
+  }
+
   bool isLiked = false;
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -195,15 +218,14 @@ class _pd_choiceState extends State<pd_choice> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const HomeScreen(
-            //         //searchText: '',
-            //         ),
-            //),
-            //);
-            Navigator.pop(context);
+            // 여긴 새로고침을 위함
+            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LPscreen(),
+              ),
+            );
           },
         ),
       ),
@@ -222,16 +244,19 @@ class _pd_choiceState extends State<pd_choice> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 32, top: 8),
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.favorite,
-                      color: Colors.red,
+                    icon: Icon(
+                      isLiked ? Icons.favorite_border : Icons.favorite,
+                      color: isLiked ? Colors.grey : Colors.red,
                     ),
                     onPressed: () {
                       setState(() {
+                        // _toggleLikedStatus(product!);
+                        deleteProduct(product!);
                         isLiked = !isLiked;
                         if (isLiked) {
-                          likedProducts.add(widget.product!.id);
+                          likedProducts.add(widget.product!);
                         } else {
+                          // ignore: collection_methods_unrelated_type
                           likedProducts.remove(widget.product!.id);
                         }
                       });

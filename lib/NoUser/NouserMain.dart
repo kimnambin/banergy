@@ -111,33 +111,6 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp>
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.check_box),
-            onPressed: () => showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('비회원 이용불가'),
-                    content: const Text('비회원은 이용하실 수 없습니다.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // 다이얼로그 닫기
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor:
-                              const Color.fromARGB(255, 29, 171, 102),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Text('확인'),
-                      ),
-                    ],
-                  );
-                }),
-          )
         ],
       ),
       body: Container(

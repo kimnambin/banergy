@@ -32,6 +32,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MainpageApp(),
     ),
   );
@@ -46,6 +47,7 @@ class MainpageApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     );
   }
@@ -152,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Home_SearchWidget(), // 검색 위젯
+
         actions: [
           IconButton(
             icon: Image.asset(
@@ -163,15 +166,6 @@ class _HomeScreenState extends State<HomeScreen>
               context,
               MaterialPageRoute(
                 builder: (context) => const FilteringAllergies(),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.check_box),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LPscreen(),
               ),
             ),
           ),
