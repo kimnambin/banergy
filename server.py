@@ -1,13 +1,15 @@
 from flask import Flask, json, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from random import shuffle  # 랜덤을 위함
+# from random import shuffle  # 랜덤을 위함
+from random import sample, shuffle
 import csv
 import datetime
 from datetime import timedelta
 from paddleocr import PaddleOCR
 from dateutil.parser import parse
 import os
+import random
 
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -577,19 +579,19 @@ def get_product():
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
-    # 사용자가 좋아요한 상품 ID 리스트
+   # 사용자가 좋아요한 상품 ID 리스트
     liked_product_ids = json.loads(user.liked_products or '[]')
-    print(liked_product_ids)
-    # 좋아요한 상품들 가져오기
-    liked_products = Product.query.filter(Product.id.in_(liked_product_ids)).all()
-
-    # 모든 제품 정보를 가져오기
+    
+    # 모든 상품 목록 가져오기
     all_products = Product.query.all()
+    
+    # 랜덤으로 5개 상품 선택
+    random_products = sample(all_products, 5)
     
     # 좋아요하지 않은 상품 정보만 필터링하여 반환
     filtered_products = []
-    for product in all_products:
-        if product not in liked_products:
+    for product in random_products:
+        if product.id not in liked_product_ids:
             product_data = {
                 'id': product.id,
                 'barcode': product.barcode,
@@ -600,6 +602,7 @@ def get_product():
                 'allergens': product.allergens
             }
             filtered_products.append(product_data)
+
     
     shuffle(filtered_products)  # 랜덤으로 보여줌
     return jsonify(filtered_products), 200
