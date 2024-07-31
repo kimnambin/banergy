@@ -45,6 +45,7 @@ app.*.map.json
 .env
 
 test.py
+시놀로지.py
 
 processbar.txt
 

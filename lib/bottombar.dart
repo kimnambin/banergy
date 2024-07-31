@@ -89,9 +89,9 @@ class _BottomNavBarState extends State<BottomNavBar>
         ),
         BottomNavigationBarItem(
           icon: ImageIcon(
-            AssetImage('assets/images/bubble-chat.png'),
+            AssetImage('assets/images/ai.png'),
           ),
-          label: '커뮤니티',
+          label: 'AI 추천',
         ),
         BottomNavigationBarItem(
           icon: ImageIcon(

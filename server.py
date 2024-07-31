@@ -585,8 +585,8 @@ def get_product():
     # 모든 상품 목록 가져오기
     all_products = Product.query.all()
     
-    # 랜덤으로 5개 상품 선택
-    random_products = sample(all_products, 5)
+    # 랜덤으로 30개 상품 선택
+    random_products = sample(all_products, 30)
     
     # 좋아요하지 않은 상품 정보만 필터링하여 반환
     filtered_products = []

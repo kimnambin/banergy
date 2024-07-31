@@ -3,9 +3,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
+import 'package:flutter_banergy/mypage/ai_recommend.dart';
 //import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
+//import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
 import 'package:flutter_banergy/product/like_product.dart';
 import 'package:flutter_banergy/product/code.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
@@ -32,7 +33,6 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   runApp(
     const MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: MainpageApp(),
     ),
   );
@@ -47,7 +47,6 @@ class MainpageApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     );
   }
@@ -142,7 +141,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   int _selectedIndex = 0; // 현재 선택된 바텀 네비게이션 바 아이템의 인덱스
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+
+  final CarouselController _controller =
+      CarouselController(); // 캐러셀관련 이미지 넣을수있음
   List<String> imageList = [
     'assets/images/ad.png',
   ];
@@ -154,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Home_SearchWidget(), // 검색 위젯
-
         actions: [
           IconButton(
             icon: Image.asset(
@@ -293,9 +293,9 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(
-              AssetImage('assets/images/bubble-chat.png'),
+              AssetImage('assets/images/ai.png'),
             ),
-            label: '커뮤니티',
+            label: 'AI 추천',
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(
@@ -327,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen>
             );
           } else if (index == 1) {
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const Freeboard()));
+                MaterialPageRoute(builder: (context) => const AiRecommend()));
             // 커뮤니티 페이지로 이동
             // 커뮤니티 페이지로 이동하는 코드를 여기에 추가
           } else if (index == 2) {

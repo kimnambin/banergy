@@ -1,52 +1,36 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
-// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  runApp(MaterialApp(
-    initialRoute: '/',
-    onGenerateRoute: (settings) {
-      if (settings.name == '/inquiryDetail') {
-        return MaterialPageRoute(
-          builder: (context) => const InquiryDetailScreen(),
-        );
-      }
-      return null;
-    },
-    // Theme 설정
-    theme: ThemeData(
-      colorScheme: ColorScheme.fromSwatch(
-        primarySwatch: Colors.green, // 기본 색상 설정
-      ).copyWith(),
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: InquiryScreen(),
     ),
-  ));
+  );
 }
 
 class InquiryScreen extends StatefulWidget {
   const InquiryScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _InquiryScreenState createState() => _InquiryScreenState();
 }
 
 class _InquiryScreenState extends State<InquiryScreen> {
-  bool isFAQVisible = false;
   final TextEditingController inquirytitleController = TextEditingController();
   final TextEditingController inquirycontentController =
       TextEditingController();
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // 문의하기 함수
   Future<void> inquirysend(BuildContext context) async {
     final String inquirytitle = inquirytitleController.text;
     final String inquirycontent = inquirycontentController.text;
@@ -72,7 +56,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    Navigator.of(context).pop();
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -96,7 +80,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    Navigator.of(context).pop();
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -113,94 +97,144 @@ class _InquiryScreenState extends State<InquiryScreen> {
         );
       }
     } catch (e) {
-      // 오류 발생 시
       if (kDebugMode) {
-        print('서버에서 오류가 발생했음: $e'); // 수정: 예외 정보 출력
+        print('서버에서 오류가 발생했음: $e');
       }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: const Text('서버와의 통신 중 오류가 발생했습니다. 다시 시도해 주세요.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
-                );
-              },
-            ),
-          ),
-          body: Container(
-            color: Colors.white,
-            child: SingleChildScrollView(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        '문의하기',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 20),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            InputField(
-                              isTextArea: false,
-                              controller: inquirytitleController,
-                              hintText: "제목",
-                            ),
-                            const SizedBox(height: 20),
-                            InputField(
-                              isTextArea: true,
-                              hintText: "내용을 입력하세요",
-                              controller: inquirycontentController,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 80),
-                      ElevatedButton(
-                        onPressed: () {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                  child: Text(
+                '자주 묻는 내용',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
+              const SizedBox(height: 20),
+              const FAQList(), // FAQList를 포함한 위젯
+              const SizedBox(height: 40),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     // 스크롤을 아래로 이동시키는 작업
+              //     _scrollToBottom(context);
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     minimumSize: const Size(double.infinity, 54),
+              //     backgroundColor: const Color(0xFF03C95B),
+              //   ),
+              //   child: const Text(
+              //     '아래로 스크롤',
+              //     style: TextStyle(
+              //       color: Colors.white,
+              //       fontFamily: 'PretendardSemiBold',
+              //       fontSize: 22,
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 40),
+              const Center(
+                  child: Text(
+                '문의하기',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              )),
+              const SizedBox(height: 20),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    InputField(
+                      isTextArea: false,
+                      controller: inquirytitleController,
+                      hintText: "제목",
+                    ),
+                    const SizedBox(height: 20),
+                    InputField(
+                      isTextArea: true,
+                      hintText: "내용을 입력하세요",
+                      controller: inquirycontentController,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
                           inquirysend(context);
-                          if (_formKey.currentState != null &&
-                              _formKey.currentState!.validate()) {
-                            setState(() {
-                              isFAQVisible = true;
-                            });
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 54),
-                          backgroundColor: const Color(0xFF03C95B),
-                        ),
-                        child: const Text('완료',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'PretendardSemiBold',
-                                fontSize: 22)),
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 54),
+                        backgroundColor: const Color(0xFF03C95B),
                       ),
-                      const SizedBox(height: 40),
-                      if (isFAQVisible) const FAQList(),
-                    ],
-                  ),
+                      child: const Text(
+                        '완료',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'PretendardSemiBold',
+                          fontSize: 22,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  void _scrollToBottom(BuildContext context) {
+    Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 }
 
@@ -221,69 +255,24 @@ class InputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (isTextArea) // isTextArea가 true일 때만 테두리 없애기
-          TextFormField(
-            maxLines: 8,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '필수 입력 항목입니다.';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              hintText: hintText,
-              border: InputBorder.none,
-              enabledBorder: const UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-              ),
+        TextFormField(
+          maxLines: isTextArea ? 8 : 1,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return '필수 입력 항목입니다.';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: isTextArea ? InputBorder.none : null,
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
             ),
-            controller: controller,
           ),
-        if (!isTextArea)
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              enabledBorder: const UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-              ),
-            ),
-            controller: controller,
-          ),
-      ],
-    );
-  }
-}
-
-class InquiryDetailScreen extends StatelessWidget {
-  const InquiryDetailScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('문의 화면'),
-      ),
-      body: const SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  '자주 묻는 내용',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              FAQList(),
-            ],
-          ),
+          controller: controller,
         ),
-      ),
+      ],
     );
   }
 }
@@ -293,34 +282,32 @@ class FAQList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 3.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FAQItem(
-              question: '밴러지는 무슨 뜻인가요??',
-              answer: '밴러지는 알레르기를 밴한다는 의미입니다',
-            ),
-            FAQItem(
-              question: '누가 만들었나요??',
-              answer: '임산성 , 한지욱 , 김남빈 , 이예원 , 양병승이 개발해 참여했습니다.',
-            ),
-            FAQItem(
-              question: '밴러지의 무슨 앱인가요????',
-              answer: '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
-            ),
-            FAQItem(
-              question: '밴러지의 장점은??',
-              answer: '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
-            ),
-            FAQItem(
-              question: '밴러지의 기능은??',
-              answer: 'OCR, 바코드 기술로 간편하게\n찾아보는 음식 성분들!',
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          FAQItem(
+            question: '밴러지는 무슨 뜻인가요??',
+            answer: '밴러지는 알레르기를 밴한다는 의미입니다',
+          ),
+          FAQItem(
+            question: '누가 만들었나요??',
+            answer: '임산성 , 한지욱 , 김남빈 , 이예원 , 양병승이 개발해 참여했습니다.',
+          ),
+          FAQItem(
+            question: '밴러지의 무슨 앱인가요????',
+            answer: '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
+          ),
+          FAQItem(
+            question: '밴러지의 장점은??',
+            answer: '필터링 서비스로 개인이\n원하는 정보만 빠르게 확인!',
+          ),
+          FAQItem(
+            question: '밴러지의 기능은??',
+            answer: 'OCR, 바코드 기술로 간편하게\n찾아보는 음식 성분들!',
+          ),
+        ],
       ),
     );
   }
@@ -337,12 +324,11 @@ class FAQItem extends StatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _FAQItemState createState() => _FAQItemState();
 }
 
 class _FAQItemState extends State<FAQItem> {
-  bool isExpanded = true;
+  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
