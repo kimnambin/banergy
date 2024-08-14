@@ -7,11 +7,13 @@ import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:flutter_banergy/product/like_product.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import "package:geolocator/geolocator.dart";
+import 'dart:io';
 
 void main() async {
   await dotenv.load();
@@ -22,6 +24,7 @@ class AiRecommend extends StatefulWidget {
   const AiRecommend({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AiRecommendState createState() => _AiRecommendState();
 }
 
@@ -338,6 +341,11 @@ class ProductRecommendationPage extends StatefulWidget {
 class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   List<String> allergies = [];
   bool isLoading = true;
+  final ImagePicker _imagePicker = ImagePicker();
+  File? _image;
+
+  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  String aiResult = '';
 
   @override
   void initState() {
@@ -348,20 +356,17 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   Future<void> fetchAllergies() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('authToken');
-
     if (token == null) {
       setState(() {
         isLoading = false;
       });
       return;
     }
-
     try {
       final response = await http.get(
-        Uri.parse('${dotenv.env['BASE_URL']}:8000/logindb/loginuser'),
+        Uri.parse('$baseUrl:8000/logindb/loginuser'),
         headers: {'Authorization': 'Bearer $token'},
       );
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -382,6 +387,55 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
     }
   }
 
+  Future<void> _getImage(ImageSource source) async {
+    final pickedFile = await _imagePicker.pickImage(source: source);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
+  Future<void> _addProduct(BuildContext context) async {
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl:8000/AI/img'),
+      );
+
+      if (_image != null) {
+        var imageStream = http.ByteStream(_image!.openRead());
+        var length = await _image!.length();
+        var multipartFile = http.MultipartFile(
+          'image',
+          imageStream,
+          length,
+          filename: _image!.path.split('/').last,
+        );
+        request.files.add(multipartFile);
+      }
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        var responseData = await http.Response.fromStream(response);
+        var jsonData = json.decode(responseData.body); // JSON 파싱
+
+        setState(() {
+          aiResult = jsonData['AI 분석결과']; // AI 분석 결과 저장
+          // aiResult = '임시 분석 결과입니다';
+        });
+      } else {
+        print('Failed to get product recommendation: ${response.statusCode}');
+        // _showErrorDialog(context, '다시 한번 확인해주세요');
+      }
+    } catch (e) {
+      print('서버에서 오류가 발생했음: $e');
+      // _showErrorDialog(context, '서버에서 오류가 발생했습니다.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -392,7 +446,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
           const SizedBox(height: 10),
           _buildAllergyFilterStatus(),
           const SizedBox(height: 10),
-          _buildRecommendationContent('상품 추천'),
+          _buildRecommendationContent('레시피 추천'),
         ],
       ),
     );
@@ -411,9 +465,11 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            onPressed: () => widget.onButtonTapped(0),
+            onPressed: () {
+              widget.onButtonTapped(0);
+            },
             child: Text(
-              '상품 추천',
+              '레시피 추천',
               style: TextStyle(
                 color: widget.selectedIndex == 0 ? Colors.white : Colors.black,
               ),
@@ -430,9 +486,14 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            onPressed: () => widget.onButtonTapped(1),
+            onPressed: () {
+              widget.onButtonTapped(1);
+              // Call method to handle '위치기반 추천'
+              // For example, call _addProduct() if needed
+              _addProduct(context);
+            },
             child: Text(
-              '위치 기반',
+              '위치기반 추천',
               style: TextStyle(
                 color: widget.selectedIndex == 1 ? Colors.white : Colors.black,
               ),
@@ -463,6 +524,31 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
           isLoading
               ? const CircularProgressIndicator()
               : Text('필터링된 알레르기: ${allergies.join(", ")}'),
+          const SizedBox(height: 20),
+          _buildPhotoArea(),
+          ElevatedButton.icon(
+            onPressed: () {
+              _getImage(ImageSource.gallery);
+            },
+            icon: const Icon(
+              Icons.perm_media,
+              color: Color(0xFFA7A6A6),
+            ),
+            label: const Text(
+              "갤러리",
+              style: TextStyle(
+                color: Color(0xFFA7A6A6),
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                side:
+                    const BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
+                borderRadius: BorderRadius.circular(40.0),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -495,15 +581,56 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            const Expanded(
+            Expanded(
               child: Center(
-                child: Text('상품 추천 내용이 여기에 표시됩니다.'),
+                child: Text(
+                  aiResult.isNotEmpty ? aiResult : '상품 추천 내용이 여기에 표시됩니다.',
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildPhotoArea() {
+    if (_image != null) {
+      return Column(
+        children: [
+          SizedBox(
+            width: 250,
+            height: 250,
+            child: Image.file(_image!),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () {
+              if (_image != null) {
+                _addProduct(context);
+              }
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text("물어보기", style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              fixedSize: const Size(double.infinity, 45),
+              backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Color(0xFFEBEBEB)),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Container(
+        width: 250,
+        height: 250,
+        color: Colors.white,
+      );
+    }
   }
 }
 
@@ -657,16 +784,16 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor:
-                  widget.selectedIndex == 0 ? Colors.grey[300] : Colors.green,
+                  widget.selectedIndex == 0 ? Colors.green : Colors.grey[300],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
             onPressed: () => widget.onButtonTapped(0),
             child: Text(
-              '상품 추천',
+              '레시피 추천',
               style: TextStyle(
-                color: widget.selectedIndex == 0 ? Colors.black : Colors.white,
+                color: widget.selectedIndex == 0 ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -683,7 +810,7 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
             ),
             onPressed: () => widget.onButtonTapped(1),
             child: Text(
-              '위치 기반',
+              '위치기반 추천',
               style: TextStyle(
                 color: widget.selectedIndex == 1 ? Colors.white : Colors.black,
               ),
