@@ -11,6 +11,14 @@ from dateutil.parser import parse
 import os
 import random
 
+from openai import OpenAI
+import base64
+
+open_key = "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"
+client = OpenAI(api_key=open_key)
+
+MODEL="gpt-4o"
+
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
@@ -110,7 +118,7 @@ def init(csv_file_path):
                 # 중복 체크
                 existing_product = Product.query.filter_by(barcode=row['barcode']).first()
                 if existing_product:
-                    print(f"제품 '{row['name']}'(바코드: {row['barcode']})은 이미 데이터베이스에 존재합니다.")
+                    #print(f"제품 '{row['name']}'(바코드: {row['barcode']})은 이미 데이터베이스에 존재합니다.")
                     continue
 
                 new_product = Product(
@@ -385,6 +393,7 @@ def add_image():
         return jsonify({'message': '상품정보추가완료!!'}), 200
 
 
+
 # 이미지를 받아오기 위함
 @app.route('/mypage/images/<int:image_id>', methods=['GET'])
 def get_image(image_id):
@@ -507,7 +516,7 @@ def login():
     if user:
         expires = timedelta(days=3)
         access_token = create_access_token(identity=user.username, expires_delta=expires)
-        # print("토큰 값:", access_token)
+        print("토큰 값:", access_token)
         allergies = user.allergies if user.allergies else "알레르기 정보X"
         print("알레르기 정보:", allergies)
         return jsonify({'message': '로그인 성공!!', 'access_token': access_token}), 200
@@ -850,6 +859,96 @@ def logindb_get_ocr_result():
         return jsonify({'text': [' '.join(text) for text in highlighted_texts]}), 200
 
 # ========================== loginDB =========================== #
+
+
+
+# ========================== AI =========================== #
+
+ai_img_result = "" # 이미지 분석 후 결과를 담을 공간
+
+
+@app.route('/AI/img', methods=['POST'])
+def AI_image():
+    if 'image' not in request.files:
+        return jsonify({'message': '올바른 파일이 아님'}), 400
+
+    addImg = request.files['image']
+
+    if addImg.filename == '':
+        return jsonify({'message': '이미지가 선택되지 않았음'}), 400
+
+    if addImg:
+        # 이미지를 저장할 경로
+        filepath = 'data/' + addImg.filename
+        addImg.save(filepath)
+
+        # 이미지 정보와 제목, 내용을 데이터베이스에 저장
+        # new_image = Mypage(addImg=filepath)
+        
+        input_text = "음식 레시피 자세히 알려줘. 해당 재료의 칼로리도 함께 포함해서 알려줘."
+        
+        # Open the image file and encode it as a base64 string
+        def encode_image(image_path):
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode("utf-8")
+
+        base64_image = encode_image(filepath)  # filepath를 사용하여 이미지 경로를 전달
+
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that responds in Markdown. Help me with my math homework!"},
+                {"role": "user", "content": [
+                    {"type": "text", "text": input_text},
+                    {"type": "image_url", "image_url": {
+                        "url": f"data:image/png;base64,{base64_image}"}
+                    }
+                ]}
+            ],
+            temperature=0.0,
+        )
+
+        ai_img_result = response.choices[0].message.content
+        print(ai_img_result)
+
+        return jsonify({'AI 분석결과': ai_img_result}), 200
+
+
+@app.route('/AI/result', methods=['GET'])
+def get_ai_result():
+    # 저장된 AI 결과를 JSON 형식으로 반환
+    if ai_img_result:
+        return jsonify({'AI 분석결과': ai_img_result}), 200
+    else:
+        return jsonify({'message': '분석 결과가 아직 없습니다.'}), 404
+
+
+# ========================== AI =========================== #
+
+# from openai import OpenAI
+
+# # Replace with your actual API key
+# open_key = "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"
+# client = OpenAI(api_key=open_key)
+
+# MODEL = "gpt-4o"
+
+# #인풋은 위치기반을 바탕으로 
+# input_text = "성결대학교 근처에 돼지고기를 제외한 식당 찾아줘"
+
+# response = client.chat.completions.create(
+#     model=MODEL,
+#     messages=[
+#         {"role": "system", "content": "You are a helpful assistant that responds in Markdown."},
+#         {"role": "user", "content": input_text}
+#     ],
+#     temperature=0.0,
+# )
+
+# result = response.choices[0].message.content
+# print(result)
+
+# =============================위치 값========================================
 
 if __name__ == '__main__':
     csv_file_path = './product.csv'

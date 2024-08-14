@@ -44,8 +44,10 @@ app.*.map.json
 
 .env
 
+server.py
+
 test.py
-시놀로지.py
+ai.py
 
 processbar.txt
 
