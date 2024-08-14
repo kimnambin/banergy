@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/aiImg.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
 import 'package:flutter_banergy/mypage/ai_recommend.dart';
 //import 'package:flutter_banergy/login/login_login.dart';
@@ -328,10 +327,8 @@ class _HomeScreenState extends State<HomeScreen>
               MaterialPageRoute(builder: (context) => const MainpageApp()),
             );
           } else if (index == 1) {
-            Navigator.pushReplacement(
-                context,
-                // MaterialPageRoute(builder: (context) => const AiRecommend()));
-                MaterialPageRoute(builder: (context) => const AI_imgScreen()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => AiRecommend()));
           } else if (index == 2) {
             showModalBottomSheet(
               context: context,

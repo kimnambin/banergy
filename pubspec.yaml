@@ -34,6 +34,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   dotted_border: ^2.1.0
   image_cropper: ^5.0.1
+  geolocator: ^13.0.1
 
 dev_dependencies:
   flutter_test:
