@@ -1,8 +1,8 @@
 name: flutter_banergy
-description: "A new Flutter project."
+description: 'A new Flutter project.'
 version: 1.0.0+1
 environment:
-  sdk: ">=3.2.0 <4.0.0"
+  sdk: '>=3.2.0 <4.0.0'
 
 dependencies:
   flutter:

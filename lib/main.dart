@@ -293,8 +293,8 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(
-              // AssetImage('assets/images/ai.png'),
-              AssetImage('assets/images/lens.png'),
+              AssetImage('assets/images/ai.png'),
+              // AssetImage('assets/images/lens.png'),
             ),
             label: 'AI 추천',
           ),
@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen>
             );
           } else if (index == 1) {
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => AiRecommend()));
+                MaterialPageRoute(builder: (context) => const AiRecommend()));
           } else if (index == 2) {
             showModalBottomSheet(
               context: context,

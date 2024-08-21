@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,6 @@ class AiRecommend extends StatefulWidget {
   const AiRecommend({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AiRecommendState createState() => _AiRecommendState();
 }
 
@@ -171,23 +172,34 @@ class _AiRecommendState extends State<AiRecommend>
           ),
         ],
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _aiRecommendationIndex = index;
-          });
-        },
-        children: [
-          ProductRecommendationPage(
-            onButtonTapped: _onAIRecommendationTapped,
-            selectedIndex: _aiRecommendationIndex,
-          ),
-          RecipeRecommendationPage(
-            onButtonTapped: _onAIRecommendationTapped,
-            selectedIndex: _aiRecommendationIndex,
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context)
+                  .size
+                  .height, // Ensure it takes the full height
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _aiRecommendationIndex = index;
+                  });
+                },
+                children: [
+                  ProductRecommendationPage(
+                    onButtonTapped: _onAIRecommendationTapped,
+                    selectedIndex: _aiRecommendationIndex,
+                  ),
+                  RecipeRecommendationPage(
+                    onButtonTapped: _onAIRecommendationTapped,
+                    selectedIndex: _aiRecommendationIndex,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _bottomNavIndex,
@@ -328,10 +340,10 @@ class ProductRecommendationPage extends StatefulWidget {
   final int selectedIndex;
 
   const ProductRecommendationPage({
-    Key? key,
+    super.key,
     required this.onButtonTapped,
     required this.selectedIndex,
-  }) : super(key: key);
+  });
 
   @override
   _ProductRecommendationPageState createState() =>
@@ -346,6 +358,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
 
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String aiResult = '';
+  bool _isPhotoSelected = false; //갤러리 버튼 클릭 여부
 
   @override
   void initState() {
@@ -374,13 +387,17 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
           isLoading = false;
         });
       } else {
-        print('Failed to load allergies: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Failed to load allergies: ${response.statusCode}');
+        }
         setState(() {
           isLoading = false;
         });
       }
     } catch (e) {
-      print('Error fetching allergies: $e');
+      if (kDebugMode) {
+        print('Error fetching allergies: $e');
+      }
       setState(() {
         isLoading = false;
       });
@@ -390,11 +407,12 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   Future<void> _getImage(ImageSource source) async {
     final pickedFile = await _imagePicker.pickImage(source: source);
 
-    setState(() {
-      if (pickedFile != null) {
+    if (pickedFile != null) {
+      setState(() {
         _image = File(pickedFile.path);
-      }
-    });
+        _isPhotoSelected = true; // 버튼 클릭 여부 트루로!!
+      });
+    }
   }
 
   Future<void> _addProduct(BuildContext context) async {
@@ -427,11 +445,15 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
           // aiResult = '임시 분석 결과입니다';
         });
       } else {
-        print('Failed to get product recommendation: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Failed to get product recommendation: ${response.statusCode}');
+        }
         // _showErrorDialog(context, '다시 한번 확인해주세요');
       }
     } catch (e) {
-      print('서버에서 오류가 발생했음: $e');
+      if (kDebugMode) {
+        print('서버에서 오류가 발생했음: $e');
+      }
       // _showErrorDialog(context, '서버에서 오류가 발생했습니다.');
     }
   }
@@ -488,8 +510,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
             ),
             onPressed: () {
               widget.onButtonTapped(1);
-              // Call method to handle '위치기반 추천'
-              // For example, call _addProduct() if needed
+
               _addProduct(context);
             },
             child: Text(
@@ -513,43 +534,54 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '알레르기 필터링 현황',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          isLoading
-              ? const CircularProgressIndicator()
-              : Text('필터링된 알레르기: ${allergies.join(", ")}'),
-          const SizedBox(height: 20),
-          _buildPhotoArea(),
-          ElevatedButton.icon(
-            onPressed: () {
-              _getImage(ImageSource.gallery);
-            },
-            icon: const Icon(
-              Icons.perm_media,
-              color: Color(0xFFA7A6A6),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '알레르기 필터링 현황',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            label: const Text(
-              "갤러리",
-              style: TextStyle(
-                color: Color(0xFFA7A6A6),
+            const SizedBox(height: 10),
+            isLoading
+                ? const CircularProgressIndicator()
+                : Text('필터링된 알레르기: ${allergies.join(", ")}'),
+            const SizedBox(height: 20),
+            if (!_isPhotoSelected) ...[
+              Text(
+                '사진을 넣어 레시피를 추천 받아 보세요 ☺️☺️',
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                side:
-                    const BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-                borderRadius: BorderRadius.circular(40.0),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () {
+                  _getImage(ImageSource.gallery);
+                },
+                icon: const Icon(
+                  Icons.perm_media,
+                  color: Color(0xFFA7A6A6),
+                ),
+                label: const Text(
+                  "갤러리",
+                  style: TextStyle(
+                    color: Color(0xFFA7A6A6),
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(
+                        color: Color.fromRGBO(227, 227, 227, 1.0)),
+                    borderRadius: BorderRadius.circular(40.0),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+            if (_isPhotoSelected) ...[
+              _buildPhotoArea(),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -570,67 +602,80 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  aiResult.isNotEmpty ? aiResult : '상품 추천 내용이 여기에 표시됩니다.',
-                  style: TextStyle(fontSize: 16),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 5),
+              // AI 분석 결과 표시
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Text(
+                  aiResult.isNotEmpty ? aiResult : '상품 추천 내용이 여기에 표시됩니다.',
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(fontSize: 13),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildPhotoArea() {
-    if (_image != null) {
-      return Column(
+    return Center(
+      child: Column(
         children: [
-          SizedBox(
-            width: 250,
-            height: 250,
-            child: Image.file(_image!),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: () {
-              if (_image != null) {
-                _addProduct(context);
-              }
-            },
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text("물어보기", style: TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              fixedSize: const Size(double.infinity, 45),
-              backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: Color(0xFFEBEBEB)),
-                borderRadius: BorderRadius.circular(30.0),
+          if (_image != null) ...[
+            SizedBox(
+              width: 150,
+              height: 150,
+              child: Image.file(_image!),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                if (_image != null) {
+                  _addProduct(context);
+                }
+              },
+              icon: const Icon(Icons.search, color: Colors.white),
+              label: const Text("검색", style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size(double.infinity, 45),
+                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(color: Color(0xFFEBEBEB)),
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
             ),
-          ),
+          ] else ...[
+            Container(
+              width: 250,
+              height: 250,
+              color: Colors.white,
+            ),
+          ],
         ],
-      );
-    } else {
-      return Container(
-        width: 250,
-        height: 250,
-        color: Colors.white,
-      );
-    }
+      ),
+    );
   }
 }
 
@@ -639,10 +684,10 @@ class RecipeRecommendationPage extends StatefulWidget {
   final int selectedIndex;
 
   const RecipeRecommendationPage({
-    Key? key,
+    super.key,
     required this.onButtonTapped,
     required this.selectedIndex,
-  }) : super(key: key);
+  });
 
   @override
   _RecipeRecommendationPageState createState() =>
@@ -655,6 +700,8 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
   double? longitude;
   double? latitude;
   String locationStatus = '위치 정보를 가져오는 중...';
+  String aiResult = ''; //ai 결과부분
+  final TextEditingController _textController = TextEditingController(); //인풋 부분
 
   @override
   void initState() {
@@ -663,15 +710,12 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
     getLocation();
   }
 
-  Future<void> fetchAllergies() async {
+  Future<List<String>> fetchAllergies() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('authToken');
 
     if (token == null) {
-      setState(() {
-        isLoading = false;
-      });
-      return;
+      return []; // 토큰이 없을 때 빈 리스트 반환
     }
 
     try {
@@ -682,40 +726,44 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        setState(() {
-          allergies = List<String>.from(data['allergies'] ?? []);
-          isLoading = false;
-        });
+        return List<String>.from(data['allergies'] ?? []);
       } else {
         debugPrint('Failed to load allergies: ${response.statusCode}');
-        setState(() {
-          isLoading = false;
-        });
+        return []; // 알레르기 정보 로드 실패 시 빈 리스트 반환
       }
     } catch (e) {
       debugPrint('Error fetching allergies: $e');
-      setState(() {
-        isLoading = false;
-      });
+      return []; // 오류 발생 시 빈 리스트 반환
     }
   }
 
   Future<void> getLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          // ignore: deprecated_member_use
-          desiredAccuracy: LocationAccuracy.high);
+    // 위치 권한을 확인하고 요청
+    var status = await Permission.location.request();
+
+    if (status.isGranted) {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+            // ignore: deprecated_member_use
+            desiredAccuracy: LocationAccuracy.high);
+        setState(() {
+          longitude = position.longitude;
+          latitude = position.latitude;
+          locationStatus =
+              '현재 위치: (${longitude!.toStringAsFixed(2)}, ${latitude!.toStringAsFixed(2)})';
+        });
+      } catch (e) {
+        setState(() {
+          locationStatus = '위치 정보를 가져오는데 실패했습니다.';
+        });
+        debugPrint('Error getting location: $e');
+      }
+    } else if (status.isDenied) {
       setState(() {
-        longitude = position.longitude;
-        latitude = position.latitude;
-        locationStatus =
-            '현재 위치: (${longitude!.toStringAsFixed(2)}, ${latitude!.toStringAsFixed(2)})';
+        locationStatus = '위치 권한이 거부되었습니다.';
       });
-    } catch (e) {
-      setState(() {
-        locationStatus = '위치 정보를 가져오는데 실패했습니다.';
-      });
-      debugPrint('Error getting location: $e');
+    } else if (status.isPermanentlyDenied) {
+      openAppSettings();
     }
   }
 
@@ -724,6 +772,9 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
       debugPrint('위치 정보가 설정되지 않았습니다.');
       return;
     }
+    String inputText = _textController.text;
+
+    debugPrint('Input Text: $inputText');
 
     // 소수점 3자리까지 포맷 후 double 타입으로 변환
     final double formattedLongitude =
@@ -733,6 +784,7 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
     final Map<String, dynamic> locationData = {
       'longitude': formattedLongitude,
       'latitude': formattedLatitude,
+      'inputText': inputText,
     };
 
     final String requestBody = jsonEncode(locationData);
@@ -749,13 +801,19 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
       );
 
       if (response.statusCode == 200) {
-        final result = json.decode(response.body);
-        debugPrint('AI 분석결과: ${result['AI 분석결과']}');
+        // 응답 데이터를 직접 파싱
+        var jsonData = json.decode(response.body); // JSON 파싱
+
+        setState(() {
+          aiResult = jsonData['AI 분석결과']; // AI 분석 결과 저장
+        });
+        // 다이얼로그 호출을 버튼 클릭 시 조정
       } else {
-        debugPrint('Failed to send location to server: ${response.statusCode}');
+        debugPrint(
+            'Failed to get product recommendation: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error sending location to server: $e');
+      debugPrint('Error during request: $e');
     }
   }
 
@@ -769,7 +827,7 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
           const SizedBox(height: 10),
           const SizedBox(height: 10),
           _buildLocationStatus(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           _buildRecommendationContent('위치 기반'),
         ],
       ),
@@ -860,38 +918,78 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                sendLocation(context);
-              },
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text("물어보기", style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(double.infinity, 45),
-                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(color: Color(0xFFEBEBEB)),
-                  borderRadius: BorderRadius.circular(30.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        await sendLocation(context);
+                      },
+                      icon: const Icon(Icons.search, color: Colors.white),
+                      label: const Text("검색",
+                          style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(100, 45),
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Color(0xFFEBEBEB)),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const Expanded(
-              child: Center(
-                child: Text('레시피 추천 내용이 여기에 표시됩니다.'),
+              const SizedBox(height: 5),
+              // 검색 입력
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextField(
+                  controller: _textController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: const BorderSide(color: Colors.green),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    hintText: '가장 심한 알레르기 하나를 입력해주세요.',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+              // AI 분석 결과 표시
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Text(
+                  aiResult.isNotEmpty ? aiResult : '여기에 주변 식당 정보가 표시됩니다. ',
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
