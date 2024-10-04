@@ -161,6 +161,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  drift:
+    dependency: "direct main"
+    description:
+      name: drift
+      sha256: d6ff1ec6a0f3fa097dda6b776cf601f1f3d88b53b287288e09c1306f394fb1b3
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.20.3"
   english_words:
     dependency: "direct main"
     description:
@@ -328,6 +336,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.3"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      sha256: ff97e5e7b2e82e63c82f5658c6ba2605ea831f0f7489b0d2fb255d817ec4eb5e
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.0.0"
   http:
     dependency: "direct main"
     description:
@@ -829,6 +845,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.3"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: "45f168ae2213201b54e09429ed0c593dc2c88c924a1488d6f9c523a255d567cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.6"
   stack_trace:
     dependency: transitive
     description:

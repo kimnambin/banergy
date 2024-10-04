@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ClinicScreen extends StatefulWidget {
   const ClinicScreen({super.key});
@@ -11,6 +12,8 @@ class ClinicScreen extends StatefulWidget {
 
 class _ClinicScreenState extends State<ClinicScreen> {
   List<String> selectedChoices = [];
+  final TextEditingController _hospitalController = TextEditingController();
+  final TextEditingController _diagnosisController = TextEditingController();
 
   List<String> choices = [
     '두드러기',
@@ -34,6 +37,49 @@ class _ClinicScreenState extends State<ClinicScreen> {
   );
 
   @override
+  void initState() {
+    super.initState();
+    _loadSavedData(); // 앱 실행 시 저장된 데이터를 불러옴
+  }
+
+  // 데이터 로드
+  Future<void> _loadSavedData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 저장된 데이터 불러오기
+    setState(() {
+      selectedChoices = prefs.getStringList('selectedChoices') ?? [];
+      _hospitalController.text = prefs.getString('hospital') ?? '';
+      _diagnosisController.text = prefs.getString('diagnosis') ?? '';
+    });
+  }
+
+  // 데이터 저장
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 선택한 데이터 저장
+    await prefs.setStringList('selectedChoices', selectedChoices);
+    await prefs.setString('hospital', _hospitalController.text);
+    await prefs.setString('diagnosis', _diagnosisController.text);
+
+    if (kDebugMode) {
+      print("Data saved successfully");
+    }
+  }
+
+  // _onSubmitted 함수 추가
+  Future<void> _onSubmitted() async {
+    await _saveData(); // 입력된 데이터 저장
+
+    if (kDebugMode) {
+      print(selectedChoices);
+      print(_hospitalController.text);
+      print(_diagnosisController.text);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: initializeDateFormatting('ko_KR', null),
@@ -51,10 +97,14 @@ class _ClinicScreenState extends State<ClinicScreen> {
                 children: [
                   const Text('방문한 병원'),
                   const SizedBox(height: 8),
-                  const TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '입력하기',
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: TextField(
+                      controller: _hospitalController, // 병원 입력 컨트롤러 추가
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: '입력하기',
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -82,10 +132,14 @@ class _ClinicScreenState extends State<ClinicScreen> {
                   const SizedBox(height: 8),
                   const Text('진료 내용'),
                   const SizedBox(height: 8),
-                  const TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '진료/검사/시술/',
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: TextField(
+                      controller: _diagnosisController, // 진료 내용 입력 컨트롤러 추가
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: '진료/검사/시술/',
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -93,8 +147,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
                     '전체 진료 내역은 [리포트]에서 한눈에 확인할 수 있어요. 진료받을 때 참고하시면 편해요 :)',
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width -
-                        32, // 버튼의 가로 길이를 화면 전체로 설정
+                    width: MediaQuery.of(context).size.width - 32,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 70, 138, 71),
@@ -102,14 +155,12 @@ class _ClinicScreenState extends State<ClinicScreen> {
                       child: const Text(
                         '저장하기',
                         style: TextStyle(
-                          color: Colors.white, // 텍스트 색상을 하얀색으로 변경
-                          fontWeight: FontWeight.bold, // 텍스트 굵게
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onPressed: () {
-                        if (kDebugMode) {
-                          print(selectedChoices);
-                        }
+                      onPressed: () async {
+                        await _onSubmitted(); // 데이터 저장
                         Navigator.of(context).pop();
                       },
                     ),
