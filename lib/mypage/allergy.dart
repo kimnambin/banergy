@@ -8,29 +8,16 @@ import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_banergy/mypage/drift_database.dart';
-import 'package:get_it/get_it.dart';
-import 'package:drift/drift.dart' hide Column;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-final GetIt getIt = GetIt.instance;
-
 void main() async {
-  setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
-  setupLocator();
   if (kDebugMode) {
     print("Locale 확인했다");
   }
-  final database = LocalDatabase();
-  GetIt.I.registerSingleton<LocalDatabase>(database);
   runApp(const Recordallergyreactions());
-}
-
-void setupLocator() {
-  getIt.registerSingleton<LocalDatabase>(LocalDatabase()); // LocalDatabase 등록
 }
 
 class Recordallergyreactions extends StatelessWidget {
@@ -51,7 +38,7 @@ class Recordallergyreactions extends StatelessWidget {
 class StartPage extends StatefulWidget {
   const StartPage({
     super.key,
-  }); // 생성자
+  });
 
   @override
   _StartPageState createState() => _StartPageState();
@@ -73,7 +60,7 @@ class _StartPageState extends State<StartPage> {
     _loadEventsFromLocal(); // 앱 시작 시 로컬 스토리지에서 이벤트 불러오기
   }
 
-// 로컬 스토리지에 이벤트 저장하기
+  // 로컬 스토리지에 이벤트 저장하기
   Future<void> _saveEventsToLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -87,7 +74,7 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-// 로컬 스토리지에서 이벤트 불러오기
+  // 로컬 스토리지에서 이벤트 불러오기
   Future<void> _loadEventsFromLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -121,7 +108,7 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-// 해당 날짜의 이벤트를 가져오는 함수
+  // 해당 날짜의 이벤트를 가져오는 함수
   List<String> _getEventsForDay(DateTime day) {
     return _events[day] ?? [];
   }
@@ -134,23 +121,10 @@ class _StartPageState extends State<StartPage> {
   }
 
   Future<void> _onSubmitted(DateTime dday, String event) async {
-    final selectedDay = _selectedDay ?? _focusedDay;
+    final selectedDay = _selectedDay;
 
     if (formkey.currentState != null && formkey.currentState!.validate()) {
       formkey.currentState!.save();
-
-      try {
-        await GetIt.I<LocalDatabase>().createSchedule(
-          SchedulesCompanion(
-            content: Value(event),
-            date: Value(selectedDay),
-          ),
-        );
-        print("Event added to database: $event at $selectedDay");
-      } catch (e) {
-        print("Failed to add event to database: $e");
-        return;
-      }
 
       // 메모리상의 이벤트 리스트에 추가 및 저장 후 바로 다시 로드하여 갱신
       setState(() {
@@ -171,7 +145,7 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-// 시간값 검증
+  // 시간값 검증
   String? timeValidator(String? val) {
     if (val == null) {
       return '값을 입력해주세요';
@@ -265,73 +239,87 @@ class _StartPageState extends State<StartPage> {
               ),
             ),
             Container(
-                child: ListView(
-                    shrinkWrap: true,
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20.0),
+                children: [
+                  Container(
                     padding: const EdgeInsets.all(20.0),
-                    children: [
+                    child: const Text(
+                      '안녕하세요? OO님',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
                   Container(
-                      padding: const EdgeInsets.all(20.0),
-                      child: const Text('안녕하세요? OO님',
-                          style: TextStyle(fontSize: 18))),
-                  Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: const Text('알레르기 반응이 있었나요?',
-                          style: TextStyle(fontSize: 16))),
-                ])),
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: const Text(
+                      '알레르기 반응이 있었나요?',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Container(
               child: ListView(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(), // 중복 스크롤 방지
                 padding: const EdgeInsets.all(20.0),
                 children: [
-                  SizedBox(
-                    // database의 데이터가 stream으로 넘어옴.
-                    child: StreamBuilder<List<Schedule>>(
-                      stream:
-                          GetIt.I<LocalDatabase>().watchSchedules(_selectedDay),
-                      builder: (context, snapshot) {
-                        // 데이터가 없을 때 빈 컨테이너 전달
-                        if (snapshot.data?.isEmpty ?? true) {
-                          return Container();
-                        }
-                        // 화면 랜더링
-                        return ListView.builder(
-                          shrinkWrap: true, // 내부 ListView도 크기 축소
-                          physics:
-                              const NeverScrollableScrollPhysics(), // 중복 스크롤 방지
-                          itemCount: snapshot.data?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final schedule = snapshot.data![index];
-                            return Dismissible(
-                              key: ObjectKey(schedule.id),
-                              direction: DismissDirection.startToEnd,
-                              onDismissed: (DismissDirection direction) {
-                                GetIt.I<LocalDatabase>()
-                                    .removeSchedule(schedule.id);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          "${schedule.content}이(가) 삭제되었습니다.")),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 8,
-                                  left: 8,
-                                ),
-                                child: MemoCard(
-                                  content: schedule.content,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                  // 아래 StreamBuilder 및 관련 LocalDatabase 코드 제거
+                  // ----------------------------------------------------
+                  // SizedBox(
+                  //   // database의 데이터가 stream으로 넘어옴.
+                  //   child: StreamBuilder<List<Schedule>>(
+                  //     stream:
+                  //         GetIt.I<LocalDatabase>().watchSchedules(_selectedDay),
+                  //     builder: (context, snapshot) {
+                  //       // 데이터가 없을 때 빈 컨테이너 전달
+                  //       if (snapshot.data?.isEmpty ?? true) {
+                  //         return Container();
+                  //       }
+                  //       // 화면 랜더링
+                  //       return ListView.builder(
+                  //         shrinkWrap: true, // 내부 ListView도 크기 축소
+                  //         physics:
+                  //             const NeverScrollableScrollPhysics(), // 중복 스크롤 방지
+                  //         itemCount: snapshot.data?.length ?? 0,
+                  //         itemBuilder: (context, index) {
+                  //           final schedule = snapshot.data![index];
+                  //           return Dismissible(
+                  //             key: ObjectKey(schedule.id),
+                  //             direction: DismissDirection.startToEnd,
+                  //             onDismissed: (DismissDirection direction) {
+                  //               GetIt.I<LocalDatabase>()
+                  //                   .removeSchedule(schedule.id);
+                  //               ScaffoldMessenger.of(context).showSnackBar(
+                  //                 SnackBar(
+                  //                     content: Text(
+                  //                         "${schedule.content}이(가) 삭제되었습니다.")),
+                  //               );
+                  //             },
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.only(
+                  //                 bottom: 8,
+                  //                 left: 8,
+                  //               ),
+                  //               child: MemoCard(
+                  //                 content: schedule.content,
+                  //               ),
+                  //             ),
+                  //           );
+                  //         },
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                  // ----------------------------------------------------
+
                   Container(
                     padding: const EdgeInsets.all(20.0),
-                    child: const Text('몸 상태와 반응 등 증상을 꼭 이야기해주세요.'),
+                    child: const Text(
+                      '몸 상태와 반응 등 증상을 꼭 이야기해주세요.',
+                    ),
                   ),
                   const SizedBox(height: 8),
                   GestureDetector(
@@ -479,6 +467,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
   final TextEditingController _eventController = TextEditingController();
 
   final double _calendarHeight = 150.0;
+
   @override
   void initState() {
     super.initState();
@@ -513,89 +502,84 @@ class _WeekCalendarState extends State<WeekCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TableCalendar<String>(
-          locale: 'ko_KR',
-          calendarBuilders: CalendarBuilders(
-            defaultBuilder: (context, day, focusedDay) {
-              final isFocusedDay = isSameDay(day, focusedDay);
-              return Center(
+    return TableCalendar(
+      locale: 'ko_KR',
+      calendarBuilders: CalendarBuilders(
+        defaultBuilder: (context, day, focusedDay) {
+          final isFocusedDay = isSameDay(day, focusedDay);
+          return Center(
+            child: Text(
+              DateFormat('d').format(day),
+              style: const TextStyle(),
+            ),
+          );
+        },
+        selectedBuilder: (context, day, focusedDay) {
+          final isFocusedDay = isSameDay(day, focusedDay);
+          return Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade600,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
                 child: Text(
                   DateFormat('d').format(day),
-                  style: const TextStyle(),
-                ),
-              );
-            },
-            selectedBuilder: (context, day, focusedDay) {
-              final isFocusedDay = isSameDay(day, focusedDay);
-              return Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade600,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      DateFormat('d').format(day),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              );
-            },
-            todayBuilder: (context, day, focusedDay) {
-              final isFocusedDay = isSameDay(day, focusedDay);
-              return Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      DateFormat('d').format(day),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              ),
+            ),
+          );
+        },
+        todayBuilder: (context, day, focusedDay) {
+          final isFocusedDay = isSameDay(day, focusedDay);
+          return Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  DateFormat('d').format(day),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              );
-            },
-          ),
-          daysOfWeekHeight: 30,
-          firstDay: DateTime.utc(2024, 7, 1),
-          lastDay: DateTime.utc(2024, 10, 31),
-          focusedDay: _focusedDay,
-          calendarFormat: _calendarFormat,
-          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-          headerStyle: const HeaderStyle(
-            titleCentered: false,
-            formatButtonVisible: false,
-          ),
-          onDaySelected: _onDaySelected,
-          onFormatChanged: (format) {
-            if (_calendarFormat != format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-              widget.onFormatChanged(format);
-            }
-          },
-          onPageChanged: (focusedDay) {
-            _focusedDay = focusedDay; // No need to call setState here
-          },
-          daysOfWeekStyle: const DaysOfWeekStyle(
-            weekendStyle: TextStyle(color: Colors.red),
-          ),
-        ),
-        const SizedBox(height: 8.0),
-      ],
+              ),
+            ),
+          );
+        },
+      ),
+      daysOfWeekHeight: 30,
+      firstDay: DateTime.utc(2024, 7, 1),
+      lastDay: DateTime.utc(2024, 10, 31),
+      focusedDay: _focusedDay,
+      calendarFormat: _calendarFormat,
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+      headerStyle: const HeaderStyle(
+        titleCentered: false,
+        formatButtonVisible: false,
+      ),
+      onDaySelected: _onDaySelected,
+      onFormatChanged: (format) {
+        if (_calendarFormat != format) {
+          setState(() {
+            _calendarFormat = format;
+          });
+          widget.onFormatChanged(format);
+        }
+      },
+      onPageChanged: (focusedDay) {
+        _focusedDay = focusedDay; // No need to call setState here
+      },
+      daysOfWeekStyle: const DaysOfWeekStyle(
+        weekendStyle: TextStyle(color: Colors.red),
+      ),
     );
   }
 

@@ -248,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildButton2(Icons.add),
+                        /*_buildButton2(Icons.add),
                         const SizedBox(width: 8),
                         GestureDetector(
                           onTap: () {
@@ -269,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage>
                             ),
                           ),
                         ),
-                        const SizedBox(width: 40),
+                        const SizedBox(width: 40),*/
                         _buildButton3(Icons.add),
                         const SizedBox(width: 8),
                         GestureDetector(

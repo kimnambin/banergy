@@ -37,6 +37,7 @@ dependencies:
   geolocator: ^13.0.1
   drift: ^2.20.3
   get_it: ^8.0.0
+  uuid: ^4.3.2
 
 dev_dependencies:
   flutter_test:
