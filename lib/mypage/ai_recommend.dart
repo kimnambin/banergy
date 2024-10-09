@@ -335,6 +335,7 @@ class _AiRecommendState extends State<AiRecommend>
   }
 }
 
+// =======================레시피 추천==========================================================================
 class ProductRecommendationPage extends StatefulWidget {
   final Function(int) onButtonTapped;
   final int selectedIndex;
@@ -359,6 +360,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String aiResult = '';
   bool _isPhotoSelected = false; //갤러리 버튼 클릭 여부
+  // final TextEditingController _textController = TextEditingController(); //인풋 부분
 
   @override
   void initState() {
@@ -416,11 +418,15 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   }
 
   Future<void> _addProduct(BuildContext context) async {
+    // String inputText = _textController.text; //인풋내용
+
     try {
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('$baseUrl:8000/AI/img'),
       );
+
+      // request.fields['inputText'] = inputText;
 
       if (_image != null) {
         var imageStream = http.ByteStream(_image!.openRead());
@@ -538,44 +544,37 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '알레르기 필터링 현황',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 10),
-            isLoading
-                ? const CircularProgressIndicator()
-                : Text('필터링된 알레르기: ${allergies.join(", ")}'),
-            const SizedBox(height: 20),
             if (!_isPhotoSelected) ...[
               Text(
                 '사진을 넣어 레시피를 추천 받아 보세요 ☺️☺️',
                 style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
               const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: () {
-                  _getImage(ImageSource.gallery);
-                },
-                icon: const Icon(
-                  Icons.perm_media,
-                  color: Color(0xFFA7A6A6),
-                ),
-                label: const Text(
-                  "갤러리",
-                  style: TextStyle(
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _getImage(ImageSource.gallery);
+                  },
+                  icon: const Icon(
+                    Icons.perm_media,
                     color: Color(0xFFA7A6A6),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                        color: Color.fromRGBO(227, 227, 227, 1.0)),
-                    borderRadius: BorderRadius.circular(40.0),
+                  label: const Text(
+                    "갤러리",
+                    style: TextStyle(color: Color(0xFFA7A6A6)),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                          color: Color.fromRGBO(227, 227, 227, 1.0)),
+                      borderRadius: BorderRadius.circular(40.0),
+                    ),
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
             ],
             if (_isPhotoSelected) ...[
               _buildPhotoArea(),
@@ -649,6 +648,27 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
               child: Image.file(_image!),
             ),
             const SizedBox(height: 20),
+            // TextField(
+            //   controller: _textController,
+            //   decoration: InputDecoration(
+            //     border: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(30.0),
+            //     ),
+            //     enabledBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(30.0),
+            //       borderSide: BorderSide(color: Colors.grey[300]!),
+            //     ),
+            //     focusedBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(30.0),
+            //       borderSide: const BorderSide(color: Colors.green),
+            //     ),
+            //     contentPadding:
+            //         const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            //     hintText: '가장 심한 알레르기 하나를 입력해주세요.',
+            //     hintStyle: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            //   ),
+            // ),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
                 if (_image != null) {
@@ -679,6 +699,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   }
 }
 
+// ==========================================식당 추천===============================================
 class RecipeRecommendationPage extends StatefulWidget {
   final Function(int) onButtonTapped;
   final int selectedIndex;
@@ -937,10 +958,12 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
                         await sendLocation(context);
                       },
                       icon: const Icon(Icons.search, color: Colors.white),
-                      label: const Text("검색",
-                          style: TextStyle(color: Colors.white)),
+                      label: const Text(
+                        "검색",
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
                       style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(100, 45),
+                        fixedSize: const Size(100, 35),
                         backgroundColor: Colors.green,
                         shape: RoundedRectangleBorder(
                           side: const BorderSide(color: Color(0xFFEBEBEB)),
