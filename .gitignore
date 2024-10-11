@@ -71,7 +71,7 @@ android
 
 ios
 
-linix
+linux
 
 macos
 
@@ -81,3 +81,6 @@ windows
 
 .metadata
 
+analysis_options.yaml
+
+pubspec.lock
