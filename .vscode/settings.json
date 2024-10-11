@@ -1,0 +1,5 @@
+{
+    "git.ignoreLimitWarning": true,
+    "cmake.configureOnOpen": false,
+    "editor.minimap.enabled": false
+}

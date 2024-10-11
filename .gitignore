@@ -65,22 +65,22 @@ static/
 
 assets
 
-android
+# android
 
-.vscode
+# .vscode
 
-ios
+# ios
 
-linux
+# linux
 
-macos
+# macos
 
-web
+# web
 
-windows
+# windows
 
-.metadata
+# .metadata
 
-analysis_options.yaml
+# analysis_options.yaml
 
-pubspec.lock
+# pubspec.lock
