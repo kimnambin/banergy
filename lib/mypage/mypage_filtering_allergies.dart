@@ -40,6 +40,9 @@ class _FilteringPageState extends State<FilteringPage> {
   List<String?> checkListValue2 = []; //이게 사용자가 실시간으로 선택하는 거
   List<String> userAllergies = []; //이게 저장된 거 불러오는 것
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+
+  bool isOtherSelected = false; //기타 선택 여부
+  String? otherInputText;
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -261,22 +264,44 @@ class _FilteringPageState extends State<FilteringPage> {
                 },
               ),
             ),
-            // 중앙에 정렬된 필터 영역
+            // 필터 영역
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(20.0),
                 color: Colors.white,
-                child: Row(
-                  children: [
-                    // 왼쪽 필터
-                    Expanded(
-                      child: buildFilterList(checkList2),
-                    ),
-                  ],
-                ),
+                child: buildFilterList(checkList2),
               ),
             ),
-
+            // 기타 항목을 선택했을 때만 텍스트 입력 창 표시
+            if (isOtherSelected)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextField(
+                  onChanged: (value) {
+                    otherInputText = value; // 사용자가 입력한 '기타' 텍스트 저장
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: const BorderSide(color: Colors.green),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    hintText: '기타 알레르기를 입력해주세요.',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ),
             // 적용 버튼 추가
             Container(
               padding: const EdgeInsets.all(16.0),
@@ -289,10 +314,15 @@ class _FilteringPageState extends State<FilteringPage> {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
-                onPressed: () => {
-                  _userFiltering(context, checkListValue2),
+                onPressed: () {
+                  if (isOtherSelected && otherInputText != null) {
+                    checkListValue2.remove("기타");
+                    checkListValue2.add(otherInputText);
+                  }
+
+                  _userFiltering(context, checkListValue2);
                   // ignore: avoid_print
-                  print("저장된 값: $checkListValue2")
+                  print("저장된 값: $checkListValue2");
                 },
                 child: const Text(
                   '적용',
@@ -334,15 +364,22 @@ class _FilteringPageState extends State<FilteringPage> {
                       child: CheckboxListTile(
                         onChanged: (bool? check) {
                           setState(() {
+                            if (filter == "기타") {
+                              isOtherSelected = check ?? false;
+                            }
+
                             if (checkListValue2.contains(filter)) {
                               checkListValue2.remove(filter);
                               return;
                             }
-                            checkListValue2.add(filter);
+
+                            if (filter != "기타") {
+                              checkListValue2.add(filter);
+                            }
                           });
                         },
                         title: Text(filter),
-                        value: checkListValue2.contains(filter) ? true : false,
+                        value: checkListValue2.contains(filter),
                       ),
                     ),
                   ),

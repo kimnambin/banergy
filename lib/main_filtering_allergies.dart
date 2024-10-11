@@ -36,6 +36,9 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
   List<String?> checkListValue2 = []; //이게 사용자가 실시간으로 선택하는 거
   List<String> userAllergies = []; //이게 저장된 거 불러오는 것
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  bool isOtherSelected = false; //기타 선택 여부
+  String? otherInputText;
+
   List<String> checkList2 = [
     "계란",
     "밀",
@@ -196,115 +199,142 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "알러지 필터링",
-            textAlign: TextAlign.center,
-          ),
-          centerTitle: true,
-          //backgroundColor: const Color(0xFFF1F2F7),
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.push(
-                context,
-                //마이페이지에서는 뒤로 가면 마이페이지가 되도록(아니면 오류가 남 ㅠ)
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-              );
-            },
-          ),
+      appBar: AppBar(
+        title: const Text(
+          "알러지 필터링",
+          textAlign: TextAlign.center,
         ),
-        body: Container(
-          decoration: const BoxDecoration(color: Colors.white),
-          child: Column(
-            children: [
-              // Image 추가
-              Container(
-                color: Colors.white,
-                child: Image.asset(
-                  'images/000.jpeg',
-                  width: 80,
-                  height: 80,
-                ),
+        centerTitle: true,
+        //backgroundColor: const Color(0xFFF1F2F7),
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.push(
+              context,
+              //마이페이지에서는 뒤로 가면 마이페이지가 되도록(아니면 오류가 남 ㅠ)
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(color: Colors.white),
+        child: Column(
+          children: [
+            // Image 추가
+            Container(
+              color: Colors.white,
+              child: Image.asset(
+                'images/000.jpeg',
+                width: 80,
+                height: 80,
               ),
-              const SizedBox(height: 10),
-              Text(
-                userAllergies.isNotEmpty
-                    ? userAllergies.join(", ")
-                    : "해당하는 알레르기를 체크해주세요",
+            ),
+            const SizedBox(height: 10),
+            Text(
+              userAllergies.isNotEmpty
+                  ? userAllergies.join(", ")
+                  : "해당하는 알레르기를 체크해주세요",
+              style: const TextStyle(
+                fontFamily: 'PretendardSemiBold',
+              ),
+            ),
+            const SizedBox(height: 15),
+            //여기가 검색부분
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
                 style: const TextStyle(
-                  fontFamily: 'PretendardSemiBold',
+                  fontFamily: 'PretendardBold',
                 ),
-              ),
-              const SizedBox(height: 15),
-              //여기가 검색부분
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextField(
-                  style: const TextStyle(
-                    fontFamily: 'PretendardBold',
+                decoration: const InputDecoration(
+                  hintText: '알레르기를 검색해보세요!!',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
                   ),
-                  decoration: const InputDecoration(
-                    hintText: '알레르기를 검색해보세요!!',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                    ),
-                    contentPadding: EdgeInsets.only(left: 30, bottom: 13),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      searchText = value;
-                    });
-                  },
+                  contentPadding: EdgeInsets.only(left: 30, bottom: 13),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                  });
+                },
               ),
-              // 중앙에 정렬된 필터 영역
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(20.0),
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      // 왼쪽 필터
-                      Expanded(
-                        child: buildFilterList(checkList2),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // 적용 버튼 추가
-              Container(
-                padding: const EdgeInsets.all(16.0),
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
                 color: Colors.white,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF03C95B),
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
+                child: buildFilterList(checkList2),
+              ),
+            ),
+            // 기타 항목을 선택했을 때만 텍스트 입력 창 표시
+            if (isOtherSelected)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextField(
+                  onChanged: (value) {
+                    otherInputText = value; // 사용자가 입력한 '기타' 텍스트 저장
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                  ),
-                  onPressed: () => {
-                    _userFiltering(context, checkListValue2),
-                    // ignore: avoid_print
-                    print("저장된 값: $checkListValue2")
-                  },
-                  child: const Text(
-                    '적용',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: const BorderSide(color: Colors.green),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    hintText: '기타 알레르기를 입력해주세요.',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
-        ));
+            // 적용 버튼 추가
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.white,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF03C95B),
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                onPressed: () {
+                  if (isOtherSelected && otherInputText != null) {
+                    checkListValue2.remove("기타");
+                    checkListValue2.add(otherInputText);
+                  }
+
+                  _userFiltering(context, checkListValue2);
+                  // ignore: avoid_print
+                  print("저장된 값: $checkListValue2");
+                },
+                child: const Text(
+                  '적용',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // 체크박스 리스트를 생성하는 함수
@@ -331,15 +361,22 @@ class _MainFilteringPageState extends State<MainFilteringPage> {
                       child: CheckboxListTile(
                         onChanged: (bool? check) {
                           setState(() {
+                            if (filter == "기타") {
+                              isOtherSelected = check ?? false;
+                            }
+
                             if (checkListValue2.contains(filter)) {
                               checkListValue2.remove(filter);
                               return;
                             }
-                            checkListValue2.add(filter);
+
+                            if (filter != "기타") {
+                              checkListValue2.add(filter);
+                            }
                           });
                         },
                         title: Text(filter),
-                        value: checkListValue2.contains(filter) ? true : false,
+                        value: checkListValue2.contains(filter),
                       ),
                     ),
                   ),

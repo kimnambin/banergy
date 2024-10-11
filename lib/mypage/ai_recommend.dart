@@ -360,7 +360,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String aiResult = '';
   bool _isPhotoSelected = false; //갤러리 버튼 클릭 여부
-  // final TextEditingController _textController = TextEditingController(); //인풋 부분
+  final TextEditingController _textController = TextEditingController(); //인풋 부분
 
   @override
   void initState() {
@@ -417,8 +417,14 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
     }
   }
 
+  bool _isLoading = false;
+
   Future<void> _addProduct(BuildContext context) async {
-    // String inputText = _textController.text; //인풋내용
+    String inputText = _textController.text; // 인풋내용
+
+    setState(() {
+      _isLoading = true; // 요청 시작 전 로딩 상태 true
+    });
 
     try {
       var request = http.MultipartRequest(
@@ -426,7 +432,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
         Uri.parse('$baseUrl:8000/AI/img'),
       );
 
-      // request.fields['inputText'] = inputText;
+      request.fields['inputText'] = inputText;
 
       if (_image != null) {
         var imageStream = http.ByteStream(_image!.openRead());
@@ -448,19 +454,23 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
 
         setState(() {
           aiResult = jsonData['AI 분석결과']; // AI 분석 결과 저장
-          // aiResult = '임시 분석 결과입니다';
+          _isLoading = false; // 로딩 상태 종료
         });
       } else {
         if (kDebugMode) {
           print('Failed to get product recommendation: ${response.statusCode}');
         }
-        // _showErrorDialog(context, '다시 한번 확인해주세요');
+        setState(() {
+          _isLoading = false; // 실패 시에도 로딩 상태 종료
+        });
       }
     } catch (e) {
       if (kDebugMode) {
         print('서버에서 오류가 발생했음: $e');
       }
-      // _showErrorDialog(context, '서버에서 오류가 발생했습니다.');
+      setState(() {
+        _isLoading = false; // 오류 발생 시 로딩 상태 종료
+      });
     }
   }
 
@@ -620,7 +630,24 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
                   ],
                 ),
               ),
+              Stack(
+                children: [
+                  // 메인 콘텐츠
+                  Column(
+                    children: [
+                      // 기타 UI 요소
+                      Text(aiResult), // AI 결과 표시
+                    ],
+                  ),
+                  // 로딩 애니메이션 표시
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(), // 로딩 애니메이션
+                    ),
+                ],
+              ),
               const SizedBox(height: 5),
+
               // AI 분석 결과 표시
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -648,26 +675,26 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
               child: Image.file(_image!),
             ),
             const SizedBox(height: 20),
-            // TextField(
-            //   controller: _textController,
-            //   decoration: InputDecoration(
-            //     border: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //     ),
-            //     enabledBorder: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //       borderSide: BorderSide(color: Colors.grey[300]!),
-            //     ),
-            //     focusedBorder: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //       borderSide: const BorderSide(color: Colors.green),
-            //     ),
-            //     contentPadding:
-            //         const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            //     hintText: '가장 심한 알레르기 하나를 입력해주세요.',
-            //     hintStyle: TextStyle(fontSize: 13, color: Colors.grey[600]),
-            //   ),
-            // ),
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(color: Colors.green),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                hintText: '가장 심한 알레르기 하나를 입력해주세요.',
+                hintStyle: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              ),
+            ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
@@ -788,6 +815,7 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
     }
   }
 
+  bool _isLoading = false;
   Future<void> sendLocation(BuildContext context) async {
     if (longitude == null || latitude == null) {
       debugPrint('위치 정보가 설정되지 않았습니다.');
@@ -812,6 +840,10 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
 
     debugPrint('Sending location data: $requestBody'); // 보내는 데이터 출력
 
+    setState(() {
+      _isLoading = true; // 요청 시작 전 로딩 상태 true
+    });
+
     try {
       final response = await http.post(
         Uri.parse('${dotenv.env['BASE_URL']}:8000/AI/map'),
@@ -827,15 +859,22 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
 
         setState(() {
           aiResult = jsonData['AI 분석결과']; // AI 분석 결과 저장
+          _isLoading = false;
         });
         // 다이얼로그 호출을 버튼 클릭 시 조정
       } else {
         debugPrint(
             'Failed to get product recommendation: ${response.statusCode}');
       }
+      setState(() {
+        _isLoading = false; // 실패 시에도 로딩 상태 종료
+      });
     } catch (e) {
       debugPrint('Error during request: $e');
     }
+    setState(() {
+      _isLoading = false; // 실패 시에도 로딩 상태 종료
+    });
   }
 
   @override
@@ -973,6 +1012,22 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
                     ),
                   ],
                 ),
+              ),
+              Stack(
+                children: [
+                  // 메인 콘텐츠
+                  Column(
+                    children: [
+                      // 기타 UI 요소
+                      Text(aiResult), // AI 결과 표시
+                    ],
+                  ),
+                  // 로딩 애니메이션 표시
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(), // 로딩 애니메이션
+                    ),
+                ],
               ),
               const SizedBox(height: 5),
               // 검색 입력

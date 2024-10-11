@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/clinic.dart';
 import 'package:flutter_banergy/mypage/detail_record.dart';
-import 'package:flutter_banergy/mypage/scedule_card.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -68,10 +67,9 @@ class _StartPageState extends State<StartPage> {
         (key, value) => MapEntry(key.toIso8601String(), value),
       );
       await prefs.setString('events', json.encode(eventMap)); // JSON으로 변환 후 저장
-      print("로컬 스토리지에 이벤트 저장 성공");
-    } catch (e) {
-      print("로컬 스토리지에 이벤트 저장 실패: $e");
-    }
+
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   // 로컬 스토리지에서 이벤트 불러오기
@@ -466,8 +464,6 @@ class _WeekCalendarState extends State<WeekCalendar> {
   late CalendarFormat _calendarFormat;
   final TextEditingController _eventController = TextEditingController();
 
-  final double _calendarHeight = 150.0;
-
   @override
   void initState() {
     super.initState();
@@ -506,7 +502,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
       locale: 'ko_KR',
       calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) {
-          final isFocusedDay = isSameDay(day, focusedDay);
+          isSameDay(day, focusedDay);
           return Center(
             child: Text(
               DateFormat('d').format(day),
@@ -515,7 +511,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
           );
         },
         selectedBuilder: (context, day, focusedDay) {
-          final isFocusedDay = isSameDay(day, focusedDay);
+          isSameDay(day, focusedDay);
           return Center(
             child: Container(
               decoration: BoxDecoration(
@@ -535,7 +531,7 @@ class _WeekCalendarState extends State<WeekCalendar> {
           );
         },
         todayBuilder: (context, day, focusedDay) {
-          final isFocusedDay = isSameDay(day, focusedDay);
+          isSameDay(day, focusedDay);
           return Center(
             child: Container(
               decoration: BoxDecoration(
