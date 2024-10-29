@@ -31,6 +31,7 @@ class LoginApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    autoLogin(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

@@ -11,7 +11,7 @@
 
 ### ⏲️ 개발 기간
 
-- 2023.09~
+- 2023.09 ~ 2024.10
 
 <hr>
 
@@ -30,9 +30,10 @@
 |                                                                                        리더, FE                                                                                         |                                                                                         BE, PM                                                                                          |                                                                                         FE, BE                                                                                         |                                                                                         PM, DE                                                                                          |                                                                                        FE, BE                                                                                        |
 
 <br>
-<hr>
 
-### ⚙️ 프로토타입
+---
+
+### ⚙️ 앱의 흐름도
 
 <div align="center">
   
@@ -54,7 +55,17 @@
 </div>
 
 <br>
-<hr>
+
+---
+
+### 🏆 수상 및 활동
+
+- 2024 코엑스 <u>**전시**</u> 2024.10.25
+- 2024 한이음 ICT멘토링 <u>**공모전 입상**</u>
+- 2024 한국인터넷방송통신학회 [**논문지 게재**](https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003075378)
+- 2023 IIBC 한국인터넷방송통신학회 <u>**우수논문상**</u>
+
+---
 
 ### 📌 주요 기능
 
