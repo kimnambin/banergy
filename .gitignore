@@ -46,24 +46,7 @@ app.*.map.json
 
 server.py
 
-test.py
-ai.py
 
-processbar.txt
-
-product.csv
-
-ip.txt
-
-data/
-
-images/
-
-instance/
-
-static/
-
-assets
 
 # android
 
