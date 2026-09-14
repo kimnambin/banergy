@@ -1,8 +1,11 @@
-// ignore_for_file: library_private_types_in_public_api
+// AI 추천(레시피 추천 / 위치 기반 추천) 화면입니다.
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/common/auth_service.dart';
+import 'package:flutter_banergy/common/ocr_service.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
@@ -11,11 +14,9 @@ import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import "package:geolocator/geolocator.dart";
-import 'dart:io';
+import 'package:geolocator/geolocator.dart';
 
 void main() async {
   await dotenv.load();
@@ -26,21 +27,21 @@ class AiRecommend extends StatefulWidget {
   const AiRecommend({super.key});
 
   @override
-  _AiRecommendState createState() => _AiRecommendState();
+  State<AiRecommend> createState() => _AiRecommendState();
 }
 
-class _AiRecommendState extends State<AiRecommend>
-    with SingleTickerProviderStateMixin {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  String? authToken;
+class _AiRecommendState extends State<AiRecommend> {
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  late final AuthService _authService = AuthService(baseUrl: _baseUrl);
+  late final OcrService _ocrService = OcrService(baseUrl: _baseUrl);
+
+  String? _authToken;
   final ImagePicker _imagePicker = ImagePicker();
-  String resultCode = '';
-  String ocrResult = '';
-  bool isOcrInProgress = false;
-  late String img64;
-  List<String> userAllergies = [];
-  String aiResult = ''; // 이미지 결과
-  late PageController _pageController;
+  String _ocrResult = '';
+  late final PageController _pageController;
+
+  int _bottomNavIndex = 1;
+  int _aiRecommendationIndex = 0;
 
   @override
   void initState() {
@@ -51,89 +52,27 @@ class _AiRecommendState extends State<AiRecommend>
 
   @override
   void dispose() {
-    _pageController.dispose(); // Dispose of _pageController
+    _pageController.dispose();
     super.dispose();
   }
 
-  Future<void> _uploadImage(XFile pickedFile) async {
-    setState(() {
-      isOcrInProgress = true;
-    });
-
-    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
-    final request = http.MultipartRequest('POST', url)
-      ..headers['Authorization'] = 'Bearer $authToken'
-      ..files.add(await http.MultipartFile.fromPath('image', pickedFile.path));
-
-    try {
-      final response = await request.send();
-      if (response.statusCode == 200) {
-        var responseData = await response.stream.bytesToString();
-        var decodedData = jsonDecode(responseData);
-        setState(() {
-          ocrResult = decodedData['text'].join('\n');
-        });
-      } else {
-        setState(() {
-          ocrResult = 'Failed to perform OCR: ${response.statusCode}';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        ocrResult = 'OCR processing error: $e';
-      });
-    } finally {
-      setState(() {
-        isOcrInProgress = false;
-      });
-    }
-  }
-
   Future<void> _checkLoginStatus() async {
-    final token = await _loginUser();
-    if (token != null) {
-      final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-      });
-    }
+    final String? token = await _authService.loadValidAuthToken();
+    if (!mounted) return;
+    setState(() => _authToken = token);
   }
 
-  Future<String?> _loginUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
+  Future<void> _uploadImage(File imageFile) async {
+    final String result = await _ocrService.recognizeText(
+      imageFile: imageFile,
+      authToken: _authToken ?? '',
+    );
+    if (!mounted) return;
+    setState(() => _ocrResult = result);
   }
-
-  Future<bool> _validateToken(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          userAllergies = List<String>.from(data['allergies'] ?? []);
-        });
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error validating token: $e');
-      }
-      return false;
-    }
-  }
-
-  int _bottomNavIndex = 1;
-  int _aiRecommendationIndex = 0;
 
   void _onAIRecommendationTapped(int index) {
-    setState(() {
-      _aiRecommendationIndex = index;
-    });
+    setState(() => _aiRecommendationIndex = index);
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
@@ -145,7 +84,7 @@ class _AiRecommendState extends State<AiRecommend>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AI 추천", textAlign: TextAlign.center),
+        title: const Text('AI 추천', textAlign: TextAlign.center),
         centerTitle: true,
         backgroundColor: const Color(0xFFF1F2F7),
         leading: IconButton(
@@ -176,15 +115,11 @@ class _AiRecommendState extends State<AiRecommend>
         child: Column(
           children: [
             SizedBox(
-              height: MediaQuery.of(context)
-                  .size
-                  .height, // Ensure it takes the full height
+              height: MediaQuery.of(context).size.height,
               child: PageView(
                 controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _aiRecommendationIndex = index;
-                  });
+                onPageChanged: (int index) {
+                  setState(() => _aiRecommendationIndex = index);
                 },
                 children: [
                   ProductRecommendationPage(
@@ -201,237 +136,199 @@ class _AiRecommendState extends State<AiRecommend>
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _bottomNavIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.black,
-        selectedLabelStyle: const TextStyle(color: Colors.green),
-        items: const [
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/home.png')),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/ai.png')),
-            label: 'AI 추천',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/lens.png')),
-            label: '렌즈',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/heart.png')),
-            label: '찜',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/person.png')),
-            label: '마이 페이지',
-          ),
-        ],
-        onTap: (index) async {
-          setState(() {
-            _bottomNavIndex = index;
-          });
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const MainpageApp()),
-              );
-              break;
-            case 1:
-              // AI 추천 페이지는 현재 페이지이므로 아무 작업도 하지 않음
-              break;
-            case 2:
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return SingleChildScrollView(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              await _handleImagePick(ImageSource.camera);
-                            },
-                            child: const Text('카메라',
-                                style:
-                                    TextStyle(fontFamily: 'PretendardMedium')),
-                          ),
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              await _handleImagePick(ImageSource.gallery);
-                            },
-                            child: const Text('갤러리',
-                                style:
-                                    TextStyle(fontFamily: 'PretendardMedium')),
-                          ),
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {},
-                            child: const Text('QR/바코드',
-                                style:
-                                    TextStyle(fontFamily: 'PretendardMedium')),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-              break;
-            case 3:
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LPscreen()));
-              break;
-            case 4:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const MypageApp()),
-              );
-              break;
-          }
-        },
-      ),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
-  Future<void> _handleImagePick(ImageSource source) async {
-    var cameraStatus = await Permission.camera.status;
-    if (source == ImageSource.camera && !cameraStatus.isGranted) {
-      await Permission.camera.request();
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: _bottomNavIndex,
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      selectedLabelStyle: const TextStyle(color: Colors.green),
+      items: const [
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/home.png')),
+          label: '홈',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/ai.png')),
+          label: 'AI 추천',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/lens.png')),
+          label: '렌즈',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/heart.png')),
+          label: '찜',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/person.png')),
+          label: '마이 페이지',
+        ),
+      ],
+      onTap: (int index) => _handleBottomNavigationTap(context, index),
+    );
+  }
+
+  void _handleBottomNavigationTap(BuildContext context, int index) {
+    setState(() => _bottomNavIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainpageApp()),
+        );
+        break;
+      case 1:
+        // AI 추천 페이지는 현재 페이지이므로 아무 작업도 하지 않음
+        break;
+      case 2:
+        _showLensOptionsSheet(context);
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LPscreen()),
+        );
+        break;
+      case 4:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MypageApp()),
+        );
+        break;
+    }
+  }
+
+  void _showLensOptionsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _pickAndScanImage(
+                    context,
+                    source: ImageSource.camera,
+                  ),
+                  child: const Text(
+                    '카메라',
+                    style: TextStyle(fontFamily: 'PretendardMedium'),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _pickAndScanImage(
+                    context,
+                    source: ImageSource.gallery,
+                  ),
+                  child: const Text(
+                    '갤러리',
+                    style: TextStyle(fontFamily: 'PretendardMedium'),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'QR/바코드',
+                    style: TextStyle(fontFamily: 'PretendardMedium'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickAndScanImage(
+    BuildContext context, {
+    required ImageSource source,
+  }) async {
+    if (source == ImageSource.camera) {
+      final PermissionStatus cameraStatus = await Permission.camera.status;
+      if (!cameraStatus.isGranted) {
+        await Permission.camera.request();
+      }
     }
 
-    final pickedFile = await _imagePicker.pickImage(source: source);
+    final XFile? pickedFile = await _imagePicker.pickImage(source: source);
     if (pickedFile == null) return;
 
-    setState(() {
-      isOcrInProgress = true;
-    });
-
     try {
-      await _uploadImage(pickedFile);
+      await _uploadImage(File(pickedFile.path));
       if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) => Ocrresult(
             imagePath: pickedFile.path,
-            ocrResult: ocrResult,
+            ocrResult: _ocrResult,
           ),
         ),
       );
-    } catch (e) {
-      debugPrint('OCR failed: $e');
-    } finally {
-      setState(() {
-        isOcrInProgress = false;
-      });
+    } catch (error) {
+      debugPrint('OCR failed: $error');
     }
   }
 }
 
-// =======================레시피 추천==========================================================================
+/// 레시피 추천 탭. 사진을 올리면 AI가 상품/레시피를 추천해 준다.
 class ProductRecommendationPage extends StatefulWidget {
-  final Function(int) onButtonTapped;
-  final int selectedIndex;
-
   const ProductRecommendationPage({
     super.key,
     required this.onButtonTapped,
     required this.selectedIndex,
   });
 
+  final ValueChanged<int> onButtonTapped;
+  final int selectedIndex;
+
   @override
-  _ProductRecommendationPageState createState() =>
+  State<ProductRecommendationPage> createState() =>
       _ProductRecommendationPageState();
 }
 
-class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
-  List<String> allergies = [];
-  bool isLoading = true;
+class _ProductRecommendationPageState
+    extends State<ProductRecommendationPage> {
   final ImagePicker _imagePicker = ImagePicker();
   File? _image;
 
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  String aiResult = '';
-  bool _isPhotoSelected = false; //갤러리 버튼 클릭 여부
-  // final TextEditingController _textController = TextEditingController(); //인풋 부분
-
-  @override
-  void initState() {
-    super.initState();
-    fetchAllergies();
-  }
-
-  Future<void> fetchAllergies() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken');
-    if (token == null) {
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          allergies = List<String>.from(data['allergies'] ?? []);
-          isLoading = false;
-        });
-      } else {
-        if (kDebugMode) {
-          print('Failed to load allergies: ${response.statusCode}');
-        }
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching allergies: $e');
-      }
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  String _aiResult = '';
+  bool _isPhotoSelected = false; // 갤러리 버튼 클릭 여부
 
   Future<void> _getImage(ImageSource source) async {
-    final pickedFile = await _imagePicker.pickImage(source: source);
+    final XFile? pickedFile = await _imagePicker.pickImage(source: source);
+    if (pickedFile == null) return;
 
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-        _isPhotoSelected = true; // 버튼 클릭 여부 트루로!!
-      });
-    }
+    setState(() {
+      _image = File(pickedFile.path);
+      _isPhotoSelected = true;
+    });
   }
 
   Future<void> _addProduct(BuildContext context) async {
-    // String inputText = _textController.text; //인풋내용
-
     try {
-      var request = http.MultipartRequest(
+      final http.MultipartRequest request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl:8000/AI/img'),
+        Uri.parse('$_baseUrl:8000/AI/img'),
       );
 
-      // request.fields['inputText'] = inputText;
-
       if (_image != null) {
-        var imageStream = http.ByteStream(_image!.openRead());
-        var length = await _image!.length();
-        var multipartFile = http.MultipartFile(
+        final http.ByteStream imageStream = http.ByteStream(_image!.openRead());
+        final int length = await _image!.length();
+        final http.MultipartFile multipartFile = http.MultipartFile(
           'image',
           imageStream,
           length,
@@ -440,27 +337,19 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
         request.files.add(multipartFile);
       }
 
-      var response = await request.send();
+      final http.StreamedResponse response = await request.send();
 
       if (response.statusCode == 200) {
-        var responseData = await http.Response.fromStream(response);
-        var jsonData = json.decode(responseData.body); // JSON 파싱
-
-        setState(() {
-          aiResult = jsonData['AI 분석결과']; // AI 분석 결과 저장
-          // aiResult = '임시 분석 결과입니다';
-        });
+        final http.Response responseData =
+            await http.Response.fromStream(response);
+        final Map<String, dynamic> jsonData =
+            json.decode(responseData.body) as Map<String, dynamic>;
+        setState(() => _aiResult = jsonData['AI 분석결과'] as String);
       } else {
-        if (kDebugMode) {
-          print('Failed to get product recommendation: ${response.statusCode}');
-        }
-        // _showErrorDialog(context, '다시 한번 확인해주세요');
+        debugPrint('Failed to get product recommendation: ${response.statusCode}');
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print('서버에서 오류가 발생했음: $e');
-      }
-      // _showErrorDialog(context, '서버에서 오류가 발생했습니다.');
+    } catch (error) {
+      debugPrint('서버에서 오류가 발생했음: $error');
     }
   }
 
@@ -493,9 +382,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            onPressed: () {
-              widget.onButtonTapped(0);
-            },
+            onPressed: () => widget.onButtonTapped(0),
             child: Text(
               '레시피 추천',
               style: TextStyle(
@@ -516,7 +403,6 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
             ),
             onPressed: () {
               widget.onButtonTapped(1);
-
               _addProduct(context);
             },
             child: Text(
@@ -553,15 +439,13 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    _getImage(ImageSource.gallery);
-                  },
+                  onPressed: () => _getImage(ImageSource.gallery),
                   icon: const Icon(
                     Icons.perm_media,
                     color: Color(0xFFA7A6A6),
                   ),
                   label: const Text(
-                    "갤러리",
+                    '갤러리',
                     style: TextStyle(color: Color(0xFFA7A6A6)),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -576,9 +460,7 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
               ),
               const SizedBox(height: 10),
             ],
-            if (_isPhotoSelected) ...[
-              _buildPhotoArea(),
-            ],
+            if (_isPhotoSelected) _buildPhotoArea(),
           ],
         ),
       ),
@@ -607,25 +489,19 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 5),
-              // AI 분석 결과 표시
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
-                  aiResult.isNotEmpty ? aiResult : '상품 추천 내용이 여기에 표시됩니다.',
+                  _aiResult.isNotEmpty ? _aiResult : '상품 추천 내용이 여기에 표시됩니다.',
                   textAlign: TextAlign.left,
                   style: const TextStyle(fontSize: 13),
                 ),
@@ -638,203 +514,137 @@ class _ProductRecommendationPageState extends State<ProductRecommendationPage> {
   }
 
   Widget _buildPhotoArea() {
+    if (_image == null) {
+      return const Center(
+        child: SizedBox(
+          width: 250,
+          height: 250,
+          child: ColoredBox(color: Colors.white),
+        ),
+      );
+    }
+
     return Center(
       child: Column(
         children: [
-          if (_image != null) ...[
-            SizedBox(
-              width: 150,
-              height: 150,
-              child: Image.file(_image!),
-            ),
-            const SizedBox(height: 20),
-            // TextField(
-            //   controller: _textController,
-            //   decoration: InputDecoration(
-            //     border: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //     ),
-            //     enabledBorder: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //       borderSide: BorderSide(color: Colors.grey[300]!),
-            //     ),
-            //     focusedBorder: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //       borderSide: const BorderSide(color: Colors.green),
-            //     ),
-            //     contentPadding:
-            //         const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            //     hintText: '가장 심한 알레르기 하나를 입력해주세요.',
-            //     hintStyle: TextStyle(fontSize: 13, color: Colors.grey[600]),
-            //   ),
-            // ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                if (_image != null) {
-                  _addProduct(context);
-                }
-              },
-              icon: const Icon(Icons.search, color: Colors.white),
-              label: const Text("검색", style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(double.infinity, 45),
-                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(color: Color(0xFFEBEBEB)),
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
+          SizedBox(
+            width: 150,
+            height: 150,
+            child: Image.file(_image!),
+          ),
+          const SizedBox(height: 40),
+          ElevatedButton.icon(
+            onPressed: () => _addProduct(context),
+            icon: const Icon(Icons.search, color: Colors.white),
+            label: const Text('검색', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              fixedSize: const Size(double.infinity, 45),
+              backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Color(0xFFEBEBEB)),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
-          ] else ...[
-            Container(
-              width: 250,
-              height: 250,
-              color: Colors.white,
-            ),
-          ],
+          ),
         ],
       ),
     );
   }
 }
 
-// ==========================================식당 추천===============================================
+/// 위치 기반 추천 탭. 현재 위치를 바탕으로 주변 식당/상품을 추천해 준다.
 class RecipeRecommendationPage extends StatefulWidget {
-  final Function(int) onButtonTapped;
-  final int selectedIndex;
-
   const RecipeRecommendationPage({
     super.key,
     required this.onButtonTapped,
     required this.selectedIndex,
   });
 
+  final ValueChanged<int> onButtonTapped;
+  final int selectedIndex;
+
   @override
-  _RecipeRecommendationPageState createState() =>
+  State<RecipeRecommendationPage> createState() =>
       _RecipeRecommendationPageState();
 }
 
 class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
-  List<String> allergies = [];
-  bool isLoading = true;
-  double? longitude;
-  double? latitude;
-  String locationStatus = '위치 정보를 가져오는 중...';
-  String aiResult = ''; //ai 결과부분
-  final TextEditingController _textController = TextEditingController(); //인풋 부분
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  double? _longitude;
+  double? _latitude;
+  String _locationStatus = '위치 정보를 가져오는 중...';
+  String _aiResult = '';
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    fetchAllergies();
-    getLocation();
+    _loadLocation();
   }
 
-  Future<List<String>> fetchAllergies() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken');
-
-    if (token == null) {
-      return []; // 토큰이 없을 때 빈 리스트 반환
-    }
-
-    try {
-      final response = await http.get(
-        Uri.parse('${dotenv.env['BASE_URL']}:8000/logindb/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return List<String>.from(data['allergies'] ?? []);
-      } else {
-        debugPrint('Failed to load allergies: ${response.statusCode}');
-        return []; // 알레르기 정보 로드 실패 시 빈 리스트 반환
-      }
-    } catch (e) {
-      debugPrint('Error fetching allergies: $e');
-      return []; // 오류 발생 시 빈 리스트 반환
-    }
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 
-  Future<void> getLocation() async {
-    // 위치 권한을 확인하고 요청
-    var status = await Permission.location.request();
+  Future<void> _loadLocation() async {
+    final PermissionStatus status = await Permission.location.request();
 
     if (status.isGranted) {
       try {
-        Position position = await Geolocator.getCurrentPosition(
-            // ignore: deprecated_member_use
-            desiredAccuracy: LocationAccuracy.high);
+        final Position position = await Geolocator.getCurrentPosition(
+          // ignore: deprecated_member_use
+          desiredAccuracy: LocationAccuracy.high,
+        );
         setState(() {
-          longitude = position.longitude;
-          latitude = position.latitude;
-          locationStatus =
-              '현재 위치: (${longitude!.toStringAsFixed(2)}, ${latitude!.toStringAsFixed(2)})';
+          _longitude = position.longitude;
+          _latitude = position.latitude;
+          _locationStatus =
+              '현재 위치: (${_longitude!.toStringAsFixed(2)}, ${_latitude!.toStringAsFixed(2)})';
         });
-      } catch (e) {
-        setState(() {
-          locationStatus = '위치 정보를 가져오는데 실패했습니다.';
-        });
-        debugPrint('Error getting location: $e');
+      } catch (error) {
+        setState(() => _locationStatus = '위치 정보를 가져오는데 실패했습니다.');
+        debugPrint('Error getting location: $error');
       }
     } else if (status.isDenied) {
-      setState(() {
-        locationStatus = '위치 권한이 거부되었습니다.';
-      });
+      setState(() => _locationStatus = '위치 권한이 거부되었습니다.');
     } else if (status.isPermanentlyDenied) {
       openAppSettings();
     }
   }
 
-  Future<void> sendLocation(BuildContext context) async {
+  Future<void> _sendLocation(BuildContext context) async {
+    final double? longitude = _longitude;
+    final double? latitude = _latitude;
     if (longitude == null || latitude == null) {
       debugPrint('위치 정보가 설정되지 않았습니다.');
       return;
     }
-    String inputText = _textController.text;
-
-    debugPrint('Input Text: $inputText');
-
-    // 소수점 3자리까지 포맷 후 double 타입으로 변환
-    final double formattedLongitude =
-        double.parse(longitude!.toStringAsFixed(3));
-    final double formattedLatitude = double.parse(latitude!.toStringAsFixed(3));
 
     final Map<String, dynamic> locationData = {
-      'longitude': formattedLongitude,
-      'latitude': formattedLatitude,
-      'inputText': inputText,
+      'longitude': double.parse(longitude.toStringAsFixed(3)),
+      'latitude': double.parse(latitude.toStringAsFixed(3)),
+      'inputText': _textController.text,
     };
 
-    final String requestBody = jsonEncode(locationData);
-
-    debugPrint('Sending location data: $requestBody'); // 보내는 데이터 출력
-
     try {
-      final response = await http.post(
-        Uri.parse('${dotenv.env['BASE_URL']}:8000/AI/map'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: requestBody,
+      final http.Response response = await http.post(
+        Uri.parse('$_baseUrl:8000/AI/map'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(locationData),
       );
 
       if (response.statusCode == 200) {
-        // 응답 데이터를 직접 파싱
-        var jsonData = json.decode(response.body); // JSON 파싱
-
-        setState(() {
-          aiResult = jsonData['AI 분석결과']; // AI 분석 결과 저장
-        });
-        // 다이얼로그 호출을 버튼 클릭 시 조정
+        final Map<String, dynamic> jsonData =
+            json.decode(response.body) as Map<String, dynamic>;
+        setState(() => _aiResult = jsonData['AI 분석결과'] as String);
       } else {
         debugPrint(
             'Failed to get product recommendation: ${response.statusCode}');
       }
-    } catch (e) {
-      debugPrint('Error during request: $e');
+    } catch (error) {
+      debugPrint('Error during request: $error');
     }
   }
 
@@ -845,8 +655,7 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
       child: Column(
         children: [
           _buildToggleButtons(),
-          const SizedBox(height: 10),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           _buildLocationStatus(),
           const SizedBox(height: 20),
           _buildRecommendationContent('위치 기반'),
@@ -917,7 +726,7 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
-          Text(locationStatus),
+          Text(_locationStatus),
         ],
       ),
     );
@@ -951,15 +760,15 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
                     Text(
                       title,
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () async {
-                        await sendLocation(context);
-                      },
+                      onPressed: () => _sendLocation(context),
                       icon: const Icon(Icons.search, color: Colors.white),
                       label: const Text(
-                        "검색",
+                        '검색',
                         style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -975,7 +784,6 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
                 ),
               ),
               const SizedBox(height: 5),
-              // 검색 입력
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: TextField(
@@ -1003,11 +811,10 @@ class _RecipeRecommendationPageState extends State<RecipeRecommendationPage> {
                 ),
               ),
               const SizedBox(height: 15),
-              // AI 분석 결과 표시
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
-                  aiResult.isNotEmpty ? aiResult : '여기에 주변 식당 정보가 표시됩니다. ',
+                  _aiResult.isNotEmpty ? _aiResult : '여기에 주변 식당 정보가 표시됩니다. ',
                   textAlign: TextAlign.left,
                 ),
               ),
