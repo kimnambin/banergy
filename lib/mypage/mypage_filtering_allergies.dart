@@ -1,24 +1,21 @@
-// ignore_for_file: use_build_context_synchronously
+// 마이페이지에서 진입하는 "로그인 회원용" 알레르기 필터링 화면입니다.
+// 체크리스트 UI는 공용 위젯(AllergyFilterView)이 그려주고, 이 파일은 로그인 상태 확인,
+// 이미 저장된 알레르기 불러오기, "회원용 저장 방식"과 "어디로 이동할지"만 담당합니다.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_banergy/common/allergy_filter_view.dart';
+import 'package:flutter_banergy/common/allergy_service.dart';
+import 'package:flutter_banergy/mypage/mypage.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-  runApp(FilteringAllergies());
+  await dotenv.load(fileName: '.env');
+  runApp(const FilteringAllergies());
 }
 
-// ignore: must_be_immutable
 class FilteringAllergies extends StatelessWidget {
-  FilteringAllergies({super.key});
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  const FilteringAllergies({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,328 +25,62 @@ class FilteringAllergies extends StatelessWidget {
   }
 }
 
+/// 로그인한 회원이 마이페이지에서 진입하는 알레르기 필터링 화면.
 class FilteringPage extends StatefulWidget {
   const FilteringPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _FilteringPageState createState() => _FilteringPageState();
+  State<FilteringPage> createState() => _FilteringPageState();
 }
 
 class _FilteringPageState extends State<FilteringPage> {
-  List<String?> checkListValue2 = []; //이게 사용자가 실시간으로 선택하는 거
-  List<String> userAllergies = []; //이게 저장된 거 불러오는 것
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  List<String> checkList2 = [
-    "계란",
-    "밀",
-    "대두",
-    "우유",
-    "게",
-    "새우",
-    "돼지고기",
-    "닭고기",
-    "소고기",
-    "고등어",
-    "복숭아",
-    "토마토",
-    "호두",
-    "잣",
-    "땅콩",
-    "아몬드",
-    "조개류",
-    "기타"
-  ];
+  final AllergyService _service = AllergyService(
+    baseUrl: dotenv.env['BASE_URL'] ?? 'http://localhost',
+  );
 
-  String? authToken;
-  String searchText = ''; //검색 부분 초기화
+  String? _authToken;
+  List<String> _savedAllergies = <String>[];
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _loadLoggedInUser();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final token = await _loginuser();
-    if (token != null) {
-      // 저장된 토큰이 있는 경우, 유효한지 확인
-      final isValid = await _validateToken(token);
-      if (isValid) {
-        // 토큰이 유효한 경우, 로그인 상태로 설정
-        setState(() {
-          authToken = token;
-        });
-      } else {
-        // 토큰이 유효하지 않은 경우, 로그인 상태 해제
-        setState(() {
-          authToken = null;
-        });
-      }
-    }
+  Future<void> _loadLoggedInUser() async {
+    final LoggedInUserAllergyInfo? info =
+        await _service.loadLoggedInUserAllergies();
+    if (!mounted) return;
+
+    setState(() {
+      _authToken = info?.authToken;
+      _savedAllergies = info?.savedAllergies ?? <String>[];
+    });
   }
 
-//로그인한 유저 가져오기
-  Future<String?> _loginuser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-    return token;
-  }
-
-  Future<bool> _validateToken(token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-      //저장된 알레르기 정보 가져오기
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        setState(() {
-          userAllergies = List<String>.from(data['allergies'] ?? []);
-        });
-        return true;
-      } else {
-        throw Exception('Failed to fetch user allergies');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching user allergies: $e');
-      }
-      return false;
-    }
-  }
-
-  Future<void> _userFiltering(
-      BuildContext context, List<String?> checkListValue2) async {
-    final String allergies = jsonEncode(checkListValue2);
-
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl:8000/logindb/allergies'),
-        body: jsonEncode({'allergies': allergies}),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: const Text('적용완료!!'),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MypageApp(),
-                      ),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Text('확인'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: const Text('다시 확인해주세요.'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('확인'),
-                  ),
-                ],
-              );
-            });
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error sending request: $e');
-      }
-    }
+  void _goToMypage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MypageApp()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "알러지 필터링",
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.push(
-              context,
-              //마이페이지에서는 뒤로 가면 마이페이지가 되도록(아니면 오류가 남 ㅠ)
-              MaterialPageRoute(builder: (context) => const MypageApp()),
-            );
-          },
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(color: Colors.white),
-        child: Column(
-          children: [
-            // Image 추가
-            Container(
-              color: Colors.white,
-              child: Image.asset(
-                'images/000.jpeg',
-                width: 80,
-                height: 80,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              userAllergies.isNotEmpty
-                  ? userAllergies.join(", ")
-                  : "해당하는 알레르기를 체크해주세요",
-              style: const TextStyle(
-                fontFamily: 'PretendardSemiBold',
-              ),
-            ),
-            const SizedBox(height: 15),
-            //여기가 검색부분
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextField(
-                style: const TextStyle(
-                  fontFamily: 'PretendardBold',
-                ),
-                decoration: const InputDecoration(
-                  hintText: '알레르기를 검색해보세요!!',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                  ),
-                  contentPadding: EdgeInsets.only(left: 30, bottom: 13),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    searchText = value;
-                  });
-                },
-              ),
-            ),
-            // 중앙에 정렬된 필터 영역
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(20.0),
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    // 왼쪽 필터
-                    Expanded(
-                      child: buildFilterList(checkList2),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+    final String subtitle = _savedAllergies.isNotEmpty
+        ? _savedAllergies.join(', ')
+        : '해당하는 알레르기를 체크해주세요';
 
-            // 적용 버튼 추가
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              color: Colors.white,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF03C95B),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                onPressed: () => {
-                  _userFiltering(context, checkListValue2),
-                  // ignore: avoid_print
-                  print("저장된 값: $checkListValue2")
-                },
-                child: const Text(
-                  '적용',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // 체크박스 리스트를 생성하는 함수
-  Widget buildFilterList(List<String> filterList) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: (filterList.length + 1) ~/ 2,
-      itemBuilder: (context, index) {
-        int start = index * 2;
-        int end =
-            (start + 2) < filterList.length ? start + 2 : filterList.length;
-        List<String> rowFilters = filterList.sublist(start, end);
-
-        return Container(
-          margin: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              for (String filter in rowFilters)
-                if (searchText.isEmpty ||
-                    filter.toLowerCase().contains(searchText.toLowerCase()))
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: CheckboxListTile(
-                        onChanged: (bool? check) {
-                          setState(() {
-                            if (checkListValue2.contains(filter)) {
-                              checkListValue2.remove(filter);
-                              return;
-                            }
-                            checkListValue2.add(filter);
-                          });
-                        },
-                        title: Text(filter),
-                        value: checkListValue2.contains(filter) ? true : false,
-                      ),
-                    ),
-                  ),
-            ],
-          ),
+    return AllergyFilterView(
+      subtitle: subtitle,
+      onBack: _goToMypage,
+      onSubmit: (List<String> allergies) {
+        return _service.submitMemberAllergies(
+          authToken: _authToken,
+          allergies: allergies,
         );
       },
+      onSubmitted: _goToMypage,
     );
   }
 }
