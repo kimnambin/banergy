@@ -11,7 +11,7 @@ import 'dart:convert';
 import 'package:flutter_banergy/product/product_detail.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_banergy/main_category/Drink.dart';
+import 'package:flutter_banergy/main_category/drink.dart';
 //import 'package:flutter_banergy/main_category/Sandwich.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
 //import 'package:flutter_banergy/main_category/gimbap.dart';

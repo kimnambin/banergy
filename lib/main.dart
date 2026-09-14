@@ -23,7 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_banergy/main_category/bigsnacks.dart';
 import 'package:flutter_banergy/main_category/snacks.dart';
-import 'package:flutter_banergy/main_category/Drink.dart';
+import 'package:flutter_banergy/main_category/drink.dart';
 import 'package:flutter_banergy/main_category/instantfood.dart';
 import 'package:flutter_banergy/main_category/ramen.dart';
 // ignore: depend_on_referenced_packages
