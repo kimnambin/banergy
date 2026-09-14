@@ -256,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage>
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const allergyinformation(),
+                                    const AllergyInformationApp(),
                               ),
                             );
                           },
@@ -456,7 +456,7 @@ class _MyHomePageState extends State<MyHomePage>
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const allergyinformation()),
+                  builder: (context) => const AllergyInformationApp()),
             );
           },
           style: ElevatedButton.styleFrom(

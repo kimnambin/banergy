@@ -1,8 +1,9 @@
-// ignore_for_file: use_build_context_synchronously, camel_case_types
+// 마이페이지의 "나의 알레르기" 정보 화면입니다.
+
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
@@ -10,11 +11,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  runApp(const allergyinformation());
+  runApp(const AllergyInformationApp());
 }
 
-class allergyinformation extends StatelessWidget {
-  const allergyinformation({super.key});
+class AllergyInformationApp extends StatelessWidget {
+  const AllergyInformationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +33,10 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> {
   String? authToken;
-  String? code;
-  String resultCode = '';
-  String ocrResult = '';
   bool isOcrInProgress = false;
-  final picker = ImagePicker();
-  late String img64;
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
@@ -72,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage>
       );
       return response.statusCode == 200;
     } catch (e) {
-      ('Error validating token: $e');
+      debugPrint('Error validating token: $e');
       return false;
     }
   }
