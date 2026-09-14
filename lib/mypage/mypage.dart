@@ -1,13 +1,13 @@
+// 마이페이지 메인 화면입니다.
+
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mypage/allergy.dart';
 import 'package:flutter_banergy/mypage/mypage_Delete.dart';
 import 'package:flutter_banergy/mypage/mypage_InquiryScreen.dart';
 import 'package:flutter_banergy/mypage/mypage_addproductScreen.dart';
-import 'package:flutter_banergy/mypage/mypage_allergy_information.dart';
 import 'package:flutter_banergy/mypage/mypage_changeidpw.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -35,19 +35,15 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _MyHomePageState extends State<MyHomePage> {
   String? authToken;
   String? loginName;
-  set code(String? code) {}
   String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
-    _tabController = TabController(length: 3, vsync: this);
   }
 
   Future<void> _checkLoginStatus() async {
@@ -57,12 +53,10 @@ class _MyHomePageState extends State<MyHomePage>
       if (isValid) {
         final userName = await _fetchUserName(token);
         setState(() {
-          if (kDebugMode) {
-            print('로그인한 유저네임 : $loginName');
-          }
           authToken = token;
           loginName = userName;
         });
+        debugPrint('로그인한 유저네임 : $loginName');
       } else {
         setState(() {
           authToken = null;
@@ -113,12 +107,6 @@ class _MyHomePageState extends State<MyHomePage>
       debugPrint('Error validating token: $e');
       return false;
     }
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   void _navigateToPage(String pageName) {
@@ -248,28 +236,6 @@ class _MyHomePageState extends State<MyHomePage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        /*_buildButton2(Icons.add),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const AllergyInformationApp(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            '병원진료',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 40),*/
                         _buildButton3(Icons.add),
                         const SizedBox(width: 8),
                         GestureDetector(
@@ -434,29 +400,6 @@ class _MyHomePageState extends State<MyHomePage>
               context,
               MaterialPageRoute(
                   builder: (context) => const Recordallergyreactions()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            shape: const CircleBorder(),
-            backgroundColor: const Color(0xFF03C95B),
-            padding: EdgeInsets.zero,
-          ),
-          child: Icon(
-            iconData,
-            color: Colors.white,
-          ),
-        ),
-      );
-  //병원 진료 버튼
-  Widget _buildButton2(IconData iconData) => SizedBox(
-        width: 30, // 버튼의 너비 설정
-        height: 30, // 버튼의 높이 설정
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const AllergyInformationApp()),
             );
           },
           style: ElevatedButton.styleFrom(
