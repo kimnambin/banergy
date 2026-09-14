@@ -1,16 +1,7 @@
-// DB Product + 컴뮤니티 + 유저 정보까지
+// 서버에서 받아오는 상품 정보, 자유게시판 글 정보를 담는 모델(데이터 형태)들입니다.
 
-//상품 정보들
+/// 상품 정보.
 class Product {
-  final int id;
-  final String barcode;
-  final String name;
-  final String kategorie;
-  final String frontproduct;
-  final String backproduct;
-  final String allergens;
-  bool isHearted;
-
   Product({
     required this.id,
     required this.barcode,
@@ -24,15 +15,26 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-        id: json['id'],
-        barcode: json['barcode'],
-        kategorie: json['kategorie'],
-        name: json['name'],
-        frontproduct: json['frontproduct'],
-        backproduct: json['backproduct'],
-        allergens: json['allergens'],
-        isHearted: json['isHearted'] ?? false);
+      id: json['id'] as int,
+      barcode: json['barcode'] as String,
+      kategorie: json['kategorie'] as String,
+      name: json['name'] as String,
+      frontproduct: json['frontproduct'] as String,
+      backproduct: json['backproduct'] as String,
+      allergens: json['allergens'] as String,
+      isHearted: json['isHearted'] as bool? ?? false,
+    );
   }
+
+  final int id;
+  final String barcode;
+  final String name;
+  final String kategorie;
+  final String frontproduct;
+  final String backproduct;
+  final String allergens;
+  bool isHearted;
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -45,44 +47,25 @@ class Product {
       'isHearted': isHearted,
     };
   }
-
-  // 좋아요를 토글하는 메서드
-  void toggleHeart() {
-    isHearted = !isHearted;
-  }
 }
 
-//커뮤니티용
-// ignore: camel_case_types
-class freeDB {
-  final String? freetitle;
-  final String? freecontent;
-  final String? timestamp;
-
-  freeDB({
+/// 자유게시판(커뮤니티) 글 하나.
+class FreeboardPost {
+  FreeboardPost({
     required this.freetitle,
     required this.freecontent,
     required this.timestamp,
   });
 
-  factory freeDB.fromJson(Map<String, dynamic> json) {
-    return freeDB(
-      freetitle: json['freetitle'],
-      freecontent: json['freecontent'],
-      timestamp: json['timestamp'],
+  factory FreeboardPost.fromJson(Map<String, dynamic> json) {
+    return FreeboardPost(
+      freetitle: json['freetitle'] as String?,
+      freecontent: json['freecontent'] as String?,
+      timestamp: json['timestamp'] as String?,
     );
   }
 
-  // timestamp를 변경하여 새로운 freeDB 객체를 반환하는 함수
-  freeDB copyWith({
-    String? freetitle,
-    String? freecontent,
-    String? timestamp,
-  }) {
-    return freeDB(
-      freetitle: freetitle ?? this.freetitle,
-      freecontent: freecontent ?? this.freecontent,
-      timestamp: timestamp ?? this.timestamp,
-    );
-  }
+  final String? freetitle;
+  final String? freecontent;
+  final String? timestamp;
 }

@@ -258,7 +258,7 @@ class _FreeboardListState extends State<FreeboardList> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: FutureBuilder<List<freeDB>>(
+      child: FutureBuilder<List<FreeboardPost>>(
         future: _fetchFreeboardData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -268,11 +268,11 @@ class _FreeboardListState extends State<FreeboardList> {
             return Text('Error: ${snapshot.error}');
           }
 
-          final List<freeDB> posts = snapshot.data ?? const <freeDB>[];
+          final List<FreeboardPost> posts = snapshot.data ?? const <FreeboardPost>[];
           return ListView.builder(
             itemCount: posts.length,
             itemBuilder: (context, index) {
-              final freeDB post = posts[index];
+              final FreeboardPost post = posts[index];
               if (post.freetitle == null || post.freecontent == null) {
                 return const SizedBox();
               }
@@ -284,7 +284,7 @@ class _FreeboardListState extends State<FreeboardList> {
     );
   }
 
-  Future<List<freeDB>> _fetchFreeboardData() async {
+  Future<List<FreeboardPost>> _fetchFreeboardData() async {
     try {
       final http.Response response = await http.get(
         Uri.parse('$_baseUrl:8000/mypage/free'),
@@ -295,7 +295,7 @@ class _FreeboardListState extends State<FreeboardList> {
 
       final List<dynamic> rawPosts = json.decode(response.body) as List<dynamic>;
       return rawPosts
-          .map((dynamic item) => freeDB.fromJson(item as Map<String, dynamic>))
+          .map((dynamic item) => FreeboardPost.fromJson(item as Map<String, dynamic>))
           .toList();
     } catch (error) {
       throw Exception('데이터 가져오기 실패: $error');
@@ -306,7 +306,7 @@ class _FreeboardListState extends State<FreeboardList> {
 class _FreeboardPostTile extends StatelessWidget {
   const _FreeboardPostTile({required this.post});
 
-  final freeDB post;
+  final FreeboardPost post;
 
   @override
   Widget build(BuildContext context) {
