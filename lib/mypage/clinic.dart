@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+// 병원 진료 기록 화면입니다.
+
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,12 +31,6 @@ class _ClinicScreenState extends State<ClinicScreen> {
     '기타'
   ];
 
-  DateTime selectedDate = DateTime.utc(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  );
-
   @override
   void initState() {
     super.initState();
@@ -63,20 +58,11 @@ class _ClinicScreenState extends State<ClinicScreen> {
     await prefs.setString('hospital', _hospitalController.text);
     await prefs.setString('diagnosis', _diagnosisController.text);
 
-    if (kDebugMode) {
-      print("Data saved successfully");
-    }
+    debugPrint('Data saved successfully');
   }
 
-  // _onSubmitted 함수 추가
   Future<void> _onSubmitted() async {
     await _saveData(); // 입력된 데이터 저장
-
-    if (kDebugMode) {
-      print(selectedChoices);
-      print(_hospitalController.text);
-      print(_diagnosisController.text);
-    }
   }
 
   @override
@@ -178,11 +164,5 @@ class _ClinicScreenState extends State<ClinicScreen> {
         }
       },
     );
-  }
-
-  void onDaySelected(DateTime selectDate, DateTime focusedDate) {
-    setState(() {
-      selectedDate = selectDate;
-    });
   }
 }

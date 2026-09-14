@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+// 알레르기 반응 상세 기록 화면입니다.
+
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,12 +51,6 @@ class _RecordScreenState extends State<RecordScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _situationController = TextEditingController();
 
-  DateTime selectedDate = DateTime.utc(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  );
-
   @override
   void initState() {
     super.initState();
@@ -83,9 +78,7 @@ class _RecordScreenState extends State<RecordScreen> {
     await prefs.setString('location', _locationController.text);
     await prefs.setString('situation', _situationController.text);
 
-    if (kDebugMode) {
-      print("Data saved successfully");
-    }
+    debugPrint('Data saved successfully');
   }
 
   @override
@@ -213,10 +206,6 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       onPressed: () async {
                         await _saveData(); // 데이터 저장
-                        if (kDebugMode) {
-                          print(selectedChoices1);
-                          print(selectedChoices2);
-                        }
                         Navigator.of(context).pop();
                       },
                     ),
@@ -234,11 +223,5 @@ class _RecordScreenState extends State<RecordScreen> {
         }
       },
     );
-  }
-
-  void onDaySelected(DateTime selectDate, DateTime focusedDate) {
-    setState(() {
-      selectedDate = selectDate;
-    });
   }
 }
