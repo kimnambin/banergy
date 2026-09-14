@@ -11,7 +11,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/NoUser/NouserOCRresult.dart';
 import 'package:flutter_banergy/NoUser/Nouserfiltering.dart';
-import 'package:flutter_banergy/appbar/home_search_widget.dart';
+import 'package:flutter_banergy/appbar/product_search_bar.dart';
 import 'package:flutter_banergy/common/ocr_service.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/main_category/category_header.dart';
@@ -71,7 +71,7 @@ class _NoUserMainpageAppState extends State<NoUserMainpageApp> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
-        title: const Home_SearchWidget(), // 검색 위젯
+        title: const ProductSearchBar(), // 검색 위젯
         actions: [
           IconButton(
             icon: Image.asset(

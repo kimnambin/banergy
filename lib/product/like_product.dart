@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/appbar/product_search_bar.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:http/http.dart' as http;
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const SearchWidget(), // 검색 위젯
+        title: const ProductSearchBar(), // 검색 위젯
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () => {

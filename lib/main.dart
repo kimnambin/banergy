@@ -9,7 +9,7 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/appbar/home_search_widget.dart';
+import 'package:flutter_banergy/appbar/product_search_bar.dart';
 import 'package:flutter_banergy/common/auth_service.dart';
 import 'package:flutter_banergy/common/ocr_service.dart';
 import 'package:flutter_banergy/mainDB.dart';
@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Home_SearchWidget(), // 검색 위젯
+        title: const ProductSearchBar(), // 검색 위젯
         actions: [
           IconButton(
             icon: Image.asset(

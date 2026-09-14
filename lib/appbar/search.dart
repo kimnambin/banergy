@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 //import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/appbar/search_widget.dart';
+import 'package:flutter_banergy/appbar/product_search_bar.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
 import 'package:flutter_banergy/product/like_product.dart';
@@ -62,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const SearchWidget(), // 검색 위젯
+        title: const ProductSearchBar(), // 검색 위젯
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
