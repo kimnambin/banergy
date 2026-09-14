@@ -1,19 +1,20 @@
+// 로그인 화면입니다.
+
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
-
+import 'package:flutter_banergy/common/labeled_text_field.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
-
 import 'package:flutter_banergy/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-// ignore: depend_on_referenced_packages
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: '.env');
   runApp(
     MaterialApp(
       home: LoginApp(),
@@ -23,11 +24,12 @@ Future<void> main() async {
 
 // ignore: must_be_immutable
 class LoginApp extends StatelessWidget {
+  LoginApp({super.key});
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  LoginApp({super.key});
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   @override
   Widget build(BuildContext context) {
@@ -46,31 +48,29 @@ class LoginApp extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-          child: Container(
-        decoration: const BoxDecoration(color: Colors.white),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  InputField(
-                    label: '아이디',
-                    controller: _usernameController,
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 20),
-                  InputField(
-                    label: '비밀번호',
-                    controller: _passwordController,
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 15),
-                  const SizedBox(height: 80),
-                  ElevatedButton(
+        child: Container(
+          decoration: const BoxDecoration(color: Colors.white),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    LabeledTextField(
+                      label: '아이디',
+                      controller: _usernameController,
+                    ),
+                    const SizedBox(height: 20),
+                    LabeledTextField(
+                      label: '비밀번호',
+                      controller: _passwordController,
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 95),
+                    ElevatedButton(
                       onPressed: () => _login(context),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -92,13 +92,15 @@ class LoginApp extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ))
-                ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 
@@ -107,27 +109,22 @@ class LoginApp extends StatelessWidget {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
-    //로그인 유지
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // 로그인 유지
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl:8000/logindb/login'),
-        body: jsonEncode({
-          'username': username,
-          'password': password,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      final http.Response response = await http.post(
+        Uri.parse('$_baseUrl:8000/logindb/login'),
+        body: jsonEncode({'username': username, 'password': password}),
+        headers: {'Content-Type': 'application/json'},
       );
-      // 로그인 성공 시
+
       if (response.statusCode == 200) {
-        //로그인 유지를 위함
-        final authToken = jsonDecode(response.body)['access_token'];
-        await saveToken(authToken);
-        await fetchUserInfo(authToken);
+        final String authToken =
+            (json.decode(response.body) as Map<String, dynamic>)['access_token'];
+        await _saveToken(authToken);
+        await _fetchUserInfo(authToken);
 
         showDialog(
           context: context,
@@ -138,8 +135,7 @@ class LoginApp extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                    //Navigator.push(
+                    Navigator.of(context).pop();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -161,7 +157,6 @@ class LoginApp extends StatelessWidget {
           },
         );
       } else {
-        // 로그인 실패 시
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -170,9 +165,7 @@ class LoginApp extends StatelessWidget {
               content: const Text('아이디 또는 비밀번호가 일치하지 않습니다.'),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                  },
+                  onPressed: () => Navigator.of(context).pop(),
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: const Color.fromARGB(255, 29, 171, 102),
@@ -187,123 +180,33 @@ class LoginApp extends StatelessWidget {
           },
         );
       }
-    } catch (e) {
-      // 오류 발생 시
-      if (kDebugMode) {
-        print('서버에서 오류가 발생했음');
-      }
+    } catch (error) {
+      debugPrint('서버에서 오류가 발생했음: $error');
     }
   }
 
-  // 로그인 유지를 위한 토큰
-  Future<void> saveToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  // 로그인 유지를 위한 토큰 저장
+  Future<void> _saveToken(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('authToken', token);
   }
 
   // 사용자 정보를 가져오는 함수
-  Future<void> fetchUserInfo(String token) async {
+  Future<void> _fetchUserInfo(String token) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+      final http.Response response = await http.get(
+        Uri.parse('$_baseUrl:8000/logindb/loginuser'),
+        headers: {'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 200) {
-        final username = jsonDecode(response.body)['username'];
-        if (kDebugMode) {
-          print('로그인한 사용자: $username');
-        }
+        final String username =
+            (json.decode(response.body) as Map<String, dynamic>)['username'];
+        debugPrint('로그인한 사용자: $username');
       } else {
         throw Exception('Failed to fetch user info');
       }
     } catch (error) {
       // 오류 발생 시 처리
     }
-  }
-
-  // 자동 로그인
-  Future<void> autoLogin(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    if (isLoggedIn) {
-      String? authToken = prefs.getString('authToken');
-      if (authToken != null) {
-        // 토큰이 유효한지 확인하고 사용자 정보 가져오기
-        final isValid = await _validateToken(authToken);
-        if (isValid) {
-          // 유효한 경우 사용자 정보 가져오기
-          await fetchUserInfo(authToken);
-          // 홈 화면으로 이동
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MainpageApp(),
-            ),
-          );
-          return;
-        } else {
-          // 토큰이 만료된 경우 로그아웃 처리
-          await logout(context);
-        }
-      }
-    }
-  }
-
-  // 로그아웃
-  Future<void> logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    await prefs.remove('authToken');
-    // 로그인 페이지로 이동
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FirstApp(),
-      ),
-    );
-  }
-
-  // 토큰 유효성 검사 함수
-  Future<bool> _validateToken(String token) async {
-    return true;
-  }
-}
-
-class InputField extends StatelessWidget {
-  final bool isTextArea;
-  final String label;
-  final TextEditingController controller;
-  final bool obscureText;
-
-  const InputField({
-    this.isTextArea = false,
-    required this.label,
-    required this.controller,
-    required this.obscureText,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
-        ),
-        TextFormField(
-          obscureText: obscureText,
-          decoration: const InputDecoration(
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-            ),
-          ),
-          controller: controller,
-        ),
-      ],
-    );
   }
 }

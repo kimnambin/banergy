@@ -1,15 +1,19 @@
+// 비밀번호 찾기 화면입니다.
+
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/common/labeled_text_field.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:http/http.dart' as http;
-//import 'joinwidget.dart';
-// ignore: depend_on_referenced_packages
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized(); // 서버 연동을 위함
   runApp(
     const MaterialApp(
@@ -22,132 +26,83 @@ class PWFindApp extends StatefulWidget {
   const PWFindApp({super.key});
 
   @override
-  State<PWFindApp> createState() => _PWFindAppAppState();
+  State<PWFindApp> createState() => _PWFindAppState();
 }
 
-class _PWFindAppAppState extends State<PWFindApp> {
+class _PWFindAppState extends State<PWFindApp> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  //final TextEditingController _dateController = TextEditingController();
-  String _pw = '';
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  String _password = '';
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
-// pw찾기 함수
-  Future<void> _findpw(BuildContext context) async {
+  // 비밀번호 찾기 함수
+  Future<void> _findPassword(BuildContext context) async {
     final String name = _nameController.text;
     final String username = _usernameController.text;
-    //final String date = _dateController.text;
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl:8000/logindb/findpw'),
-        body: jsonEncode({
-          'name': name,
-          'username': username,
-          //'date': date,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      final http.Response response = await http.post(
+        Uri.parse('$_baseUrl:8000/logindb/findpw'),
+        body: jsonEncode({'name': name, 'username': username}),
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
-        // 입력정보가 맞을 때
-        // ignore: use_build_context_synchronously
         setState(() {
-          _pw = jsonDecode(response.body)['password'];
+          _password =
+              (json.decode(response.body) as Map<String, dynamic>)['password'];
         });
-
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Text('회원님의 비밀번호는 "$_pw" 입니다.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginApp(),
-                      ),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color(0xFF03C95B),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Text('확인'),
-                ),
-              ],
+        _showResultDialog(
+          message: '회원님의 비밀번호는 "$_password" 입니다.',
+          onConfirm: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginApp()),
             );
           },
         );
       } else {
-        //  실패 시
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: const Text('정보가 일치하지 않습니다.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Text('확인'),
-                ),
-              ],
-            );
-          },
-        );
+        _showResultDialog(message: '정보가 일치하지 않습니다.');
       }
-    } catch (e) {
-      // 오류 발생 시
-      print('서버에서 오류가 발생했음');
+    } catch (error) {
+      debugPrint('서버에서 오류가 발생했음: $error');
     }
   }
 
-  // 데이터 가져오는 함수
-  Future<void> fetchData() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/sign'),
-      );
-      if (response.statusCode == 200) {
-        _findpw;
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (error) {
-      // 오류 발생 시 처리
-      // 예: 오류 메시지 표시
-      print('Error fetching data: $error');
-    }
+  void _showResultDialog({required String message, VoidCallback? onConfirm}) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirm?.call();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF03C95B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          "비밀번호 찾기",
+          '비밀번호 찾기',
           style: TextStyle(fontFamily: 'PretendardSemiBold', fontSize: 20),
           textAlign: TextAlign.center,
         ),
@@ -173,18 +128,18 @@ class _PWFindAppAppState extends State<PWFindApp> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    InputField(
+                    LabeledTextField(
                       label: '계정 이름',
                       controller: _nameController,
                     ),
                     const SizedBox(height: 20),
-                    InputField(
+                    LabeledTextField(
                       label: '계정 아이디',
                       controller: _usernameController,
                     ),
                     const SizedBox(height: 95),
                     ElevatedButton(
-                      onPressed: () => _findpw(context),
+                      onPressed: () => _findPassword(context),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: const Color(0xFF03C95B),
@@ -199,48 +154,20 @@ class _PWFindAppAppState extends State<PWFindApp> {
                           child: Text(
                             '완료',
                             style: TextStyle(
-                                fontFamily: 'PretendardSemiBold', fontSize: 22),
+                              fontFamily: 'PretendardSemiBold',
+                              fontSize: 22,
+                            ),
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          //bottomNavigationBar: BottomNavBar(),
         ),
       ),
-    ));
-  }
-}
-
-class InputField extends StatelessWidget {
-  final bool isTextArea;
-  final String label;
-  final TextEditingController controller;
-
-  const InputField({
-    this.isTextArea = false,
-    required this.label,
-    required this.controller,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 30),
-        ),
-        TextFormField(
-          controller: controller,
-        ),
-      ],
     );
   }
 }
