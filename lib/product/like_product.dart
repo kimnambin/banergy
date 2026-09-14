@@ -1,23 +1,19 @@
-//찜한걸 보는 화면
-
-// ignore_for_file: non_constant_identifier_names
+// 찜(좋아요)한 상품을 보는 화면입니다.
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/product_search_bar.dart';
+import 'package:flutter_banergy/common/auth_service.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/product/pd_choice.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
 import 'package:flutter_banergy/mainDB.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: '.env');
   runApp(
     const MaterialApp(
       home: LPscreen(),
@@ -25,11 +21,9 @@ void main() async {
   );
 }
 
-//like + product 라는 뜻
+/// LPscreen: like + product(좋아요한 상품)라는 뜻.
 class LPscreen extends StatelessWidget {
-  final File? image;
-
-  const LPscreen({super.key, this.image});
+  const LPscreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +38,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,50 +76,25 @@ class ProductGrid extends StatefulWidget {
 }
 
 class _ProductGridState extends State<ProductGrid> {
-  late List<Product> products = [];
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  late final AuthService _authService = AuthService(baseUrl: _baseUrl);
+
   List<Product> likedProducts = [];
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
   String? authToken;
-  bool isLiked = true;
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
-    likeData(); // initState에서 데이터를 불러옵니다.
   }
 
-  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
+  // 사용자의 로그인 상태를 확인하고, 로그인되어 있으면 좋아요한 상품 목록을 가져옵니다.
   Future<void> _checkLoginStatus() async {
-    final token = await _loginUser();
+    final String? token = await _authService.loadValidAuthToken();
+    if (!mounted) return;
+    setState(() => authToken = token);
     if (token != null) {
-      final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-        if (isValid) {
-          likeData(); // 좋아요 누른 상품들 데이터 가져오기
-        }
-      });
-    }
-  }
-
-  // 사용자가 이미 로그인했는지 확인합니다.
-  Future<String?> _loginUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
-  }
-
-  // 토큰의 유효성을 확인합니다.
-  Future<bool> _validateToken(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      debugPrint('Error validating token: $e');
-      return false;
+      likeData();
     }
   }
 
@@ -136,24 +103,20 @@ class _ProductGridState extends State<ProductGrid> {
     if (authToken == null) return;
 
     final response = await http.get(
-      Uri.parse('$baseUrl:8000/logindb/getlike'),
+      Uri.parse('$_baseUrl:8000/logindb/getlike'),
       headers: {'Authorization': 'Bearer $authToken'},
     );
 
     if (response.statusCode == 200) {
+      final Map<String, dynamic> body =
+          json.decode(response.body) as Map<String, dynamic>;
+      final List<dynamic> rawLikedProducts =
+          (body['liked_products'] as List<dynamic>?) ?? const <dynamic>[];
+      if (!mounted) return;
       setState(() {
-        final List<dynamic> likedProductsList =
-            json.decode(response.body)['liked_products'];
-        likedProducts =
-            likedProductsList.map((json) => Product.fromJson(json)).toList();
-
-        // 좋아요 누른 상품들 콘솔창에 보기
-        for (var product in likedProducts) {
-          if (kDebugMode) {
-            print('좋아요 누른 상품들 -> ${product.name}');
-          }
-        }
-        //_updateLiked(); // 좋아요 상태 업데이트
+        likedProducts = rawLikedProducts
+            .map((dynamic item) => Product.fromJson(item as Map<String, dynamic>))
+            .toList();
       });
     } else {
       throw Exception('Failed to load liked products');
@@ -162,7 +125,7 @@ class _ProductGridState extends State<ProductGrid> {
 
   // 좋아요 삭제
   Future<void> deleteProduct(Product product) async {
-    final url = Uri.parse('$baseUrl:8000/logindb/deletelike');
+    final url = Uri.parse('$_baseUrl:8000/logindb/deletelike');
     final response = await http.post(
       url,
       headers: {
