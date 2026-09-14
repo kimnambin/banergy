@@ -308,12 +308,12 @@ class _SerachGridState extends State<SerachGrid> {
     });
   }
 
-  // 상품 클릭 시 pdScreen에서 보여줌
+  // 상품 클릭 시 ProductDetailScreen에서 보여줌
   void _handleProductClick(BuildContext context, Product product) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => pdScreen(product: product),
+        builder: (context) => ProductDetailScreen(product: product),
       ),
     );
   }

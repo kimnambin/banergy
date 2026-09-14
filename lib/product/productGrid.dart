@@ -187,7 +187,7 @@ class _ProductGridState extends State<ProductGrid> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => pdScreen(product: product),
+        builder: (context) => ProductDetailScreen(product: product),
       ),
     );
   }
@@ -227,7 +227,7 @@ class LikedProductsWidget extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => pd_choice(product: product),
+                        builder: (context) => LikedProductDetailScreen(product: product),
                       ),
                     );
                   },

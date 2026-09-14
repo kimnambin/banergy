@@ -7,6 +7,16 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// 공백으로 구분된 상품의 알레르기 성분([productAllergens]) 중 하나라도
+/// 사용자의 알레르기 목록([userAllergies])에 있으면 true를 돌려줍니다.
+bool productMatchesAnyAllergy(
+  String productAllergens,
+  List<String> userAllergies,
+) {
+  final List<String> productAllergensList = productAllergens.split(' ');
+  return productAllergensList.any(userAllergies.contains);
+}
+
 /// 로그인된 사용자의 인증 토큰과, 서버에 이미 저장되어 있던 알레르기 목록을 함께 담는 값.
 class LoggedInUserAllergyInfo {
   const LoggedInUserAllergyInfo({

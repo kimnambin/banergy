@@ -267,7 +267,7 @@ class _ProductGridState extends State<ProductGrid> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => pd_choice(product: product),
+        builder: (context) => LikedProductDetailScreen(product: product),
       ),
     );
   }

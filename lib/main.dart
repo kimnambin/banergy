@@ -480,7 +480,7 @@ class _ProductGridState extends State<ProductGrid> {
   void _openProductDetail(BuildContext context, Product product) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => pdScreen(product: product)),
+      MaterialPageRoute(builder: (context) => ProductDetailScreen(product: product)),
     );
   }
 }

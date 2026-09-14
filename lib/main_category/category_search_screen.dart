@@ -60,7 +60,7 @@ class CategorySearchScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => pdScreen(product: product),
+                        builder: (context) => ProductDetailScreen(product: product),
                       ),
                     );
                   },
