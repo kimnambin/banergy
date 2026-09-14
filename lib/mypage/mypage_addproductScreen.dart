@@ -1,7 +1,10 @@
+// 마이페이지에서 상품을 추가 등록하는 화면입니다.
+
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_banergy/common/hint_text_field.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -113,9 +116,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           },
         );
       }
-    } catch (e) {
-      // 오류 발생 시
-      print('서버에서 오류가 발생했음: $e');
+    } catch (error) {
+      debugPrint('서버에서 오류가 발생했음: $error');
     }
   }
 
@@ -151,13 +153,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
-                    InputField(
+                    HintTextField(
                       hintText: '상품명',
                       controller: _addtitleController,
-                      isTextArea: false,
                     ),
                     const SizedBox(height: 20),
-                    const InputField(
+                    const HintTextField(
                       hintText: '추가할 내용을 적어주세요.',
                       isTextArea: true,
                     ),
@@ -256,47 +257,5 @@ class _AddProductScreenState extends State<AddProductScreen> {
         color: Colors.white,
       );
     }
-  }
-}
-
-class InputField extends StatelessWidget {
-  final bool isTextArea;
-  final String hintText;
-  final TextEditingController? controller;
-
-  const InputField({
-    super.key,
-    this.hintText = "",
-    this.controller,
-    this.isTextArea = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (isTextArea)
-          TextFormField(
-            maxLines: 2,
-            decoration: InputDecoration(
-              hintText: hintText,
-              border: InputBorder.none,
-            ),
-            controller: controller,
-          )
-        else
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              enabledBorder: const UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromRGBO(227, 227, 227, 1.0)),
-              ),
-            ),
-            controller: controller,
-          ),
-      ],
-    );
   }
 }

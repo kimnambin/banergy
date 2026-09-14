@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
-import 'package:flutter_banergy/mypage/mypage_Freeboard_WriteScreen.dart.dart';
+import 'package:flutter_banergy/mypage/mypage_freeboard_write_screen.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
@@ -132,7 +132,7 @@ class _FreeboardState extends State<Freeboard>
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Freeboard_WriteScreen()),
+            MaterialPageRoute(builder: (context) => FreeboardWriteScreen()),
           );
         },
         backgroundColor: const Color(0xFF03C95B),
