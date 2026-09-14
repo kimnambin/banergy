@@ -1,10 +1,10 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// 상품 목록 화면입니다.
+
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/bottombar.dart';
-import 'package:flutter_banergy/login/login_login.dart';
-import 'package:flutter_banergy/main.dart';
 import 'package:flutter_banergy/mainDB.dart';
 import 'package:flutter_banergy/mypage/mypage_filtering_allergies.dart';
 import 'package:flutter_banergy/product/pd_choice.dart';
@@ -12,19 +12,18 @@ import 'package:flutter_banergy/product/product_detail.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
   @override
-  _ProductGridState createState() => _ProductGridState();
+  State<ProductGrid> createState() => _ProductGridState();
 }
 
 class _ProductGridState extends State<ProductGrid> {
-  late List<Product> products = [];
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  List<Product> likedProducts = [];
+  List<Product> products = <Product>[];
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final List<Product> likedProducts = [];
 
   @override
   void initState() {
@@ -33,42 +32,19 @@ class _ProductGridState extends State<ProductGrid> {
   }
 
   Future<void> fetchData() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl:8000/'),
+    final http.Response response = await http.get(
+      Uri.parse('$_baseUrl:8000/'),
     );
-    if (response.statusCode == 200) {
-      setState(() {
-        final List<dynamic> productList = json.decode(response.body);
-        products = productList.map((item) => Product.fromJson(item)).toList();
-      });
-    } else {
+    if (response.statusCode != 200) {
       throw Exception('Failed to load data');
     }
-  }
 
-  Future<void> checkLoginStatus(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    if (!isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginApp()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainpageApp()),
-      );
-    }
-  }
-
-  void _toggleLikedStatus(Product product) {
+    final List<dynamic> rawProducts =
+        json.decode(response.body) as List<dynamic>;
     setState(() {
-      if (likedProducts.contains(product)) {
-        likedProducts.remove(product);
-      } else {
-        likedProducts.add(product);
-      }
+      products = rawProducts
+          .map((dynamic item) => Product.fromJson(item as Map<String, dynamic>))
+          .toList();
     });
   }
 
@@ -119,60 +95,42 @@ class _ProductGridState extends State<ProductGrid> {
           ),
           delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
+              final Product product = products[index];
               return Card(
-                child: Stack(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        _handleProductClick(context, products[index]);
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 110,
-                            child: Center(
-                              child: Image.network(
-                                products[index].frontproduct,
-                                fit: BoxFit.cover,
+                child: InkWell(
+                  onTap: () => _handleProductClick(context, product),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 110,
+                        child: Center(
+                          child: Image.network(
+                            product.frontproduct,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'PretendardRegular',
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  products[index].name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'PretendardRegular',
-                                  ),
-                                ),
-                                const SizedBox(height: 4.0),
-                                Text(products[index].allergens),
-                              ],
-                            ),
-                          ),
-                        ],
+                            const SizedBox(height: 4.0),
+                            Text(product.allergens),
+                          ],
+                        ),
                       ),
-                    ),
-                    // Positioned(
-                    //   top: 0,
-                    //   right: 0,
-                    //   child: IconButton(
-                    //     icon: likedProducts.contains(products[index])
-                    //         ? const Icon(Icons.favorite, color: Colors.red)
-                    //         : const Icon(Icons.favorite_border),
-                    //     onPressed: () {
-                    //       _toggleLikedStatus(products[index]);
-                    //     },
-                    //   ),
-                    // ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
