@@ -1,14 +1,17 @@
+// 회원가입 화면입니다.
+
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/login/signup/joinwidget.dart';
-import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     const MaterialApp(
@@ -25,16 +28,15 @@ class JoinApp extends StatefulWidget {
 }
 
 class _JoinAppState extends State<JoinApp> {
-  //유효성 검사 부분
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  late final GlobalKey<FormState> _formKey;
-  late final TextEditingController _dateController;
+  final TextEditingController _dateController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _selectedGender;
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
 
   // 회원가입 함수
   Future<void> _signup(BuildContext context) async {
@@ -48,8 +50,8 @@ class _JoinAppState extends State<JoinApp> {
     final String? gender = _selectedGender;
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl:8000/logindb/sign'),
+      final http.Response response = await http.post(
+        Uri.parse('$_baseUrl:8000/logindb/sign'),
         body: jsonEncode({
           'username': username,
           'password': password,
@@ -57,120 +59,62 @@ class _JoinAppState extends State<JoinApp> {
           'date': date,
           'gender': gender,
         }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 201) {
-        // 회원가입 성공 시
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: const Text('회원가입 완료!!'),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginApp(),
-                      ),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Text('확인'),
-                ),
-              ],
+        _showResultDialog(
+          context,
+          message: '회원가입 완료!!',
+          onConfirm: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginApp()),
             );
           },
         );
       } else {
-        // 실패 시
-        // ignore: use_build_context_synchronously
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: const Text('입력한 정보를 확인해주세요.'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(255, 29, 171, 102),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('확인'),
-                  ),
-                ],
-              );
-            });
+        _showResultDialog(context, message: '입력한 정보를 확인해주세요.');
       }
-    } catch (e) {
-      print('Error sending request: $e');
+    } catch (error) {
+      debugPrint('Error sending request: $error');
     }
   }
 
-//회원가입 페이지만에 글로벌 키를 사용하기 위함
-  @override
-  void initState() {
-    super.initState();
-    _formKey = GlobalKey<FormState>();
-    _dateController = TextEditingController();
-  }
-
-  // 각 필드에 대한 유효성 검사 함수 정의
-  bool isIdValid() {
-    String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$'; //영어 + 숫자 조합을 위함
-    RegExp regex = RegExp(pattern);
-    return regex.hasMatch(_usernameController.text) &&
-        _usernameController.text.length >= 5; //5글자 이상
-  }
-
-  bool isPasswordValid() {
-    String pattern =
-        r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$'; //영어+숫자+특수기호 조합을 위함
-    RegExp regex = RegExp(pattern);
-    return regex.hasMatch(_passwordController.text) &&
-        _passwordController.text.length >= 5;
-  }
-
-  bool isConfirmPasswordValid() {
-    return _confirmPasswordController
-            .text.isNotEmpty && //비었는지 + 위에 입력한 비밀번호와 동일한지 확인
-        _confirmPasswordController.text == _passwordController.text;
-  }
-
-  bool isNameValid() {
-    return _nameController.text.isNotEmpty;
-  }
-
-  // 모든 필드에 대한 유효성 검사를 수행하는 함수
-  bool isFormValid() {
-    return isIdValid() &&
-        isPasswordValid() &&
-        isConfirmPasswordValid() &&
-        isNameValid();
+  void _showResultDialog(
+    BuildContext context, {
+    required String message,
+    VoidCallback? onConfirm,
+  }) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirm?.call();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(255, 29, 171, 102),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
@@ -185,10 +129,7 @@ class _JoinAppState extends State<JoinApp> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          // 배경색 지정을 위해 Container 추가
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
+          decoration: const BoxDecoration(color: Colors.white),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(40.0),
@@ -206,269 +147,151 @@ class _JoinAppState extends State<JoinApp> {
                     const Text(
                       '회원가입',
                       style: TextStyle(
-                          fontSize: 22, fontFamily: 'PretendardSemiBold'),
+                        fontSize: 22,
+                        fontFamily: 'PretendardSemiBold',
+                      ),
                     ),
                     const SizedBox(height: 40),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    _buildFieldLabel('아이디'),
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(),
+                      validator: _validateUsername,
+                    ),
+                    const SizedBox(height: 15),
+                    _buildFieldLabel('비밀번호'),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(),
+                      validator: _validatePassword,
+                    ),
+                    const SizedBox(height: 15),
+                    _buildFieldLabel('비밀번호 재확인'),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(),
+                      validator: _validateConfirmPassword,
+                    ),
+                    const SizedBox(height: 15),
+                    _buildFieldLabel('이름'),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return '다시 확인해주세요.';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    _buildFieldLabel('성별'),
+                    const SizedBox(height: 10),
+                    Stack(
                       children: [
-                        const Text(
-                          '아이디',
-                          style: TextStyle(
-                              fontFamily: 'PretendardBold', fontSize: 24),
-                        ),
-                        TextFormField(
-                          controller: _usernameController,
-                          decoration: const InputDecoration(),
-                          validator: (value) {
-                            String pattern =
-                                r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$';
-                            RegExp regex = RegExp(pattern);
-
-                            if (value == null || value.isEmpty) {
-                              return '아이디를 입력하세요.';
-                            } else if (!regex.hasMatch(value) ||
-                                value.length < 5) {
-                              return '아이디는 5글자 이상의 영어 + 숫자 조합이어야 합니다.';
-                            }
-
-                            return null;
+                        genderbox(
+                          selectedGender: _selectedGender,
+                          onChanged: (String? selectedGender) {
+                            setState(() => _selectedGender = selectedGender);
                           },
+                          hintText: '',
+                          hintStyle: const TextStyle(color: Color(0xFF777777)),
+                          iconColor: Colors.grey,
+                          hintTextColor: Colors.grey,
+                          border: const Border(
+                            bottom: BorderSide(color: Colors.grey),
+                          ),
                         ),
-                        const SizedBox(height: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '비밀번호',
-                              style: TextStyle(
-                                  fontSize: 24, fontFamily: 'PretendardBold'),
+                        const Positioned(
+                          left: 0,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.account_circle,
+                              color: Colors.grey,
                             ),
-                            TextFormField(
-                              controller: _passwordController,
-                              obscureText: true,
-                              decoration: const InputDecoration(),
-                              validator: (value) {
-                                String pattern =
-                                    r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$';
-                                RegExp regex = RegExp(pattern);
-
-                                if (value == null || value.isEmpty) {
-                                  return '비밀번호를 입력하세요.';
-                                } else if (!regex.hasMatch(value) ||
-                                    value.length < 5) {
-                                  return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
-                                }
-
-                                return null;
-                              },
+                          ),
+                        ),
+                        const Positioned(
+                          right: 0,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.expand_more,
+                              color: Colors.grey,
                             ),
-                            const SizedBox(height: 15),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  '비밀번호 재확인',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontFamily: 'PretendardBold',
-                                  ),
-                                ),
-                                TextFormField(
-                                  controller: _confirmPasswordController,
-                                  obscureText: true,
-                                  decoration: const InputDecoration(),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '비밀번호 재확인.';
-                                    } else if (value !=
-                                        _passwordController.text) {
-                                      return '비밀번호가 일치하지 않습니다.';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 15),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      '이름',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontFamily: 'PretendardBold',
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: _nameController,
-                                      decoration: const InputDecoration(),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return '다시 확인해주세요.';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 15),
-                                    // 성별
-
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '성별',
-                                          style: TextStyle(
-                                            fontSize: 24,
-                                            fontFamily: 'PretendardBold',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10), // 간격 조정
-                                        Stack(
-                                          children: [
-                                            // GenderBox
-                                            genderbox(
-                                              selectedGender: _selectedGender,
-                                              onChanged: (selectedGender) {
-                                                setState(() {
-                                                  _selectedGender =
-                                                      selectedGender;
-                                                });
-                                              },
-                                              hintText: '',
-                                              hintStyle: const TextStyle(
-                                                  color: Color(0xFF777777)),
-                                              iconColor: Colors.grey,
-                                              hintTextColor: Colors.grey,
-                                              border: const Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.grey),
-                                              ),
-                                            ),
-                                            // 아이콘
-                                            const Positioned(
-                                              left: 0,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.account_circle,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                            const Positioned(
-                                              right: 0,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.expand_more,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 30),
-                                      ],
-                                    ),
-
-                                    // 생년월일 입력 필드
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '생년월일',
-                                          style: TextStyle(
-                                            fontSize: 24,
-                                            fontFamily: 'PretendardBold',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10), // 간격 조정
-                                        Stack(
-                                          children: [
-                                            // DatePickerButton
-                                            DatePickerButton(
-                                              controller: _dateController,
-                                              onChanged: (selectedDate) {
-                                                setState(() {
-                                                  _dateController.text =
-                                                      selectedDate.toString();
-                                                });
-                                              },
-                                              backgroundColor: Colors.white,
-                                              hintText: '',
-                                              hintStyle: const TextStyle(
-                                                  color: Color(0xFF777777)),
-                                              iconColor: Colors.grey,
-                                              hintTextColor: Colors.grey,
-                                              border: const Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.grey),
-                                              ),
-                                            ),
-                                            // 왼쪽 아이콘
-                                            const Positioned(
-                                              left: 0,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.calendar_today,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                            // 오른쪽 아이콘
-                                            const Positioned(
-                                              right: 0,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.expand_more,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 15),
-                                      ],
-                                    ),
-
-                                    const SizedBox(height: 15),
-                                    const SizedBox(height: 50),
-                                    ElevatedButton(
-                                      onPressed: () => _signup(context),
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        backgroundColor:
-                                            const Color(0xFF03C95B),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                      ),
-                                      child: const SizedBox(
-                                        width: double.infinity,
-                                        height: 50,
-                                        child: Center(
-                                          child: Text(
-                                            '회원가입',
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    'PretendardSemiBold',
-                                                fontSize: 22),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 30),
+                    _buildFieldLabel('생년월일'),
+                    const SizedBox(height: 10),
+                    Stack(
+                      children: [
+                        DatePickerButton(
+                          controller: _dateController,
+                          onChanged: (String selectedDate) {
+                            setState(() {
+                              _dateController.text = selectedDate;
+                            });
+                          },
+                          backgroundColor: Colors.white,
+                          hintText: '',
+                          hintStyle: const TextStyle(color: Color(0xFF777777)),
+                          iconColor: Colors.grey,
+                          hintTextColor: Colors.grey,
+                          border: const Border(
+                            bottom: BorderSide(color: Colors.grey),
+                          ),
+                        ),
+                        const Positioned(
+                          left: 0,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        const Positioned(
+                          right: 0,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.expand_more,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 65),
+                    ElevatedButton(
+                      onPressed: () => _signup(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFF03C95B),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Center(
+                          child: Text(
+                            '회원가입',
+                            style: TextStyle(
+                              fontFamily: 'PretendardSemiBold',
+                              fontSize: 22,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -477,6 +300,49 @@ class _JoinAppState extends State<JoinApp> {
           ),
         ),
       ),
-    ));
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        label,
+        style: const TextStyle(fontFamily: 'PretendardBold', fontSize: 24),
+      ),
+    );
+  }
+
+  String? _validateUsername(String? value) {
+    final RegExp pattern = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$');
+    if (value == null || value.isEmpty) {
+      return '아이디를 입력하세요.';
+    }
+    if (!pattern.hasMatch(value) || value.length < 5) {
+      return '아이디는 5글자 이상의 영어 + 숫자 조합이어야 합니다.';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    final RegExp pattern =
+        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$');
+    if (value == null || value.isEmpty) {
+      return '비밀번호를 입력하세요.';
+    }
+    if (!pattern.hasMatch(value) || value.length < 5) {
+      return '비밀번호는 5글자 이상의 영어 + 숫자 + 특수문자 조합이어야 합니다.';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return '비밀번호 재확인.';
+    }
+    if (value != _passwordController.text) {
+      return '비밀번호가 일치하지 않습니다.';
+    }
+    return null;
   }
 }
