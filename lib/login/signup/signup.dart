@@ -191,18 +191,14 @@ class _JoinAppState extends State<JoinApp> {
                     const SizedBox(height: 10),
                     Stack(
                       children: [
-                        genderbox(
+                        GenderBox(
                           selectedGender: _selectedGender,
                           onChanged: (String? selectedGender) {
                             setState(() => _selectedGender = selectedGender);
                           },
                           hintText: '',
-                          hintStyle: const TextStyle(color: Color(0xFF777777)),
                           iconColor: Colors.grey,
                           hintTextColor: Colors.grey,
-                          border: const Border(
-                            bottom: BorderSide(color: Colors.grey),
-                          ),
                         ),
                         const Positioned(
                           left: 0,
@@ -240,12 +236,8 @@ class _JoinAppState extends State<JoinApp> {
                           },
                           backgroundColor: Colors.white,
                           hintText: '',
-                          hintStyle: const TextStyle(color: Color(0xFF777777)),
                           iconColor: Colors.grey,
                           hintTextColor: Colors.grey,
-                          border: const Border(
-                            bottom: BorderSide(color: Colors.grey),
-                          ),
                         ),
                         const Positioned(
                           left: 0,
