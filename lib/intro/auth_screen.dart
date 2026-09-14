@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_banergy/intro/intro_pageA.dart';
-import 'package:flutter_banergy/intro/intro_pageB.dart';
-import 'package:flutter_banergy/intro/intro_pageC.dart';
+import 'package:flutter_banergy/intro/intro_page_a.dart';
+import 'package:flutter_banergy/intro/intro_page_b.dart';
+import 'package:flutter_banergy/intro/intro_page_c.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

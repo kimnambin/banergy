@@ -1,44 +1,41 @@
-import 'package:flutter/cupertino.dart';
+// 앱 시작 시 잠깐 보여주는 스플래시(로고) 화면입니다.
+
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset('images/000.jpeg', width: 200, height: 200),
-                const SizedBox(height: 10),
-                const Text(
-                  '밴러지',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontFamily: 'PretendardBold', // 글꼴 추가
-                  ),
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset('images/000.jpeg', width: 200, height: 200),
+              const SizedBox(height: 10),
+              const Text(
+                '밴러지',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'PretendardBold',
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'PretendardBold', // 글꼴 추가
-                  ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                '알러지로 마음대로 먹지도\n못하는 당신을 위한 맞춤형\n관리 앱',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'PretendardBold',
                 ),
-                const SizedBox(height: 10),
-                const CircularProgressIndicator(
-                  color: Colors.red,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 10),
+              const CircularProgressIndicator(color: Colors.red),
+            ],
           ),
         ),
       ),
