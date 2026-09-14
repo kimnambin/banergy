@@ -1,36 +1,36 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, duplicate_ignore, collection_methods_unrelated_type, non_constant_identifier_names
+// 앱 진입점과 홈 화면입니다.
+// 로그인 확인, OCR 업로드, 상품 목록 조회 같은 통신 로직은 lib/common/의 서비스 파일들에
+// 맡기고, 이 파일은 화면(UI)을 그리는 역할만 합니다.
+
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banergy/appbar/home_search_widget.dart';
+import 'package:flutter_banergy/common/auth_service.dart';
+import 'package:flutter_banergy/common/ocr_service.dart';
+import 'package:flutter_banergy/mainDB.dart';
+import 'package:flutter_banergy/main_category/category_header.dart';
+import 'package:flutter_banergy/main_filtering_allergies.dart';
 import 'package:flutter_banergy/mypage/ai_recommend.dart';
-//import 'package:flutter_banergy/login/login_login.dart';
 import 'package:flutter_banergy/mypage/mypage.dart';
-//import 'package:flutter_banergy/mypage/mypage_freeboard.dart';
-import 'package:flutter_banergy/product/like_product.dart';
 import 'package:flutter_banergy/product/code.dart';
+import 'package:flutter_banergy/product/like_product.dart';
 import 'package:flutter_banergy/product/ocr_result.dart';
 import 'package:flutter_banergy/product/product_detail.dart';
-import 'package:flutter_banergy/main_filtering_allergies.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
-import 'package:flutter_banergy/mainDB.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_banergy/main_category/bigsnacks.dart';
-import 'package:flutter_banergy/main_category/snacks.dart';
-import 'package:flutter_banergy/main_category/drink.dart';
-import 'package:flutter_banergy/main_category/instantfood.dart';
-import 'package:flutter_banergy/main_category/ramen.dart';
-// ignore: depend_on_referenced_packages
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: '.env');
   runApp(
     const MaterialApp(
       home: MainpageApp(),
@@ -38,11 +38,9 @@ Future<void> main() async {
   );
 }
 
-// 앱의 메인 페이지를 빌드하는 StatelessWidget입니다.
+/// 앱의 메인 페이지를 빌드하는 StatelessWidget입니다.
 class MainpageApp extends StatelessWidget {
-  final File? image;
-
-  const MainpageApp({super.key, this.image});
+  const MainpageApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,102 +50,56 @@ class MainpageApp extends StatelessWidget {
   }
 }
 
-// 홈 화면을 관리하는 StatefulWidget입니다.
+/// 홈 화면을 관리하는 StatefulWidget입니다.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  String? authToken; // 사용자의 인증 토큰
+class _HomeScreenState extends State<HomeScreen> {
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  late final AuthService _authService = AuthService(baseUrl: _baseUrl);
+  late final OcrService _ocrService = OcrService(baseUrl: _baseUrl);
+
+  String? _authToken; // 사용자의 인증 토큰
   final ImagePicker _imagePicker = ImagePicker(); // 이미지 피커 인스턴스
   final _qrBarCodeScannerDialogPlugin =
       QrBarCodeScannerDialog(); // QR/바코드 스캐너 플러그인 인스턴스
-  String? code; // 바코드
-  String resultCode = ''; // 스캔된 바코드 결과
-  String ocrResult = ''; // OCR 결과
-  bool isOcrInProgress = false; // OCR 작업 진행 여부
-  final picker = ImagePicker(); // 이미지 피커 인스턴스
-  late String img64; // 이미지를 Base64로 인코딩한 결과
+  String _ocrResult = ''; // OCR 결과
+  bool _isOcrInProgress = false; // OCR 작업 진행 여부
+
+  int _selectedIndex = 0; // 현재 선택된 바텀 네비게이션 바 아이템의 인덱스
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
+  final List<String> _imageList = ['assets/images/ad.png'];
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus(); // 로그인 상태 확인
-  }
-
-  // 이미지 업로드 및 OCR 작업을 수행합니다.
-  Future<void> _uploadImage(XFile pickedFile) async {
-    setState(() {
-      isOcrInProgress = true; // 이미지 업로드 시작
-    });
-
-    final url = Uri.parse('$baseUrl:8000/logindb/ocr');
-    final request = http.MultipartRequest('POST', url);
-    request.headers['Authorization'] = 'Bearer $authToken';
-    request.files
-        .add(await http.MultipartFile.fromPath('image', pickedFile.path));
-    final response = await request.send();
-
-    if (response.statusCode == 200) {
-      var responseData = await response.stream.bytesToString();
-      var decodedData = jsonDecode(responseData);
-      setState(() {
-        ocrResult = decodedData['text'].join('\n'); // OCR 결과 업데이트
-      });
-    } else {
-      setState(() {
-        ocrResult =
-            'Failed to perform OCR: ${response.statusCode}'; // OCR 실패 메시지 업데이트
-      });
-    }
+    _checkLoginStatus();
   }
 
   // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
   Future<void> _checkLoginStatus() async {
-    final token = await _loginUser();
-    if (token != null) {
-      final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-      });
-    }
+    final String? token = await _authService.loadValidAuthToken();
+    if (!mounted) return;
+    setState(() => _authToken = token);
   }
 
-  // 사용자가 이미 로그인했는지 확인합니다.
-  Future<String?> _loginUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
+  // 이미지를 서버로 보내 OCR 작업을 수행합니다.
+  Future<void> _uploadImage(File imageFile) async {
+    setState(() => _isOcrInProgress = true);
+
+    final String result = await _ocrService.recognizeText(
+      imageFile: imageFile,
+      authToken: _authToken ?? '',
+    );
+
+    if (!mounted) return;
+    setState(() => _ocrResult = result);
   }
-
-  // 토큰의 유효성을 확인합니다.
-  Future<bool> _validateToken(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      debugPrint('Error validating token: $e');
-      return false;
-    }
-  }
-
-  int _selectedIndex = 0; // 현재 선택된 바텀 네비게이션 바 아이템의 인덱스
-  int _current = 0;
-
-  final CarouselController _controller =
-      CarouselController(); // 캐러셀관련 이미지 넣을수있음
-  List<String> imageList = [
-    'assets/images/ad.png',
-  ];
-  List<Product> likedProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -172,9 +124,7 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       body: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
+        decoration: const BoxDecoration(color: Colors.white),
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -182,408 +132,245 @@ class _HomeScreenState extends State<HomeScreen>
                 height: 220,
                 child: Stack(
                   children: [
-                    sliderWidget(),
-                    sliderIndicator(),
+                    _buildImageSlider(),
+                    _buildSliderIndicator(),
                   ],
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 120,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5, // 카테고리 개수
-                  itemBuilder: (BuildContext context, int index) {
-                    // 카테고리 정보 (이름과 이미지 파일 이름)
-                    List<Map<String, String>> categories = [
-                      {"name": "라면", "image": "001.png"},
-                      {"name": "패스트푸드", "image": "002.png"},
-                      // {"name": "김밥", "image": "003.png"},
-                      // {"name": "도시락", "image": "004.png"},
-                      // {"name": "샌드위치", "image": "005.png"},
-                      {"name": "음료", "image": "006.png"},
-                      {"name": "간식", "image": "007.png"},
-                      {"name": "과자", "image": "008.png"},
-                    ];
-
-                    // 현재 카테고리
-                    var category = categories[index];
-
-                    return GestureDetector(
-                      onTap: () {
-                        _navigateToScreen(
-                          context,
-                          category["name"]!,
-                        );
-                      },
-                      child: SizedBox(
-                        width: 100,
-                        child: Container(
-                          margin: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: Image.asset(
-                                  'assets/images/${category["image"]}',
-                                  width: 60, // 이미지의 너비
-                                  height: 60, // 이미지의 높이
-                                ),
-                              ),
-                              Text(
-                                '${category["name"]}', // 카테고리 이름 라벨
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'PretendardBold',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-
+            const SliverToBoxAdapter(child: HomeCategoryStrip()),
             const ProductGrid(), // 상품 그리드
-
-            if (isOcrInProgress) // OCR 작업이 진행 중인 경우에만 표시
-              SliverToBoxAdapter(
-                child: Container(
-                  alignment: Alignment.center,
-                  color: Colors.black.withOpacity(0.5),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 8),
-                      Text(
-                        '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            if (_isOcrInProgress) _buildOcrProgressOverlay(),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green, // 선택된 아이템의 색상
-        unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
-        selectedLabelStyle:
-            const TextStyle(color: Colors.green), // 선택된 아이템의 라벨 색상
+      bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
+  }
 
-        items: const [
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/home.png'),
+  Widget _buildOcrProgressOverlay() {
+    return SliverToBoxAdapter(
+      child: Container(
+        alignment: Alignment.center,
+        color: Colors.black.withOpacity(0.5),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 8),
+            Text(
+              '서버에 이미지 업로드 중... \n 최대 2~3분이 소요됩니다',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/ai.png'),
-              // AssetImage('assets/images/lens.png'),
-            ),
-            label: 'AI 추천',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/lens.png'),
-            ),
-            label: '렌즈',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/heart.png'),
-            ),
-            label: '찜',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/person.png'),
-            ),
-            label: '마이 페이지',
-          ),
-        ],
-        onTap: (index) async {
-          setState(() {
-            _selectedIndex = index; // 선택된 인덱스 업데이트
-          });
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MainpageApp()),
-            );
-          } else if (index == 1) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const AiRecommend()));
-          } else if (index == 2) {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return SingleChildScrollView(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            var cameraStatus = await Permission.camera.status;
-                            if (!cameraStatus.isGranted) {
-                              await Permission.camera.request();
-                            }
-
-                            final pickedFile = await _imagePicker.pickImage(
-                              source: ImageSource.camera,
-                            );
-
-                            if (pickedFile != null) {
-                              setState(() {
-                                // 이미지 선택 후에 진행 바를 나타냅니다.
-                                isOcrInProgress = true;
-                              });
-
-                              try {
-                                CroppedFile? croppedFile =
-                                    await ImageCropper().cropImage(
-                                  sourcePath: pickedFile.path,
-                                  aspectRatioPresets: [
-                                    CropAspectRatioPreset.square,
-                                    CropAspectRatioPreset.ratio3x2,
-                                    CropAspectRatioPreset.original,
-                                    CropAspectRatioPreset.ratio4x3,
-                                    CropAspectRatioPreset.ratio16x9,
-                                  ],
-                                );
-
-                                if (croppedFile != null) {
-                                  // 크롭된 이미지를 파일로 변환
-                                  File croppedImageFile =
-                                      File(croppedFile.path);
-
-                                  // OCR 작업 수행 (여기서 _uploadImage를 호출)
-                                  await _uploadImage(
-                                      XFile(croppedImageFile.path));
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          Ocrresult(
-                                        imagePath: croppedImageFile.path,
-                                        ocrResult: ocrResult,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                debugPrint('OCR failed: $e');
-                              } finally {
-                                setState(() {
-                                  isOcrInProgress = false;
-                                });
-                              }
-                            }
-                          },
-                          child: const Text('카메라'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final pickedFile = await _imagePicker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-
-                            if (pickedFile != null) {
-                              setState(() {
-                                isOcrInProgress = true;
-                              });
-
-                              try {
-                                CroppedFile? croppedFile =
-                                    await ImageCropper().cropImage(
-                                  sourcePath: pickedFile.path,
-                                  aspectRatioPresets: [
-                                    CropAspectRatioPreset.square,
-                                    CropAspectRatioPreset.ratio3x2,
-                                    CropAspectRatioPreset.original,
-                                    CropAspectRatioPreset.ratio4x3,
-                                    CropAspectRatioPreset.ratio16x9,
-                                  ],
-                                );
-
-                                if (croppedFile != null) {
-                                  // 크롭된 이미지를 파일로 변환
-                                  File croppedImageFile =
-                                      File(croppedFile.path);
-
-                                  // OCR 작업 수행 (여기서 _uploadImage를 호출)
-                                  await _uploadImage(
-                                    XFile(croppedImageFile.path),
-                                  );
-
-                                  // 결과를 화면에 표시
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          Ocrresult(
-                                        imagePath: croppedImageFile.path,
-                                        ocrResult: ocrResult,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                debugPrint('OCR failed: $e');
-                              } finally {
-                                setState(() {
-                                  isOcrInProgress = false;
-                                });
-                              }
-                            }
-                          },
-                          child: const Text('갤러리'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
-                              context: context,
-                              onCode: (code) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CodeScreen(
-                                      resultCode: code ?? "스캔된 정보 없음",
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: const Text(
-                            'QR/바코드',
-                            style: TextStyle(fontFamily: 'PretendardMedium'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          } else if (index == 3) {
-            setState(() {
-              _selectedIndex = index;
-            });
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LPscreen()),
-            );
-          } else if (index == 4) {
-            setState(() {
-              _selectedIndex = index;
-            });
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
-            );
-          }
-        },
+          ],
+        ),
       ),
     );
   }
 
-  void _navigateToScreen(BuildContext context, String categoryName) {
-    Widget? screen;
-    switch (categoryName) {
-      case '라면':
-        screen = const RamenScreen();
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.black,
+      selectedLabelStyle: const TextStyle(color: Colors.green),
+      items: const [
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/home.png')),
+          label: '홈',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/ai.png')),
+          label: 'AI 추천',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/lens.png')),
+          label: '렌즈',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/heart.png')),
+          label: '찜',
+        ),
+        BottomNavigationBarItem(
+          icon: ImageIcon(AssetImage('assets/images/person.png')),
+          label: '마이 페이지',
+        ),
+      ],
+      onTap: (int index) => _handleBottomNavigationTap(context, index),
+    );
+  }
+
+  void _handleBottomNavigationTap(BuildContext context, int index) {
+    setState(() => _selectedIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainpageApp()),
+        );
         break;
-      case '패스트푸드':
-        screen = const InstantfoodScreen();
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AiRecommend()),
+        );
         break;
-      // case '김밥':
-      //   screen = const GimbapScreen();
-      //   break;
-      // case '도시락':
-      //   screen = const LunchboxScreen();
-      //   break;
-      // case '샌드위치':
-      //   screen = const SandwichScreen();
-      //break;
-      case '음료':
-        screen = const DrinkScreen();
+      case 2:
+        _showLensOptionsSheet(context);
         break;
-      case '간식':
-        screen = const SnacksScreen();
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LPscreen()),
+        );
         break;
-      case '과자':
-        screen = const BigsnacksScreen();
+      case 4:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyHomePage()),
+        );
         break;
-    }
-    if (screen != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => screen!),
-      );
     }
   }
 
-// 캐러셀 관련 코드
-  Widget sliderWidget() {
+  void _showLensOptionsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _pickAndScanImage(
+                    context,
+                    source: ImageSource.camera,
+                  ),
+                  child: const Text('카메라'),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _pickAndScanImage(
+                    context,
+                    source: ImageSource.gallery,
+                  ),
+                  child: const Text('갤러리'),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _scanBarcode(context),
+                  child: const Text(
+                    'QR/바코드',
+                    style: TextStyle(fontFamily: 'PretendardMedium'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickAndScanImage(
+    BuildContext context, {
+    required ImageSource source,
+  }) async {
+    if (source == ImageSource.camera) {
+      final PermissionStatus cameraStatus = await Permission.camera.status;
+      if (!cameraStatus.isGranted) {
+        await Permission.camera.request();
+      }
+    }
+
+    final XFile? pickedFile = await _imagePicker.pickImage(source: source);
+    if (pickedFile == null) return;
+
+    setState(() => _isOcrInProgress = true);
+
+    try {
+      final CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        aspectRatioPresets: const [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9,
+        ],
+      );
+      if (croppedFile == null) return;
+
+      final File croppedImageFile = File(croppedFile.path);
+      await _uploadImage(croppedImageFile);
+
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => Ocrresult(
+            imagePath: croppedImageFile.path,
+            ocrResult: _ocrResult,
+          ),
+        ),
+      );
+    } catch (error) {
+      debugPrint('OCR failed: $error');
+    } finally {
+      if (mounted) setState(() => _isOcrInProgress = false);
+    }
+  }
+
+  void _scanBarcode(BuildContext context) {
+    _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
+      context: context,
+      onCode: (String? code) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CodeScreen(resultCode: code ?? '스캔된 정보 없음'),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildImageSlider() {
     return CarouselSlider(
       carouselController: _controller,
-      items: imageList.map(
-        (imgLink) {
-          return Builder(
-            builder: (context) {
-              return SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  imgLink,
-                  fit: BoxFit.fill,
-                ),
-              );
-            },
-          );
-        },
-      ).toList(),
+      items: _imageList.map((String imageAsset) {
+        return Builder(
+          builder: (context) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(imageAsset, fit: BoxFit.fill),
+            );
+          },
+        );
+      }).toList(),
       options: CarouselOptions(
         height: 220,
         viewportFraction: 1.0,
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 4),
-        onPageChanged: (index, reason) {
-          setState(() {
-            _current = index;
-          });
+        onPageChanged: (int index, CarouselPageChangedReason reason) {
+          setState(() => _current = index);
         },
       ),
     );
   }
 
-  Widget sliderIndicator() {
+  Widget _buildSliderIndicator() {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: imageList.asMap().entries.map((entry) {
+        children: _imageList.asMap().entries.map((entry) {
           return GestureDetector(
             onTap: () => _controller.animateToPage(entry.key),
             child: Container(
@@ -593,8 +380,8 @@ class _HomeScreenState extends State<HomeScreen>
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color:
-                    Colors.white.withOpacity(_current == entry.key ? 0.9 : 0.4),
+                color: Colors.white
+                    .withOpacity(_current == entry.key ? 0.9 : 0.4),
               ),
             ),
           );
@@ -604,212 +391,183 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-// 상품 그리드를 표시하는 StatefulWidget입니다.
+/// 로그인한 사용자에게 맞춤 추천된 상품을 그리드로 보여주는 위젯입니다.
 class ProductGrid extends StatefulWidget {
   const ProductGrid({super.key});
 
   @override
-  _ProductGridState createState() => _ProductGridState();
+  State<ProductGrid> createState() => _ProductGridState();
 }
 
 class _ProductGridState extends State<ProductGrid> {
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
-  late List<Product> products = [];
-  List<Product> likedProducts = [];
-  String? authToken;
+  final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost';
+  late final AuthService _authService = AuthService(baseUrl: _baseUrl);
+
+  List<Product> _products = <Product>[];
+  String? _authToken;
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
-    fetchData(); // 데이터 가져오기
-    //likeData();
   }
 
-  // 사용자의 로그인 상태를 확인하고 인증 토큰을 가져옵니다.
+  // 사용자의 로그인 상태를 확인하고, 로그인되어 있으면 맞춤 상품 목록을 가져옵니다.
   Future<void> _checkLoginStatus() async {
-    final token = await _loginUser();
+    final String? token = await _authService.loadValidAuthToken();
+    if (!mounted) return;
+    setState(() => _authToken = token);
     if (token != null) {
-      final isValid = await _validateToken(token);
-      setState(() {
-        authToken = isValid ? token : null;
-        if (isValid) {
-          fetchData(); // 상품 정보 가져오기
-        }
-      });
+      _fetchProducts();
     }
   }
 
-  // 사용자가 이미 로그인했는지 확인합니다.
-  Future<String?> _loginUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
-  }
-
-  // 토큰의 유효성을 확인합니다.
-  Future<bool> _validateToken(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl:8000/logindb/loginuser'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      debugPrint('Error validating token: $e');
-      return false;
-    }
-  }
-
-  //상품 정보 불러오기
-  Future<void> fetchData() async {
-    if (authToken == null) return;
-    final response = await http.get(
-      Uri.parse('$baseUrl:8000/logindb/show_product'),
-      headers: {'Authorization': 'Bearer $authToken'},
+  Future<void> _fetchProducts() async {
+    final http.Response response = await http.get(
+      Uri.parse('$_baseUrl:8000/logindb/show_product'),
+      headers: {'Authorization': 'Bearer $_authToken'},
     );
 
-    if (response.statusCode == 200) {
-      setState(() {
-        final List<dynamic> productList = json.decode(response.body);
-        products = productList.map((json) => Product.fromJson(json)).toList();
-      });
-    }
+    if (response.statusCode != 200) return;
+
+    final List<dynamic> rawProducts =
+        json.decode(response.body) as List<dynamic>;
+    if (!mounted) return;
+    setState(() {
+      _products = rawProducts
+          .map((dynamic item) => Product.fromJson(item as Map<String, dynamic>))
+          .toList();
+    });
   }
 
-  Future<void> Likeproduct(Product product) async {
-    final url = Uri.parse('$baseUrl:8000/logindb/like');
-    final response = await http.post(
-      url,
+  Future<void> _likeProduct(Product product) async {
+    final http.Response response = await http.post(
+      Uri.parse('$_baseUrl:8000/logindb/like'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken'
+        'Authorization': 'Bearer $_authToken',
       },
       body: json.encode({'product_id': product.id}),
     );
 
-    if (response.statusCode == 200) {
-      setState(() {
-        product.isHearted = !product.isHearted;
-        _toggleLikedStatus(product); // 하트 상태 업데이트
-      });
-    } else {
+    if (response.statusCode != 200) {
       throw Exception('Failed to toggle like');
     }
-  }
-
-  void _toggleLikedStatus(Product product) {
-    setState(() {
-      if (likedProducts.contains(product)) {
-        likedProducts.remove(product); // 좋아요 상태 삭제
-      } else {
-        likedProducts.add(product); // 좋아요 상태 추가
-      }
-    });
+    if (!mounted) return;
+    setState(() => product.isHearted = !product.isHearted);
   }
 
   @override
   Widget build(BuildContext context) {
-    const backgroundColor = Color(0xFFFFFFFF);
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ),
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          final product = products[index];
-          return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        _handleProductClick(context, products[index]);
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 15, // 이미지 높이 제한
-                          ),
-                          SizedBox(
-                            height: 90,
-                            child: Center(
-                              child: Image.network(
-                                products[index].frontproduct,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 14.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              products[index].name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'PretendardRegular',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 4.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              products[index].allergens,
-                              maxLines: 1, //한줄만 보이게 하는 것
-                              overflow:
-                                  TextOverflow.ellipsis, //넘치는 부분은 ...으로 표시
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: IconButton(
-                        icon: Icon(
-                          product.isHearted
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: product.isHearted ? Colors.red : null,
-                        ),
-                        onPressed: () {
-                          _toggleLikedStatus(products[index]);
-                          Likeproduct(product);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ));
+          final Product product = _products[index];
+          return _HomeProductCard(
+            product: product,
+            onTap: () => _openProductDetail(context, product),
+            onLikeTap: () => _likeProduct(product),
+          );
         },
-        childCount: products.length,
+        childCount: _products.length,
       ),
     );
   }
 
-  // 상품 클릭 시 새로운창에서 상품 정보를 표시하는 함수
-  void _handleProductClick(BuildContext context, Product product) {
+  void _openProductDetail(BuildContext context, Product product) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => pdScreen(product: product),
+      MaterialPageRoute(builder: (context) => pdScreen(product: product)),
+    );
+  }
+}
+
+class _HomeProductCard extends StatelessWidget {
+  const _HomeProductCard({
+    required this.product,
+    required this.onTap,
+    required this.onLikeTap,
+  });
+
+  final Product product;
+  final VoidCallback onTap;
+  final VoidCallback onLikeTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            InkWell(
+              onTap: onTap,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    height: 90,
+                    child: Center(
+                      child: Image.network(
+                        product.frontproduct,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'PretendardRegular',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      product.allergens,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: Icon(
+                  product.isHearted ? Icons.favorite : Icons.favorite_border,
+                  color: product.isHearted ? Colors.red : null,
+                ),
+                onPressed: onLikeTap,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
