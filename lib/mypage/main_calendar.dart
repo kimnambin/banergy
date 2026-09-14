@@ -1,16 +1,11 @@
+// 마이페이지 일정 화면에서 보여주는 달력 위젯입니다.
+
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 class MainCalendar extends StatefulWidget {
   const MainCalendar({super.key});
-  // final OnDaySelected onDaySelected;
-  // final DateTime selectedDate;
-
-  // MainCalendar({
-  //   required this.onDaySelected,
-  //   required this.selectedDate,
-  // });
 
   @override
   State<MainCalendar> createState() => _MainCalendarState();
@@ -47,7 +42,6 @@ class _MainCalendarState extends State<MainCalendar> {
             ), //sheet의 외각을 정의할 수 있음. 여기에서는 위쪽의 양옆음 둥글게 함.
             builder: (BuildContext context) {
               return Container(
-                margin: const EdgeInsets.only(),
                 height: 390,
                 color: Colors.transparent,
                 child: Center(
@@ -121,10 +115,6 @@ class _MainCalendarState extends State<MainCalendar> {
         // selectedDay 와 동일한 날짜의 모양을 바꿔줍니다.
         return isSameDay(selectDay, day);
       },
-/*      selectedDayPredicate: (date) =>
-          date.year == selectedDate.year &&
-          date.month == selectedDate.month &&
-          date.day == selectedDate.day, */
       firstDay: DateTime(2024, 1, 1),
       lastDay: DateTime(2025, 12, 31),
       focusedDay: focusedDay,
