@@ -6,7 +6,7 @@ class Product {
     required this.id,
     required this.barcode,
     required this.name,
-    required this.kategorie,
+    required this.category,
     required this.frontproduct,
     required this.backproduct,
     this.allergens = '',
@@ -17,7 +17,7 @@ class Product {
     return Product(
       id: json['id'] as int,
       barcode: json['barcode'] as String,
-      kategorie: json['kategorie'] as String,
+      category: json['kategorie'] as String,
       name: json['name'] as String,
       frontproduct: json['frontproduct'] as String,
       backproduct: json['backproduct'] as String,
@@ -29,7 +29,7 @@ class Product {
   final int id;
   final String barcode;
   final String name;
-  final String kategorie;
+  final String category;
   final String frontproduct;
   final String backproduct;
   final String allergens;
@@ -40,7 +40,7 @@ class Product {
       'id': id,
       'barcode': barcode,
       'name': name,
-      'kategorie': kategorie,
+      'kategorie': category,
       'frontproduct': frontproduct,
       'backproduct': backproduct,
       'allergens': allergens,
@@ -52,9 +52,9 @@ class Product {
 /// 자유게시판(커뮤니티) 글 하나.
 class FreeboardPost {
   FreeboardPost({
-    required this.freetitle,
-    required this.freecontent,
-    required this.timestamp,
+    this.freetitle,
+    this.freecontent,
+    this.timestamp,
   });
 
   factory FreeboardPost.fromJson(Map<String, dynamic> json) {
