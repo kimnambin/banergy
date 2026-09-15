@@ -9,7 +9,7 @@ import 'package:flutter_banergy/intro/splash_screen.dart';
 import 'package:flutter_banergy/intro/auth_screen.dart';
 import 'package:flutter_banergy/login/login_FirstApp.dart';
 import 'package:flutter_banergy/main.dart';
-import 'package:flutter_banergy/rounter/locations.dart';
+import 'package:flutter_banergy/router/locations.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';

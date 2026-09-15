@@ -127,7 +127,7 @@ class ProductDetailView extends StatelessWidget {
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
-                child: _buildTitleTexts([product.kategorie, product.name]),
+                child: _buildTitleTexts([product.category, product.name]),
               ),
               const SizedBox(height: 50),
               _buildLabeledText('알레르기 식품:', product.allergens),
